@@ -1,14 +1,14 @@
 import os
 import numpy as np
 import pandas as pd
-from package import deal_stride #, validation
-# from semio_package.features import autocorr, indexes
 import matplotlib.pyplot as plt
 import matrixprofile as mp
 from scipy.spatial.distance import cdist
 from tslearn import metrics
 import dtwalign
 from scipy import stats
+
+from package import deal_stride #, validation
 
 
 def annotate_stride_estimation(data, data_autre, pied, r=2, type_sig="Gyr_Y", gr=False, exo=["vide"],
