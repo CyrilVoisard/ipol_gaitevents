@@ -10,7 +10,7 @@ from scipy.signal import butter, filtfilt
 from scipy import interpolate
 import sys
 
-from package import import_data, compute_semio_val, radar_design
+from package import import_data, seg_detection, dtw_detection
 
 # if you need to access a file next to the source code, use the variable ROOT
 ROOT = os.path.dirname(os.path.realpath(__file__))
@@ -57,7 +57,7 @@ def print_semio_criteria(criteria_dict):
 
 
 def print_quality_index(steps_lim_full, seg_lim):
-    """Dump the parameters computed from the trial in a text file (trial_info.txt)
+    """Dump the quality index computed from the trial
 
     Parameters
     ----------
