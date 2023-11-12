@@ -16,7 +16,7 @@ def disp_seg(seg):
     print(seg)
 
 
-def plot_seg_detection(seg_lim, steps_lim, data_lb, freq):
+def plot_seg_detection(seg_lim, steps_lim, data_lb, freq, output):
     # Graphic signals
     t_full, angle_x_full = signals_for_seg(data_lb, steps_lim)
 
