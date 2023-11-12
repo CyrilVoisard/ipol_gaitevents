@@ -113,7 +113,7 @@ if __name__ == "__main__":
     data_lf = import_data.import_XSens(os.path.join(data_WD, args.i2))
     
     # gait events and steps detection
-    steps_lim_full = dtw_detection.steps_detection(data_rf, data_lb, freq)
+    steps_lim_full = dtw_detection.steps_detection_full(data_rf, data_lf, freq)
 
     print("ok charge")
     sys.exit(0)
