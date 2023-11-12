@@ -5,7 +5,7 @@ import matplotlib.patches as mpatches
 from matplotlib import patches
 import os
 
-from mp_dtw_package import deal_stride
+from package import deal_stride
 
 
 def plot_stepdetection_dtw(steps_rf, steps_lf, data_pied_droit, data_pied_gauche, id_exp=0,
