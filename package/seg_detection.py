@@ -7,7 +7,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import linregress
-from semio_package import features as ft
+# from semio_package import features as ft
 
 
 def disp_seg(seg):
