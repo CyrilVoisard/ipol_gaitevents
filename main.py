@@ -111,12 +111,12 @@ if __name__ == "__main__":
     data_lb = import_data.import_XSens(os.path.join(data_WD, args.i0))
     data_rf = import_data.import_XSens(os.path.join(data_WD, args.i1))
     data_lf = import_data.import_XSens(os.path.join(data_WD, args.i2))
-        
-    print("ok charge")
-    sys.exit(0)
     
     # gait events and steps detection
     steps_lim_full = dtw_detection.steps_detection(data_rf, data_lb, freq)
+
+    print("ok charge")
+    sys.exit(0)
     
     # phase boundaries detection and figure
     seg_lim = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
