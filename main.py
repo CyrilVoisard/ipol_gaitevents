@@ -56,6 +56,40 @@ def print_semio_criteria(criteria_dict):
         print(info_msg.format(**display_dict), file=f)
 
 
+def print_quality_index(steps_lim_full, seg_lim):
+    """Dump the parameters computed from the trial in a text file (trial_info.txt)
+
+    Parameters
+    ----------
+    parameters_dict : dict
+        Parameters of the trial.
+    """
+
+    display_dict = {'Average Speed': "Average Speed: {Average Speed}".format(**criteria_dict),
+                    'Springiness': "Springiness: {Springiness}".format(**criteria_dict),
+                    'Sturdiness': "Sturdiness: {Sturdiness}".format(**criteria_dict),
+                    'Smoothness': "Smoothness: {Smoothness}".format(**criteria_dict),
+                    'Steadiness': "Steadiness: {Steadiness}".format(**criteria_dict),
+                    'Stability': "Stability: {Stability}".format(**criteria_dict),
+                    'Symmetry': "Symmetry: {Symmetry}".format(**criteria_dict),
+                    'Synchronisation': "Synchronisation: {Synchronisation}".format(**criteria_dict)
+                    }
+    info_msg = """
+    Z-Scores
+    --------------------------------------------------+--------------------------------------------------
+    {Average Speed:<50}| {Steadiness:<50}
+    {Springiness:<50}| {Stability:<50}
+    {Sturdiness:<50}| {Symmetry:<50}
+    {Smoothness:<50}| {Synchronisation:<50}
+    """
+
+    # Dump information
+    os.chdir(data_WD) # Get back to the normal WD
+
+    with open("trial_criteria.txt", "wt") as f:
+        print(info_msg.format(**display_dict), file=f)
+
+
 if __name__ == "__main__":
 
     import argparse
