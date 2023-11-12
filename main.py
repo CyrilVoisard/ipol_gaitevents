@@ -123,7 +123,7 @@ if __name__ == "__main__":
 
     # print phases and figure
     # print_seg_detection(seg_lim)
-    seg_detection.plot_seg_detection(seg_lim, data_lb, freq)
+    seg_detection.plot_seg_detection(seg_lim, steps_lim_full, data_lb, freq)
 
     print("ok charge")
     sys.exit(0)
