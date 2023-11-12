@@ -90,12 +90,13 @@ def print_quality_index(steps_lim_full, seg_lim):
         print(info_msg.format(**display_dict), file=f)
 
 
+
+
 if __name__ == "__main__":
 
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description='Return a semiogram for a given trial.')
+    parser = argparse.ArgumentParser(description='Return a semiogram for a given trial.')
     parser.add_argument('-i0', metavar='data_lb', help='Time series for the lower back sensor.')
     parser.add_argument('-i1', metavar='data_rf', help='Time series for the right foot sensor.')
     parser.add_argument('-i2', metavar='data_lf', help='Time series for the left foot sensor.')
@@ -110,6 +111,9 @@ if __name__ == "__main__":
     data_lb = import_data.import_XSens(os.path.join(data_WD, args.i0))
     data_rf = import_data.import_XSens(os.path.join(data_WD, args.i1))
     data_lf = import_data.import_XSens(os.path.join(data_WD, args.i2))
+        
+    print("ok charge")
+    sys.exit(0)
     
     # gait events and steps detection
     steps_lim_full = dtw_detection.steps_detection(data_rf, data_lb, freq)
