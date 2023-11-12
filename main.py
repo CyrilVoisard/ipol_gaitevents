@@ -114,12 +114,12 @@ if __name__ == "__main__":
     
     # gait events and steps detection
     steps_lim_full = dtw_detection.steps_detection_full(data_rf, data_lf, freq)
-
-    print("ok charge")
-    sys.exit(0)
     
     # phase boundaries detection and figure
     seg_lim = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
+
+    print("ok charge")
+    sys.exit(0)
 
     # quality index and 
     qi, steps_lim_corrected = print_quality_index(steps_lim_full, seg_lim)
