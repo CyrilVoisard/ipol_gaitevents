@@ -1,8 +1,8 @@
 import os
 import numpy as np
 import pandas as pd
-from mp_dtw_package import deal_stride, validation
-from semio_package.features import autocorr, indexes
+from package import deal_stride #, validation
+# from semio_package.features import autocorr, indexes
 import matplotlib.pyplot as plt
 import matrixprofile as mp
 from scipy.spatial.distance import cdist
