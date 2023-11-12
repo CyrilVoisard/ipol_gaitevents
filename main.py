@@ -118,15 +118,15 @@ if __name__ == "__main__":
     # phase boundaries detection and figure
     seg_lim = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
 
-    print("ok charge")
-    sys.exit(0)
-
     # quality index and 
-    qi, steps_lim_corrected = print_quality_index(steps_lim_full, seg_lim)
+    # qi, steps_lim_corrected = print_quality_index(steps_lim_full, seg_lim)
 
     # print phases and figure
-    print_seg_detection(seg_lim)
+    # print_seg_detection(seg_lim)
     seg_detection.plot_seg_detection(seg_lim, data_lb, freq)
+
+    print("ok charge")
+    sys.exit(0)
 
     # print validated gait events and figure 
     print_steps_detection(steps_lim_corrected)
