@@ -88,7 +88,7 @@ def affine_annotate_dtw(x, y, start, gyr, acc, stride_annotations, disp=False):
 
     # parameters
     s_y1 = np.array([y[start:end] / np.max(y[start:end]),
-                     x[start:end] / np.max(abs(x[start:end])))
+                     x[start:end] / np.max(abs(x[start:end]))])
     s_y1 = s_y1.transpose()
 
     s_y2 = np.array([acc / np.max(acc),
