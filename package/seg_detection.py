@@ -16,10 +16,7 @@ def disp_seg(seg):
     print(seg)
 
 
-def plot_segdetection_xs(data_lb, steps_lim, id_exp=0, freq=100, download=False, output_files=0):
-    # segmentation
-    seg = seg_detection(data_lb, steps_lim, id_exp=id_exp, freq=freq, download=download, output_files=output_files)
-
+def plot_segdetection(seg_lim, steps_lim, data_lb, freq):
     # Graphic signals
     t_full, angle_x_full = signals_for_seg(data_lb, steps_lim)
 
@@ -36,19 +33,15 @@ def plot_segdetection_xs(data_lb, steps_lim, id_exp=0, freq=100, download=False,
     ax.set(title="Position angulaire selon X : " + id_exp)
 
     # Marqueurs de la segmentation de la marche en rouge pour le demi-tour
-    ax.vlines(seg[1] / freq, -50, 230, 'red', '-', linewidth=2, label="$u_{go}$ and $u_{back}$")
-    ax.vlines(seg[2] / freq, -50, 230, 'red', '-', linewidth=2)
+    ax.vlines(seg_lim[1] / freq, -50, 230, 'red', '-', linewidth=2, label="$u_{go}$ and $u_{back}$")
+    ax.vlines(seg_lim[2] / freq, -50, 230, 'red', '-', linewidth=2)
     fig.legend(fontsize=15)
 
-    if download:
-        # On enregistre la nouvelle figure
-        titre = id_exp + "_auto_seg_image.png"
-        os.chdir(output_files)
-        plt.savefig(titre, bbox_inches="tight")
-        # plt.show()
-        plt.close()
-
-    return seg
+    # save the fig
+    path_out = os.path.join(output, "phases_seg.png")
+    plt.savefig(path_out, dpi=200,
+                    transparent=True, bbox_inches="tight")
+    
 
 
 def seg_detection(data_lb, steps_lim, freq):
