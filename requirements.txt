@@ -2,3 +2,4 @@ numpy
 iio==0.0.3
 tslearn
 matrixprofile
+dtwalign
