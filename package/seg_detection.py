@@ -30,7 +30,7 @@ def plot_seg_detection(seg_lim, steps_lim, data_lb, freq):
     ax.set_ylabel('Angular position (°)', fontsize=15)
     ax.set_xlabel('Time (s)', fontsize=15)
     ax.xaxis.set_tick_params(labelsize=12)
-    ax.set(title="Position angulaire selon X : " + id_exp)
+    ax.set(title="Position angulaire selon X : ")
 
     # Marqueurs de la segmentation de la marche en rouge pour le demi-tour
     ax.vlines(seg_lim[1] / freq, -50, 230, 'red', '-', linewidth=2, label="$u_{go}$ and $u_{back}$")
