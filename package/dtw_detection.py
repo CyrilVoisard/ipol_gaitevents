@@ -7,42 +7,26 @@ from tslearn import metrics
 from package import find_stride, deal_stride, plot_stepdetection
 
 
-def steps_detection_full(data_rf, data_lf, id_exp, freq=100, gr=False, exo=[], download=False, output_files=0):
-    steps_rf = steps_detection(data_rf, data_lf, 1, id_exp, freq=freq, gr=gr, exo=exo, download=download,
-                               output_files=output_files)
-    steps_lf = steps_detection(data_lf, data_rf, 0, id_exp, freq=freq, gr=gr, exo=exo, download=download,
-                               output_files=output_files)
+def steps_detection_full(data_rf, data_lf, freq):
+    steps_rf = steps_detection(data_rf, data_lf, 1, freq)
+    steps_lf = steps_detection(data_lf, data_rf, 0, freq)
 
     full = np.concatenate((steps_rf, steps_lf))
-
-    if download:
-        os.chdir(output_files)
-        name_file = id_exp + '_dtw_steps.txt'
-        print(name_file)
-        np.savetxt(name_file, full, delimiter=';', fmt='%d')
-
-    plot_stepdetection.plot_stepdetection_dtw(steps_rf, steps_lf, data_rf, data_lf, id_exp=id_exp, download=True,
-                                              output_files=output_files)
-    print('RAS image steps')
 
     return pd.DataFrame(full, columns=["Foot", "Phase", "HO", "TO", "HS", "FF", "Score"])
 
 
-def steps_detection(data, data_autre, pied, id_exp, freq=100, gr=False, exo=None, download=False, output_files=0):
+def steps_detection(data, data_other_side, foot, freq):
     x = data["Gyr_Y"]
     z = deal_stride.calculate_jerk_tot(data, freq)
 
-    gyr_ok, acc_ok, stride_annotations_ok, comp = find_stride.annotate_stride_estimation(data, data_autre, pied,
-                                                                                         id_exp=id_exp, freq=freq,
-                                                                                         gr=gr, exo=exo,
-                                                                                         download=download,
-                                                                                         output=output_files)
+    gyr_ok, acc_ok, stride_annotations_ok, comp = find_stride.annotate_stride_estimation(data, data_other_side, foot, freq)
 
     cost = matrix_cost(x, z, gyr_ok, acc_ok)
 
-    pic_correl_debut = indexes(cost, 0.35, min_dist=len(gyr_ok) // 2, thres_abs=True)
-    pic_correl_debut = pic_correl_debut[np.argsort(-cost[pic_correl_debut])]
-    F = [0] * len(x)  # Same size as the signal, allows for counting if the steps are identified.
+    pic_correl_start = indexes(cost, 0.35, min_dist=len(gyr_ok) // 2, thres_abs=True)
+    pic_correl_start = pic_correl_start[np.argsort(-cost[pic_correl_start])]
+    F = [0] * len(x)  # same size as the signal, allows for counting if the steps are identified.
 
     starts = []
     ends = []
@@ -50,9 +34,9 @@ def steps_detection(data, data_autre, pied, id_exp, freq=100, gr=False, exo=None
     annotations = []
     steps_list = []
 
-    for i in range(len(pic_correl_debut)):
+    for i in range(len(pic_correl_start)):
         step = []
-        start_min, end_min, path_min, sim_min, annotations_min = affine_annotate_dtw(x, z, pic_correl_debut[i],
+        start_min, end_min, path_min, sim_min, annotations_min = affine_annotate_dtw(x, z, pic_correl_start[i],
                                                                                      gyr_ok, acc_ok,
                                                                                      stride_annotations_ok)
 
@@ -77,7 +61,7 @@ def steps_detection(data, data_autre, pied, id_exp, freq=100, gr=False, exo=None
             sims.append(sim_min)
             annotations.append(annotations_min)
 
-            step.append(pied)
+            step.append(foot)
             step.append(100)
             step.append(ho)
             step.append(to)
@@ -85,9 +69,9 @@ def steps_detection(data, data_autre, pied, id_exp, freq=100, gr=False, exo=None
             step.append(ff)
             step.append(sim_min)
             steps_list.append(step)
-        else:
-            print("Step déjà rentré : ", ho, to, hs, ff)
-            print(F[to:hs], F[hs:to])
+        #else:
+         #   print("Step déjà rentré : ", ho, to, hs, ff)
+          #  print(F[to:hs], F[hs:to])
 
     steps_list = np.array(steps_list)
     steps_list = steps_list[steps_list[:, 3].argsort()]
@@ -102,15 +86,13 @@ def affine_annotate_dtw(x, y, start, gyr, acc, stride_annotations, disp=False):
     dx = np.array(np.diff(x).tolist() + [0])
     dgyr = np.array(np.diff(gyr).tolist() + [0])
 
-    # Paramètres de départ
-    s_y1 = np.array([1 * y[start:end] / np.max(y[start:end]),
-                     1 * x[start:end] / np.max(abs(x[start:end])),
-                     0 * abs(dx[start:end]) / (np.max(abs(dx[start:end])))])
+    # parameters
+    s_y1 = np.array([y[start:end] / np.max(y[start:end]),
+                     x[start:end] / np.max(abs(x[start:end])))
     s_y1 = s_y1.transpose()
 
-    s_y2 = np.array([1 * acc / np.max(acc),
-                     1 * gyr / np.max(abs(gyr)),
-                     0 * abs(dgyr) / (np.max(abs(dgyr)))])
+    s_y2 = np.array([acc / np.max(acc),
+                     gyr / np.max(abs(gyr))])
     s_y2 = s_y2.transpose()
 
     r = 2
@@ -133,23 +115,23 @@ def matrix_cost(x, z, gyr_ok, jerk_ok, mu=0.1):
     v = jerk_ok
     Nd = len(u)
 
-    for j in range(0, Nx - Nd + 1):  # À quelle point le signal qui suit correspond au pas du dictionnaire ?
+    for j in range(0, Nx - Nd + 1):  
 
-        # Sélection avec l'amplitude mu
+        # filter with amplitude
         cx = np.std(x[j:j + Nd])
         cu = np.std(u)
         cz = np.std(z[j:j + Nd])
         cv = np.std(v)
 
-        # Calcul de la corrélation
+        # correlation estimation
         w = stats.pearsonr(x[j:j + Nd], u)[0] / 2 + stats.pearsonr(z[j:j + Nd], v)[0] / 2
         w_2 = max(stats.pearsonr(x[j:j + Nd], u)[0], stats.pearsonr(z[j:j + Nd], v)[0])
         if (cx > mu * cu) & (cz > mu * cv):
             matrix[j] = w
             matrix_2[j] = w_2
         else:
-            matrix[j] = -abs(w) / 10  # si on met des 0, c'est sélectionné dans les >=...
-            matrix_2[j] = -abs(w_2) / 10  # si on met des 0, c'est sélectionné dans les >=...
+            matrix[j] = -abs(w) / 10  
+            matrix_2[j] = -abs(w_2) / 10
 
     return np.array(matrix, dtype=float)
 
