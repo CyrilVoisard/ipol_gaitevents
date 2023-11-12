@@ -17,7 +17,7 @@ def disp_seg(seg):
 
 
 def plot_segdetection_xs(data_tr, steps_lim, id_exp=0, freq=100, download=False, output_files=0):
-    # Segmentation
+    # segmentation
     seg = seg_detection(data_tr, steps_lim, id_exp=id_exp, freq=freq, download=download, output_files=output_files)
 
     # Graphic signals
