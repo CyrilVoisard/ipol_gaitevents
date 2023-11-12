@@ -10,7 +10,7 @@ from scipy.signal import butter, filtfilt
 from scipy import interpolate
 import sys
 
-from package import import_data, seg_detection, dtw_detection
+from package import import_data #, seg_detection, dtw_detection
 
 # if you need to access a file next to the source code, use the variable ROOT
 ROOT = os.path.dirname(os.path.realpath(__file__))
