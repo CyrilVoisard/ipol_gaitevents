@@ -50,14 +50,14 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, freq, output, corrected=Fals
 
     for i in range(len(steps_lf)):
         # ----------------------- Remplissage pour le pied gauche -------------------------------------------
-        ax[0].plot(t_lf[int(steps_lf[i][2])], jerk_lf[int(steps_lf[i][2])], 'g', marker='x')
-        ax[0].plot(t_lf[int(steps_lf[i][3])], jerk_lf[int(steps_lf[i][3])], 'r', marker='x')
-        ax[0].plot(t_lf[int(steps_lf[i][4])], jerk_lf[int(steps_lf[i][4])], 'k', marker='x')
-        ax[0].plot(t_lf[int(steps_lf[i][5])], jerk_lf[int(steps_lf[i][5])], 'g', marker='x')
+        ax[0].plot(t_lf[int(steps_lf["HO"][i])], jerk_lf[int(steps_lf["HO"][i])], 'g', marker='x')
+        ax[0].plot(t_lf[int(steps_lf["TO"][i])], jerk_lf[int(steps_lf["TO"][i])], 'r', marker='x')
+        ax[0].plot(t_lf[int(steps_lf["HS"][i])], jerk_lf[int(steps_lf["HS"][i])], 'k', marker='x')
+        ax[0].plot(t_lf[int(steps_lf["FF"][i])], jerk_lf[int(steps_lf["FF"][i])], 'g', marker='x')
 
-        to = int(steps_lf[i][3])
+        to = int(steps_lf["TO"][i])
         ax[1].vlines(t_lf[to], mi_lf, ma_lf, 'k', '--')
-        hs = int(steps_lf[i][4])
+        hs = int(steps_lf["HS"][i])
         ax[1].vlines(t_lf[hs], mi_lf, ma_lf, 'k', '--')
 
         if to < hs:
@@ -89,14 +89,14 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, freq, output, corrected=Fals
 
         # ----------------------- Remplissage pour le pied droit -------------------------------------------
     for i in range(len(steps_rf)):
-        ax[2].plot(t_rf[int(steps_rf[i][2])], jerk_rf[int(steps_rf[i][2])], 'g', marker='x')
-        ax[2].plot(t_rf[int(steps_rf[i][3])], jerk_rf[int(steps_rf[i][3])], 'r', marker='x')
-        ax[2].plot(t_rf[int(steps_rf[i][4])], jerk_rf[int(steps_rf[i][4])], 'k', marker='x')
-        ax[2].plot(t_rf[int(steps_rf[i][5])], jerk_rf[int(steps_rf[i][5])], 'g', marker='x')
+        ax[2].plot(t_rf[int(steps_rf["HO"][i])], jerk_rf[int(steps_rf["HO"][i])], 'g', marker='x')
+        ax[2].plot(t_rf[int(steps_rf["TO"][i])], jerk_rf[int(steps_rf["TO"][i])], 'r', marker='x')
+        ax[2].plot(t_rf[int(steps_rf["HS"][i])], jerk_rf[int(steps_rf["HS"][i])], 'k', marker='x')
+        ax[2].plot(t_rf[int(steps_rf["FF"][i])], jerk_rf[int(steps_rf["FF"][i])], 'g', marker='x')
 
-        to = int(steps_rf[i][3])
+        to = int(steps_rf["TO"][i])
         ax[3].vlines(t_rf[to], mi_rf, ma_rf, 'k', '--')
-        hs = int(steps_rf[i][4])
+        hs = int(steps_rf["HS"][i])
         ax[3].vlines(t_rf[hs], mi_rf, ma_rf, 'k', '--')
 
         if to < hs:
