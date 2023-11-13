@@ -79,7 +79,7 @@ def print_quality_index(steps_lim_full, seg_lim):
     else :
         ax.annotate(qi,xy=( 1.18*pi, .5),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
 
-    f.savefig("quality_index.png")
+    f.savefig(os.path.join(data_WB, "quality_index.png"))
     f.show()
             
 
