@@ -140,5 +140,5 @@ def plot_stepdetection(steps_rf, steps_lf, data_rf, data_lf, freq, output, corre
 
     # save the fig
     path_out = os.path.join(output, "steps.svg")
-    plt.savefig(path_out, dpi=200,
+    plt.savefig(path_out, dpi=100,
                     transparent=True, bbox_inches="tight")
