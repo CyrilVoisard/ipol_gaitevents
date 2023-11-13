@@ -159,7 +159,7 @@ if __name__ == "__main__":
     # qi, steps_lim_corrected = print_quality_index(steps_lim_full, seg_lim)
 
     # print phases and figure
-    print_seg_detection(seg_lim)
+    print_seg_detection(seg_lim, freq)
     seg_detection.plot_seg_detection(seg_lim, steps_lim_full, data_lb, freq, output=data_WD)
 
     # print validated gait events and figure 
