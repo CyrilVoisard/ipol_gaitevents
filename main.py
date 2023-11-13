@@ -88,8 +88,40 @@ def print_quality_index(steps_lim_full, seg_lim):
 
     with open("trial_criteria.txt", "wt") as f:
         print(info_msg.format(**display_dict), file=f)
+            
 
+def print_seg_detection(seg_lim, freq):
+    """Dump the phase segmentation computed from the trial
 
+    Parameters
+    ----------
+    seg_lim : pandas dataframe
+        Parameters of the trial.
+    """
+
+    display_dict = {'Start': "{Start}".format(**seg_lim_dict),
+                    'Start_sec': "{}".format(round(seg_lim_dict['Start']/100)),
+                    'U-Turn start': "{U-Turn start}".format(**seg_lim_dict),
+                    'U-Turn start_sec': "{}".format(round(seg_lim_dict['U-Turn start']/100)),
+                    'U-Turn end': "{U-Turn end}".format(**seg_lim_dict),
+                    'U-Turn end_sec': "{}".format(round(seg_lim_dict['U-Turn end']/100)),
+                    'End': "{End}".format(**seg_lim_dict), 
+                    'End_sec': "{}".format(round(seg_lim_dict['End']/100))}
+        
+    info_msg = """
+    Trial boundaries| Time (samples)| Time (seconds)
+    ----------------------------+-------------------------------
+    Trial start| {Start:<20}| {Start_sec:<20}
+    U-Turn start| {U-Turn start:<20}| {U-Turn start_sec:<20}
+    U-Turn end| {U-Turn end:<20}| {U-Turn end_sec:<50}
+    Trial end| {End:<20}| {End_sec:<20}
+    """
+
+    # Dump information
+    os.chdir(data_WD) # Get back to the normal WD
+
+    with open("seg_lim.txt", "wt") as f:
+        print(info_msg.format(**display_dict), file=f)
 
 
 if __name__ == "__main__":
