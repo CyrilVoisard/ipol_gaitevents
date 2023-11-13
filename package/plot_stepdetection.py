@@ -8,9 +8,10 @@ import os
 from package import deal_stride
 
 
-def plot_stepdetection_dtw(steps_rf, steps_lf, data_pied_droit, data_pied_gauche, id_exp=0,
-                           download=False, output_files=0, *args, **kwargs):
-    nom = id_exp + "_Détection de pas "
+def plot_stepdetection_dtw(data_rf, data_lf, output, corrected=False):
+    steps_rf, steps_lf = None
+  
+    nom = "Gait events detection"
 
     fig, ax = plt.subplots(4, figsize=(20, 12), sharex=True, sharey=False)
 
@@ -29,18 +30,18 @@ def plot_stepdetection_dtw(steps_rf, steps_lf, data_pied_droit, data_pied_gauche
     ax[3].xaxis.set_tick_params(labelsize=12)
 
     # ---------------------------- Données pour le pied gauche ---------------------------------------------
-    t_lf = data_pied_gauche["PacketCounter"]
-    gyr_lf = data_pied_gauche["Gyr_Y"]
-    jerk_lf = deal_stride.calculate_jerk_tot(data_pied_gauche)
+    t_lf = data_lf["PacketCounter"]
+    gyr_lf = data_lf["Gyr_Y"]
+    jerk_lf = deal_stride.calculate_jerk_tot(data_lf)
     ma_lf = max(gyr_lf)
     mi_lf = min(gyr_lf)
     ax[0].plot(t_lf, jerk_lf)
     ax[1].plot(t_lf, gyr_lf)
 
     # ---------------------------- Données pour le pied droit ---------------------------------------------
-    t_rf = data_pied_droit["PacketCounter"]
-    gyr_rf = data_pied_droit["Gyr_Y"]
-    jerk_rf = deal_stride.calculate_jerk_tot(data_pied_droit)
+    t_rf = data_rf["PacketCounter"]
+    gyr_rf = data_rf["Gyr_Y"]
+    jerk_rf = deal_stride.calculate_jerk_tot(data_rf)
     ma_rf = max(gyr_rf)
     mi_rf = min(gyr_rf)
     ax[2].plot(t_rf, jerk_rf)
@@ -139,7 +140,7 @@ def plot_stepdetection_dtw(steps_rf, steps_lf, data_pied_droit, data_pied_gauche
     if download:
         # On enregistre la nouvelle figure
         titre = id_exp + "_dtw_steps_image.png"
-        os.chdir(output_files)
+        os.chdir(output)
         plt.savefig(titre)
         # plt.show()
         plt.close()
