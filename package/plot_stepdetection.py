@@ -8,8 +8,9 @@ import os
 from package import deal_stride
 
 
-def plot_stepdetection_dtw(data_rf, data_lf, output, corrected=False):
-    steps_rf, steps_lf = None
+def plot_stepdetection_dtw(steps_lim, data_rf, data_lf, output, corrected=False):
+    steps_rf = steps_lim[steps_lim['Foot]==1]
+    steps_lf = steps_lim[steps_lim['Foot]==0]
   
     nom = "Gait events detection"
 
@@ -137,10 +138,7 @@ def plot_stepdetection_dtw(data_rf, data_lf, output, corrected=False):
     ax[2].legend(handles=[black_circle, green_circle, red_circle], loc="upper left")
     ax[3].legend(handles=[red_patch, green_patch], loc="upper left")
 
-    if download:
-        # On enregistre la nouvelle figure
-        titre = id_exp + "_dtw_steps_image.png"
-        os.chdir(output)
-        plt.savefig(titre)
-        # plt.show()
-        plt.close()
+    # save the fig
+    path_out = os.path.join(output, "steps.svg")
+    plt.savefig(path_out, dpi=200,
+                    transparent=True, bbox_inches="tight")
