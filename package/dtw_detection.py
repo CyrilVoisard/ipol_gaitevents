@@ -7,9 +7,11 @@ from tslearn import metrics
 from package import find_stride, deal_stride, plot_stepdetection
 
 
-def steps_detection_full(data_rf, data_lf, freq):
+def steps_detection_full(data_rf, data_lf, freq, output):
     steps_rf = steps_detection(data_rf, data_lf, 1, freq)
     steps_lf = steps_detection(data_lf, data_rf, 0, freq)
+
+    plot_stepdetection.plot_stepdetection_dtw(steps_rf, steps_lf, data_rf, data_lf, output)
 
     full = np.concatenate((steps_rf, steps_lf))
 
