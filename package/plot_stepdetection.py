@@ -9,8 +9,8 @@ from package import deal_stride
 
 
 def plot_stepdetection_dtw(steps_lim, data_rf, data_lf, output, corrected=False):
-    steps_rf = steps_lim[steps_lim['Foot]==1]
-    steps_lf = steps_lim[steps_lim['Foot]==0]
+    steps_rf = steps_lim[steps_lim['Foot']==1]
+    steps_lf = steps_lim[steps_lim['Foot']==0]
   
     nom = "Gait events detection"
 
