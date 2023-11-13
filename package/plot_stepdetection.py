@@ -48,7 +48,7 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, freq, output, corrected=Fals
     ax[2].plot(t_rf, jerk_rf)
     ax[3].plot(t_rf, gyr_rf)
 
-    for i in range(len(steps_lf)):
+    for i in range(len(steps_lf)):  ############################# Pb indiçage
         # ----------------------- Remplissage pour le pied gauche -------------------------------------------
         ax[0].plot(t_lf[int(steps_lf["HO"][i])], jerk_lf[int(steps_lf["HO"][i])], 'g', marker='x')
         ax[0].plot(t_lf[int(steps_lf["TO"][i])], jerk_lf[int(steps_lf["TO"][i])], 'r', marker='x')
