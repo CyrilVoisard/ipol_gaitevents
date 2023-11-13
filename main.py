@@ -57,37 +57,30 @@ def print_semio_criteria(criteria_dict):
 
 
 def print_quality_index(steps_lim_full, seg_lim):
-    """Dump the quality index computed from the trial
+    """Given a quality index between 0 and 100, this function will produce a picture of the number surrounded by an appropriately colored circle
 
     Parameters
     ----------
-    parameters_dict : dict
-        Parameters of the trial.
     """
+    qi = 50
+    max_qi=100
+    xval = np.arange(0, 2*pi*(.05+0.90*(qi/max_qi)), 0.01)
+    colormap = plt.get_cmap("RdYlGn")
+    norm = mpl.colors.Normalize(0.0, 2*np.pi)
+    f, ax = plt.subplots(nrows=1, ncols=1, figsize=(4,4),subplot_kw=dict(projection='polar'))
+    #Scatter version
+    yval = np.ones_like(xval)
+    ax.scatter(xval, yval, c=xval, s=300, cmap=colormap, norm=norm, linewidths=0)
 
-    display_dict = {'Average Speed': "Average Speed: {Average Speed}".format(**criteria_dict),
-                    'Springiness': "Springiness: {Springiness}".format(**criteria_dict),
-                    'Sturdiness': "Sturdiness: {Sturdiness}".format(**criteria_dict),
-                    'Smoothness': "Smoothness: {Smoothness}".format(**criteria_dict),
-                    'Steadiness': "Steadiness: {Steadiness}".format(**criteria_dict),
-                    'Stability': "Stability: {Stability}".format(**criteria_dict),
-                    'Symmetry': "Symmetry: {Symmetry}".format(**criteria_dict),
-                    'Synchronisation': "Synchronisation: {Synchronisation}".format(**criteria_dict)
-                    }
-    info_msg = """
-    Z-Scores
-    --------------------------------------------------+--------------------------------------------------
-    {Average Speed:<50}| {Steadiness:<50}
-    {Springiness:<50}| {Stability:<50}
-    {Sturdiness:<50}| {Symmetry:<50}
-    {Smoothness:<50}| {Synchronisation:<50}
-    """
+    ax.set_axis_off()
+    ax.set_ylim(0,1.5)
+    if score<10:
+        ax.annotate(qi,xy=( 1.25*pi, .3),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
+    else :
+        ax.annotate(qi,xy=( 1.18*pi, .5),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
 
-    # Dump information
-    os.chdir(data_WD) # Get back to the normal WD
-
-    with open("trial_criteria.txt", "wt") as f:
-        print(info_msg.format(**display_dict), file=f)
+    f.savefig("quality_index.png")
+    f.show()
             
 
 def print_seg_detection(seg_lim, freq):
