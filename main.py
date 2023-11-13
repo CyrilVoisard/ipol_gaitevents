@@ -99,10 +99,10 @@ def print_seg_detection(seg_lim, freq):
         Parameters of the trial.
     """
 
-    seg_lim_dict = {'Start': seg_lim.iloc[0, 0],
-                    'U-Turn start': seg_lim.iloc[1, 0],
-                    'U-Turn end': seg_lim.iloc[2, 0],
-                    'End': seg_lim.iloc[3, 0]}
+    seg_lim_dict = {'Start': seg_lim[0],
+                    'U-Turn start': seg_lim[1],
+                    'U-Turn end': seg_lim[2],
+                    'End': seg_lim[3]}
 
     display_dict = {'Start': "{Start}".format(**seg_lim_dict),
                     'Start_sec': "{}".format(round(seg_lim_dict['Start']/100)),
