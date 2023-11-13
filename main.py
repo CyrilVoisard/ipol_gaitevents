@@ -150,7 +150,7 @@ if __name__ == "__main__":
     data_lf = import_data.import_XSens(os.path.join(data_WD, args.i2))
     
     # gait events and steps detection
-    steps_lim_full = dtw_detection.steps_detection_full(data_rf, data_lf, freq)
+    steps_rf, steps_lf, steps_lim_full = dtw_detection.steps_detection_full(data_rf, data_lf, freq)
     
     # phase boundaries detection and figure
     seg_lim = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
@@ -165,7 +165,7 @@ if __name__ == "__main__":
     # print validated gait events and figure 
     #print_steps_detection(steps_lim_corrected)
     #plot_stepdetection.plot_stepdetection(steps_lim_corrected, data_rf, data_lf, freq, output=data_WD, corrected=True)
-    plot_stepdetection.plot_stepdetection(steps_lim_full, data_rf, data_lf, freq, output=data_WD, corrected=True)
+    plot_stepdetection.plot_stepdetection(steps_rf, steps_lf, data_rf, data_lf, freq, output=data_WD, corrected=True)
 
     print("ok charge")
     sys.exit(0)
