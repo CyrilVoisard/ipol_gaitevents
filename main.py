@@ -78,12 +78,12 @@ def print_seg_detection(seg_lim, freq):
                     'End_sec': "{}".format(round(seg_lim_dict['End']/100))}
         
     info_msg = """
-    Trial boundaries| Time (samples)| Time (seconds)
+    Trial boundaries| Time (samples)
     ----------------------------+-------------------------------
-    Trial start| {Start:<20}| {Start_sec:<20}
-    U-Turn start| {U-Turn start:<20}| {U-Turn start_sec:<20}
-    U-Turn end| {U-Turn end:<20}| {U-Turn end_sec:<50}
-    Trial end| {End:<20}| {End_sec:<20}
+    Trial start| {Start:<20}
+    U-Turn start| {U-Turn start:<20}
+    U-Turn end| {U-Turn end:<20}
+    Trial end| {End:<20}
     """
 
     # Dump information
