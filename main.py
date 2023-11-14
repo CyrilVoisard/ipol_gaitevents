@@ -78,11 +78,10 @@ def print_seg_detection(seg_lim, freq):
                     'End_sec': "{}".format(round(seg_lim_dict['End']/100))}
         
     info_msg = """
-    ----------------------------+-------------------------------
-    {Start:<30}|{Start_sec:<30}
-    {U-Turn start:<20}| {U-Turn start_sec:<30}
-    {U-Turn end:<20}| {U-Turn end_sec:<30}
-    {End:<20}| {End_sec:<30}
+    {Start:<30}| {Start_sec:<30}| {Start_sec:<30}
+    {U-Turn start:<20}| {U-Turn start_sec:<30}| {Start_sec:<30}
+    {U-Turn end:<20}| {U-Turn end_sec:<30}| {Start_sec:<30}
+    {End:<20}| {End_sec:<30}| {Start_sec:<30}
     """
 
     # Dump information
