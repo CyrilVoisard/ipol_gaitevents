@@ -97,16 +97,21 @@ def print_seg_detection(seg_lim, freq):
 
 def print_steps_detection(steps_lim_corrected):
 
-    display_dict = {'Subject': "Subject: {Subject}".format(**metadata_dict),
-                    'Trial': "Trial: {Trial}".format(**metadata_dict),
-                    'Age': "Age (year): {Age}".format(**metadata_dict),
-                    'Gender': "Gender: {Gender}".format(**metadata_dict),
-                    'Height': "Height (m): {Height}".format(**metadata_dict),
-                    'Weight': "Weight (kg): {Weight}".format(**metadata_dict),
-                    'WalkingSpeed': "WalkingSpeed (m/s): {}".format(round(2000/(metadata_dict['TrialBoundaries'][1]-metadata_dict['TrialBoundaries'][0]), 3)),
-                    'UTurnDuration': "U-Turn Duration (s): {}".format((metadata_dict['UTurnBoundaries'][1]-metadata_dict['UTurnBoundaries'][0])/100),
-                    'LeftGaitCycles': '    - Left foot: {}'.format(len(metadata_dict['LeftFootEvents'])),
-                    'RightGaitCycles': '    - Right foot: {}'.format(len(metadata_dict['RightFootEvents']))
+    steps_dict = {"TrialDuration": 1000, 
+                    "LeftGaitCycles", 1000, 
+                     "RightGaitCycles", 1000, 
+                     "LeftGaitCyclesOk", 1000, 
+                     "RightGaitCyclesOk", 1000
+                    }
+
+    display_dict = {'Raw': "Raw data",
+                    'Corrected': "Corrected data",
+                    'TrialDuration': "Trial duration: {TrialDuration}".format(**steps_dict),
+                    'LeftGaitCycles': "    - Left foot: {LeftGaitCycles}".format(**steps_dict),
+                    'RightGaitCycles': "    - Right foot: {RightGaitCycles}".format(**steps_dict),
+                    'WalkingSpeed': "WalkingSpeed (m/s): {}".format(round(2000/(steps_dict['TrialBoundaries'][1]-steps_dict['TrialBoundaries'][0]), 3)),
+                    'LeftGaitCyclesOk': '    - Left foot: {LeftGaitCyclesOk}'.format(**steps_dict),
+                    'RightGaitCyclesOk': '    - Right foot: {RightGaitCyclesOk}'.format(**steps_dict)
                     }
     info_msg = """
     {Raw:^30}|{Corrected:^30}
@@ -159,7 +164,7 @@ if __name__ == "__main__":
     seg_detection.plot_seg_detection(seg_lim, steps_lim_full, data_lb, freq, output=data_WD)
 
     # print validated gait events and figure 
-    #print_steps_detection(steps_lim_corrected)
+    print_steps_detection(steps_lim_corrected)
     #plot_stepdetection.plot_stepdetection(steps_lim_corrected, data_rf, data_lf, freq, output=data_WD, corrected=True)
     plot_stepdetection.plot_stepdetection(steps_rf, steps_lf, data_rf, data_lf, freq, output=data_WD, corrected=True)
 
