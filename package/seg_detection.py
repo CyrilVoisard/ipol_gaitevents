@@ -39,7 +39,7 @@ def plot_seg_detection(seg_lim, steps_lim, data_lb, freq, output):
 
     # save the fig
     path_out = os.path.join(output, "phases_seg.svg")
-    plt.savefig(path_out, dpi=200,
+    plt.savefig(path_out, dpi=80,
                     transparent=True, bbox_inches="tight")
     
 
