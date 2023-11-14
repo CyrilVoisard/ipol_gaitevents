@@ -79,7 +79,7 @@ def print_seg_detection(seg_lim, freq):
                     'U-Turn end_sec': "{}".format(round(seg_lim_dict['U-Turn end']/100, 2)),
                     'End_title': "Trial end",
                     'End': "{End}".format(**seg_lim_dict), 
-                    'End_sec': "{}".format(round(seg_lim_dict['End']/100))}
+                    'End_sec': "{}".format(round(seg_lim_dict['End']/100, 2))}
         
     info_msg = """
     {Start_title:<15}| {Start:<15}| {Start_sec:<15}
