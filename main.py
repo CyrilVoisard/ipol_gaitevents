@@ -127,9 +127,9 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description='Return a semiogram for a given trial.')
-    parser.add_argument('-i0', metavar='data_lb', help='Time series for the lower back sensor.')
-    parser.add_argument('-i1', metavar='data_rf', help='Time series for the right foot sensor.')
-    parser.add_argument('-i2', metavar='data_lf', help='Time series for the left foot sensor.')
+    parser.add_argument('-i1', metavar='data_lb', help='Time series for the lower back sensor.')
+    parser.add_argument('-i2', metavar='data_rf', help='Time series for the right foot sensor.')
+    parser.add_argument('-i0', metavar='data_lf', help='Time series for the left foot sensor.')
     
     parser.add_argument('-freq', metavar='freq',
                         help='Acquistion frequency.')
