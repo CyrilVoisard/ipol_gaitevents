@@ -82,16 +82,45 @@ def print_seg_detection(seg_lim, freq):
                     'End_sec': "{}".format(round(seg_lim_dict['End']/100, 2))}
         
     info_msg = """
-    {Start_title:<15}| {Start:<15}| {Start_sec:<15}
-    {U-Turn start_title:<15}| {U-Turn start:<15}| {U-Turn start_sec:<15}
-    {U-Turn end_title:<15}| {U-Turn end:<15}| {U-Turn end_sec:<15}
-    {End_title:<15}| {End:<15}| {End_sec:<15}
+    {Start_title:<15}| {Start:<10}| {Start_sec:<10}
+    {U-Turn start_title:<15}| {U-Turn start:<10}| {U-Turn start_sec:<10}
+    {U-Turn end_title:<15}| {U-Turn end:<10}| {U-Turn end_sec:<10}
+    {End_title:<15}| {End:<10}| {End_sec:<10}
     """
 
     # Dump information
     os.chdir(data_WD) # Get back to the normal WD
 
     with open("seg_lim.txt", "wt") as f:
+        print(info_msg.format(**display_dict), file=f)
+        
+
+def print_steps_detection(steps_lim_corrected):
+
+    display_dict = {'Subject': "Subject: {Subject}".format(**metadata_dict),
+                    'Trial': "Trial: {Trial}".format(**metadata_dict),
+                    'Age': "Age (year): {Age}".format(**metadata_dict),
+                    'Gender': "Gender: {Gender}".format(**metadata_dict),
+                    'Height': "Height (m): {Height}".format(**metadata_dict),
+                    'Weight': "Weight (kg): {Weight}".format(**metadata_dict),
+                    'WalkingSpeed': "WalkingSpeed (m/s): {}".format(round(2000/(metadata_dict['TrialBoundaries'][1]-metadata_dict['TrialBoundaries'][0]), 3)),
+                    'UTurnDuration': "U-Turn Duration (s): {}".format((metadata_dict['UTurnBoundaries'][1]-metadata_dict['UTurnBoundaries'][0])/100),
+                    'LeftGaitCycles': '    - Left foot: {}'.format(len(metadata_dict['LeftFootEvents'])),
+                    'RightGaitCycles': '    - Right foot: {}'.format(len(metadata_dict['RightFootEvents']))
+                    }
+    info_msg = """
+    {Raw:^30}|{Corrected:^30}
+    ------------------------------+------------------------------
+    {TrialDuration:<30}| {WalkingSpeed:<30}
+    Number of footsteps:| Number of validated footsteps:
+    {LeftGaitCycles:<30}| {LeftGaitCyclesOk:<30}
+    {RightGaitCycles:<30}| {RightGaitCyclesOk:<30}
+    """
+
+    # dump information
+    os.chdir(data_WD) # Get back to the normal WD
+
+    with open("gait_events.txt", "wt") as f:
         print(info_msg.format(**display_dict), file=f)
 
 
@@ -134,24 +163,5 @@ if __name__ == "__main__":
     #plot_stepdetection.plot_stepdetection(steps_lim_corrected, data_rf, data_lf, freq, output=data_WD, corrected=True)
     plot_stepdetection.plot_stepdetection(steps_rf, steps_lf, data_rf, data_lf, freq, output=data_WD, corrected=True)
 
-    print("ok charge")
-    sys.exit(0)
-    
-
-
-
-    
-    
-    parameters_dict = dict(zip(parameters_names, parameters))
-    print_semio_parameters(parameters_dict)
-
-    criteria_dict = dict(zip(criteria_names, criteria))
-    print_semio_criteria(criteria_dict)
-
-    # semiogram design
-    radar_design.new_radar_superpose({"unique": criteria}, min_r=int(args.min_z), max_r=int(args.max_z), output=data_WD, name="semio")
-    if compare : 
-        radar_design.new_radar_superpose({"unique": ref_criteria}, min_r=int(args.min_z), max_r=int(args.max_z), output=data_WD, name="semio_ref")
-        radar_design.new_radar_superpose({"ref": ref_criteria, "new": criteria}, min_r=int(args.min_z), max_r=int(args.max_z), output=data_WD, name="semio_sup")
     print("ok charge")
     sys.exit(0)
