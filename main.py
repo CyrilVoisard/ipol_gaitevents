@@ -130,6 +130,7 @@ if __name__ == "__main__":
     parser.add_argument('-i1', metavar='data_lb', help='Time series for the lower back sensor.')
     parser.add_argument('-i2', metavar='data_rf', help='Time series for the right foot sensor.')
     parser.add_argument('-i0', metavar='data_lf', help='Time series for the left foot sensor.')
+
     
     parser.add_argument('-freq', metavar='freq',
                         help='Acquistion frequency.')
@@ -137,7 +138,7 @@ if __name__ == "__main__":
 
     freq = int(args.freq)
     
-    # load data (only lower back in this demo)
+    # load data
     data_lb = import_data.import_XSens(os.path.join(data_WD, args.i1))
     data_rf = import_data.import_XSens(os.path.join(data_WD, args.i2))
     data_lf = import_data.import_XSens(os.path.join(data_WD, args.i0))
