@@ -68,22 +68,21 @@ def print_seg_detection(seg_lim, freq):
                     'U-Turn end': seg_lim[2],
                     'End': seg_lim[3]}
 
-    display_dict = {'Start': "{Start}".format(**seg_lim_dict),
+    display_dict = {'Start': "Start: {Start}".format(**seg_lim_dict),
                     'Start_sec': "{}".format(round(seg_lim_dict['Start']/100)),
-                    'U-Turn start': "{U-Turn start}".format(**seg_lim_dict),
+                    'U-Turn start': "U-Turn start: {U-Turn start}".format(**seg_lim_dict),
                     'U-Turn start_sec': "{}".format(round(seg_lim_dict['U-Turn start']/100)),
-                    'U-Turn end': "{U-Turn end}".format(**seg_lim_dict),
+                    'U-Turn end': "U-Turn_end: {U-Turn end}".format(**seg_lim_dict),
                     'U-Turn end_sec': "{}".format(round(seg_lim_dict['U-Turn end']/100)),
-                    'End': "{End}".format(**seg_lim_dict), 
+                    'End': "End: {End}".format(**seg_lim_dict), 
                     'End_sec': "{}".format(round(seg_lim_dict['End']/100))}
         
     info_msg = """
-    Trial_boundaries| Time (samples)
     ----------------------------+-------------------------------
-    Trial_start| {Start:<20}
-    U-Turn_start| {U-Turn start:<20}
-    U-Turn_end| {U-Turn end:<20}
-    Trial_end| {End:<20}
+    {Start:<30}|{Start_sec:<30}
+    {U-Turn start:<20}| {U-Turn start_sec:<30}
+    {U-Turn end:<20}| {U-Turn end_sec:<30}
+    {End:<20}| {End_sec:<30}
     """
 
     # Dump information
