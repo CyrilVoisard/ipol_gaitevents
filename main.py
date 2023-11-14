@@ -47,7 +47,7 @@ def print_quality_index(steps_lim_full, seg_lim):
     else :
         ax.annotate(qi,xy=( 1.18*np.pi, .5),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
 
-    path_out = os.path.join(data_WB, "quality_index.svg")
+    path_out = os.path.join(data_WD, "quality_index.svg")
     plt.savefig(path_out, dpi=100,
                     transparent=True, bbox_inches="tight")
     
