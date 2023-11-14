@@ -140,7 +140,7 @@ if __name__ == "__main__":
     # load data (only lower back in this demo)
     data_lb = import_data.import_XSens(os.path.join(data_WD, args.i1))
     data_rf = import_data.import_XSens(os.path.join(data_WD, args.i2))
-    data_lf = import_data.import_XSens(os.path.join(data_WD, args.i3))
+    data_lf = import_data.import_XSens(os.path.join(data_WD, args.i0))
     
     # gait events and steps detection
     steps_rf, steps_lf, steps_lim_full = dtw_detection.steps_detection_full(data_rf, data_lf, freq)
