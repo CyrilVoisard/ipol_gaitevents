@@ -28,6 +28,7 @@ def print_quality_index(steps_lim_full, seg_lim):
     Parameters
     ----------
     """
+    steps_lim_corrected = steps_lim_full
     qi = 50
     max_qi=100
     xval = np.arange(0, 2*pi*(.05+0.90*(qi/max_qi)), 0.01)
@@ -48,6 +49,8 @@ def print_quality_index(steps_lim_full, seg_lim):
     path_out = os.path.join(data_WB, "quality_index.svg")
     plt.savefig(path_out, dpi=100,
                     transparent=True, bbox_inches="tight")
+    
+    return qi, steps_lim_corrected
             
 
 def print_seg_detection(seg_lim, freq):
@@ -117,7 +120,7 @@ if __name__ == "__main__":
     seg_lim = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
 
     # quality index and 
-    # qi, steps_lim_corrected = print_quality_index(steps_lim_full, seg_lim)
+    qi, steps_lim_corrected = print_quality_index(steps_lim_full, seg_lim)
 
     # print phases and figure
     print_seg_detection(seg_lim, freq)
