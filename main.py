@@ -42,7 +42,7 @@ def print_quality_index(steps_lim_full, seg_lim):
 
     ax.set_axis_off()
     ax.set_ylim(0,1.5)
-    if score<10:
+    if qi<10:
         ax.annotate(qi,xy=( 1.25*np.pi, .3),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
     else :
         ax.annotate(qi,xy=( 1.18*np.pi, .5),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
