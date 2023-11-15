@@ -106,10 +106,10 @@ def print_steps_detection(steps_lim_corrected):
 
     display_dict = {'Raw': "Raw data",
                     'Corrected': "Corrected data",
-                    'TrialDuration': "Trial duration: {TrialDuration}".format(**steps_dict),
+                    'TrialDuration (s)': "Trial duration: {TrialDuration}".format(**steps_dict),
                     'LeftGaitCycles': "    - Left foot: {LeftGaitCycles}".format(**steps_dict),
                     'RightGaitCycles': "    - Right foot: {RightGaitCycles}".format(**steps_dict),
-                    'WalkingSpeed': "WalkingSpeed (m/s): {}".format(round(2000/(steps_dict['TrialBoundaries'][1]-steps_dict['TrialBoundaries'][0]), 3)),
+                    'WalkingSpeed': "WalkingSpeed (m/s): {WalkingSpeed}".format(**steps_dict),
                     'LeftGaitCyclesOk': '    - Left foot: {LeftGaitCyclesOk}'.format(**steps_dict),
                     'RightGaitCyclesOk': '    - Right foot: {RightGaitCyclesOk}'.format(**steps_dict)
                     }
