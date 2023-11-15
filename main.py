@@ -24,11 +24,20 @@ os.chdir(ROOT)
 
 
 def print_quality_index(steps_lim_full, seg_lim):
-    """Given a quality index between 0 and 100, this function will produce a picture of the number surrounded by an appropriately colored circle
+    """Compute the quality index of the trial gait events detection (between 0 and 100) and produce a picture of the number surrounded by an appropriately colored circle. 
+    Add quality index formula ? 
 
     Parameters
     ----------
+        steps_lim_full {dataframe} -- pandas dataframe with all the detected gait events
+        seg_lim {dataframe} -- pandas dataframe with phases events 
+
+    Returns
+    -------
+        qi {int} -- quality index 
+        steps_lim_corrected {dataframe} -- pandas dataframe with gait events after elimination of the extra trial steps
     """
+    
     steps_lim_corrected = steps_lim_full
     qi = 50
     max_qi=100
@@ -55,12 +64,11 @@ def print_quality_index(steps_lim_full, seg_lim):
             
 
 def print_seg_detection(seg_lim, freq):
-    """Dump the phase segmentation computed from the trial
+    """Dump the phase segmentation computed from the trial. 
 
     Parameters
     ----------
-    seg_lim : pandas dataframe
-        Parameters of the trial.
+        seg_lim {dataframe} -- pandas dataframe with phases events 
     """
 
     seg_lim_dict = {'Start': seg_lim[0],
@@ -96,6 +104,12 @@ def print_seg_detection(seg_lim, freq):
         
 
 def print_steps_detection(steps_lim_corrected):
+    """Dump the trial parameters computed from the gait events detection.  
+
+    Parameters
+    ----------
+        steps_lim_corrected {dataframe} -- pandas dataframe with gait events after elimination of the extra trial steps
+    """
 
     steps_dict = {"TrialDuration": 1000, 
                   "LeftGaitCycles": 1000, 
