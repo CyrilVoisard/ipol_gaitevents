@@ -98,10 +98,10 @@ def print_seg_detection(seg_lim, freq):
 def print_steps_detection(steps_lim_corrected):
 
     steps_dict = {"TrialDuration": 1000, 
-                    "LeftGaitCycles", 1000, 
-                     "RightGaitCycles", 1000, 
-                     "LeftGaitCyclesOk", 1000, 
-                     "RightGaitCyclesOk", 1000
+                    "LeftGaitCycles": 1000, 
+                     "RightGaitCycles": 1000, 
+                     "LeftGaitCyclesOk": 1000, 
+                     "RightGaitCyclesOk": 1000
                     }
 
     display_dict = {'Raw': "Raw data",
