@@ -107,7 +107,7 @@ def print_steps_detection(steps_lim_corrected):
 
     display_dict = {'Raw': "Raw data",
                     'Corrected': "Corrected data",
-                    'TrialDuration (s)': "Trial duration: {TrialDuration}".format(**steps_dict),
+                    'TrialDuration': "Trial duration (s): {TrialDuration}".format(**steps_dict),
                     'LeftGaitCycles': "    - Left foot: {LeftGaitCycles}".format(**steps_dict),
                     'RightGaitCycles': "    - Right foot: {RightGaitCycles}".format(**steps_dict),
                     'WalkingSpeed': "WalkingSpeed (m/s): {WalkingSpeed}".format(**steps_dict),
