@@ -11,7 +11,7 @@ from scipy.signal import butter, filtfilt
 from scipy import interpolate
 import sys
 
-from package import import_data, dtw_detection, seg_detection, plot_stepdetection
+from package import import_data, dtw_detection, seg_detection, plot_stepdetection, quality
 
 # if you need to access a file next to the source code, use the variable ROOT
 ROOT = os.path.dirname(os.path.realpath(__file__))
@@ -185,7 +185,7 @@ if __name__ == "__main__":
     seg_lim = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
 
     # quality index and 
-    qi, steps_lim_corrected = print_quality_index(steps_lim_full, seg_lim)
+    qi, steps_lim_corrected = print_quality_index(steps_lim_full, seg_lim, output=data_WD)
 
     # print phases and figure
     print_seg_detection(seg_lim, freq)
