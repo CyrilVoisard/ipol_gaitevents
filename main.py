@@ -41,15 +41,15 @@ def print_quality_index(steps_lim_full, seg_lim):
     steps_lim_corrected = steps_lim_full
 
     # estimation of stride alternation
-    #steps_lim_sort = steps_lim_corrected.sort_values(by = ['HS', 'TO'])
-    #alt_go = steps_lim_sort[steps_lim_sort['HS'] < seg_lim.iloc[1, 0]]['Foot'].tolist()
-    #alt_back = steps_lim_sort[steps_lim_sort['HS'] > seg_lim.iloc[2, 0]]['Foot'].tolist()
-    #i = 0
-    #for k in range(len(alt_go)-1):
-     #   i = i + abs(alt_go[k+1]-alt_go[k])
-    #for k in range(len(alt_back)-1):
-    #    i = i + abs(alt_back[k+1]-alt_back[k])
-    #qi = 100*i/(len(alt_go) + len(alt_back)-2)
+    steps_lim_sort = steps_lim_corrected.sort_values(by = ['HS', 'TO'])
+    alt_go = steps_lim_sort[steps_lim_sort['HS'] < seg_lim.iloc[1, 0]]['Foot'].tolist()
+    alt_back = steps_lim_sort[steps_lim_sort['HS'] > seg_lim.iloc[2, 0]]['Foot'].tolist()
+    i = 0
+    for k in range(len(alt_go)-1):
+        i = i + abs(alt_go[k+1]-alt_go[k])
+    for k in range(len(alt_back)-1):
+        i = i + abs(alt_back[k+1]-alt_back[k])
+    qi = 100*i/(len(alt_go) + len(alt_back)-2)
     qi = 80
 
     # plot qi
