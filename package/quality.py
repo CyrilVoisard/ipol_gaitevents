@@ -55,7 +55,7 @@ def print_quality_index(steps_lim_full, seg_lim, output):
     steps_lim_corrected = steps_lim_full
   
     qi_corrected = compute_quality_index(steps_lim_corrected, seg_lim)
-    path_corrected = os.path.join(output, "quality_index_raw.svg")
+    path_corrected = os.path.join(output, "quality_index_corrected.svg")
     plot_quality_index(qi_corrected, path_corrected)
   
     return qi_corrected, steps_lim_corrected
