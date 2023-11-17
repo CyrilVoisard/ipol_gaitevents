@@ -47,17 +47,17 @@ def print_quality_index(steps_lim_full, seg_lim, output):
         steps_lim_corrected {dataframe} -- pandas dataframe with gait events after elimination of the extra trial steps
     """
 
-  qi_raw = compute_quality_index(steps_lim_full, seg_lim)
-  path_raw = os.path.join(output, "quality_index_raw.svg")
-  plot_quality_index(qi_raw, path_raw)
-
-  steps_lim_corrected = steps_lim_full
-
-  qi_corrected = compute_quality_index(steps_lim_corrected, seg_lim)
-  path_corrected = os.path.join(output, "quality_index_raw.svg")
-  plot_quality_index(qi_corrected, path_corrected)
-
-  return qi_corrected, steps_lim_corrected
+    qi_raw = compute_quality_index(steps_lim_full, seg_lim)
+    path_raw = os.path.join(output, "quality_index_raw.svg")
+    plot_quality_index(qi_raw, path_raw)
+  
+    steps_lim_corrected = steps_lim_full
+  
+    qi_corrected = compute_quality_index(steps_lim_corrected, seg_lim)
+    path_corrected = os.path.join(output, "quality_index_raw.svg")
+    plot_quality_index(qi_corrected, path_corrected)
+  
+    return qi_corrected, steps_lim_corrected
 
 
 def plot_quality_index(qi, path):
