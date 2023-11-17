@@ -71,21 +71,21 @@ def plot_quality_index(qi, path):
     """
   
     # plot qi
-  max_qi=100
-  xval = np.arange(0, 2*np.pi*(.05+0.90*(qi/max_qi)), 0.01)
-  colormap = plt.get_cmap("RdYlGn")
-  norm = mpl.colors.Normalize(0.0, 2*np.pi)
-  f, ax = plt.subplots(nrows=1, ncols=1, figsize=(4,4),subplot_kw=dict(projection='polar'))
-  #Scatter version
-  yval = np.ones_like(xval)
-  ax.scatter(xval, yval, c=xval, s=300, cmap=colormap, norm=norm, linewidths=0)
-
-  ax.set_axis_off()
-  ax.set_ylim(0,1.5)
-  if qi<10:
-      ax.annotate(qi,xy=( 1.25*np.pi, .3),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
-  else :
-      ax.annotate(qi,xy=( 1.18*np.pi, .5),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
-
-  plt.savefig(path, dpi=80,
-                  transparent=True, bbox_inches="tight")
+    max_qi=100
+    xval = np.arange(0, 2*np.pi*(.05+0.90*(qi/max_qi)), 0.01)
+    colormap = plt.get_cmap("RdYlGn")
+    norm = mpl.colors.Normalize(0.0, 2*np.pi)
+    f, ax = plt.subplots(nrows=1, ncols=1, figsize=(4,4),subplot_kw=dict(projection='polar'))
+    #Scatter version
+    yval = np.ones_like(xval)
+    ax.scatter(xval, yval, c=xval, s=300, cmap=colormap, norm=norm, linewidths=0)
+  
+    ax.set_axis_off()
+    ax.set_ylim(0,1.5)
+    if qi<10:
+        ax.annotate(qi,xy=( 1.25*np.pi, .3),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
+    else :
+        ax.annotate(qi,xy=( 1.18*np.pi, .5),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
+  
+    plt.savefig(path, dpi=80,
+                    transparent=True, bbox_inches="tight")
