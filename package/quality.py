@@ -140,7 +140,7 @@ def get_bornes(steps_lim, seg_lim):
     
       for i in range(len(hs_f) - 1):  # for outlier search, we exclude the first and last steps 
           hs_t.append(hs_f[i + 1] - hs_f[i])  # hs_t contains all stride durations 
-      hs_t = ft.rmoutliers(hs_t)  # function for eliminating outliers (start, U-turn, end)
+      hs_t = rmoutliers(hs_t)  # function for eliminating outliers (start, U-turn, end)
       strT = np.median(hs_t)  # estimation of average stride duration 
       to_f = steps_lim_f["TO"].tolist()  # for the side under consideration, this vector contains all Toe-Off dates
 
@@ -173,4 +173,14 @@ def get_bornes(steps_lim, seg_lim):
                   end = hs_f[i - 1]
 
   return start, end
+
+def rmoutliers(vec, limite=2):
+    # print("Avant :", vec)
+    z = np.abs(stats.zscore(vec))
+    vec1 = []
+    for i in range(len(vec)):
+        if z[i] < limite:  # La valeur à partir de laquelle on peut supprimer les données peut varier
+            vec1.append(vec[i])
+    # print("Après :", vec1)
+    return vec1
 
