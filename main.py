@@ -50,7 +50,6 @@ def print_quality_index(steps_lim_full, seg_lim):
     for k in range(len(alt_back)-1):
         i = i + abs(alt_back[k+1]-alt_back[k])
     qi = 100*i/(len(alt_go) + len(alt_back)-2)
-    qi = 80
 
     # plot qi
     max_qi=100
