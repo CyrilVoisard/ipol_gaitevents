@@ -16,9 +16,9 @@ def disp_seg(seg):
     print(seg)
 
 
-def plot_seg_detection(seg_lim, steps_lim, data_lb, freq, output):
+def plot_seg_detection(seg_lim, data_lb, freq, output):
     # Graphic signals
-    t_full, angle_x_full = signals_for_seg(data_lb, steps_lim)
+    t_full, angle_x_full = signals_for_seg(data_lb)
 
     # Figure initialisation et signal brut
     plt.rcParams["figure.figsize"] = (20, 10)
@@ -45,10 +45,10 @@ def plot_seg_detection(seg_lim, steps_lim, data_lb, freq, output):
 
 
 def seg_detection(data_lb, steps_lim, freq):
-    start = int(np.min(steps_lim["TO"]))
-    end = int(np.max(steps_lim["HS"]))
+    #start = int(np.min(steps_lim["TO"]))
+    #end = int(np.max(steps_lim["HS"]))
     # useful signals
-    t_full, angle_x_full = signals_for_seg(data_lb, steps_lim)
+    t_full, angle_x_full = signals_for_seg(data_lb)
 
     # middle argument
     mid_index = find_nearest(angle_x_full, 90)
@@ -87,7 +87,7 @@ def seg_detection(data_lb, steps_lim, freq):
     return seg
 
 
-def signals_for_seg(data_lb, steps_lim):
+def signals_for_seg(data_lb):
 
     gyr_x = data_lb['Gyr_X']
     angle_x_full = np.cumsum(gyr_x)
