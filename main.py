@@ -185,7 +185,7 @@ if __name__ == "__main__":
     seg_lim = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
 
     # quality index and 
-    qi, steps_lim_corrected = print_quality_index(steps_lim_full, seg_lim, output=data_WD)
+    qi, steps_lim_corrected = quality.print_quality_index(steps_lim_full, seg_lim, output=data_WD)
 
     # print phases and figure
     print_seg_detection(seg_lim, freq)
