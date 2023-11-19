@@ -182,14 +182,14 @@ if __name__ == "__main__":
     steps_rf, steps_lf, steps_lim_full = dtw_detection.steps_detection_full(data_rf, data_lf, freq)
     
     # phase boundaries detection and figure
-    seg_lim_full = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
+    seg_lim_full, regression = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
 
     # quality index and 
     qi, steps_lim_corrected, seg_lim_corrected = quality.print_quality_index(steps_lim_full, seg_lim_full, output=data_WD)
 
     # print phases and figure
     print_seg_detection(seg_lim_corrected, freq)
-    seg_detection.plot_seg_detection(seg_lim_corrected, data_lb, freq, output=data_WD)
+    seg_detection.plot_seg_detection(seg_lim_corrected, data_lb, regression, freq, output=data_WD)
 
     # print validated gait events and figure 
     print_steps_detection(seg_lim_full, seg_lim_corrected, steps_lim_full, steps_lim_corrected, freq)
