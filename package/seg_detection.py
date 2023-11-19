@@ -45,8 +45,8 @@ def plot_seg_detection(seg_lim, data_lb, freq, output):
 
 
 def seg_detection(data_lb, steps_lim, freq):
-    #start = int(np.min(steps_lim["TO"]))
-    #end = int(np.max(steps_lim["HS"]))
+    start = int(np.min(steps_lim["TO"]))
+    end = int(np.max(steps_lim["HS"]))
     # useful signals
     t_full, angle_x_full = signals_for_seg(data_lb)
 
