@@ -127,8 +127,8 @@ def print_steps_detection(seg_lim_full, seg_lim_corrected, steps_lim_full, steps
                   "LeftGaitCycles": len(steps_lim_full[steps_lim_full["Foot"]==0]), 
                   "RightGaitCycles": len(steps_lim_full[steps_lim_full["Foot"]==1]), 
                   "WalkingSpeed": (seg_lim_corrected[3] - seg_lim_corrected[0] - seg_lim_corrected[2] + seg_lim_corrected[1])/freq, 
-                  "LeftGaitCyclesOk": len(steps_lim_corrected[steps_lim_corrected["Foot"]==0]), 
-                  "RightGaitCyclesOk": len(steps_lim_corrected[steps_lim_corrected["Foot"]==1])
+                  "LeftGaitCyclesOk": len(steps_lim_corrected[(steps_lim_corrected["Foot"]==0) & (steps_lim_corrected["Corrected"]==1)]), 
+                  "RightGaitCyclesOk": len(steps_lim_corrected[(steps_lim_corrected["Foot"]==1) & (steps_lim_corrected["Corrected"]==1)])
                  }
 
     display_dict = {'Raw': "Raw data",
