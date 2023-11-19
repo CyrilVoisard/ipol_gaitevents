@@ -106,12 +106,21 @@ def correct_steps_lim(steps_lim, seg_lim):
         qi {int} -- quality index 
     """
   
-  # estimation of the start and end time samples for the trial to compute 
+  # estimation of the start and end time samples for the trial to compute seg_lim_corrected
   start, end = get_bornes(steps_lim, seg_lim)
   seg_lim_corrected = [start, seg_lim[1], seg_lim[2], end]
-  
-  steps_lim_corrected = steps_lim
 
+  # suppression des pas du demi-tour et des pas en dehors des limites précédement estimées
+  correct = []
+  for i in range(len(steps_lim)):
+      if inside([steps_lim["HS"], steps_lim["TO"]], seg_lim_corrected):
+          correct.append(1)
+      else:
+          correct.append(0)
+      
+  steps_lim_corrected = steps_lim.copy()
+  steps_lim_corrected["Correct"] = correct
+    
   return steps_lim_corrected, seg_lim_corrected
 
 
@@ -174,6 +183,40 @@ def get_bornes(steps_lim, seg_lim):
                   end = hs_f[i - 1]
 
   return start, end
+
+
+def inside(liste, seg_lim):
+    out = 0
+    in_go = 0
+    in_back = 0
+    for x in liste:
+        if x < seg_lim[0]:
+            out = 1
+        else:
+            if (x > seg_lim[1]) and (x < seg_lim[2]):
+                out = 1
+            else:
+                if x > seg_lim[3]:
+                    out = 1
+                else:
+                    if (x <= seg_lim[1]) and (x >= seg_lim[0]):
+                        in_go = 1
+                    else:
+                        if (x <= seg_lim[3]) and (x >= seg_lim[2]):
+                            in_go = 1
+
+    if out + in_go + in_back == 0:
+        return 0
+    else:
+        if out == 1:
+            return 0
+        else:
+            if in_go + in_back == 2:
+                return 0
+            else:
+                if in_go + in_back == 1:
+                    return 1
+
 
 def rmoutliers(vec, limite=2):
     # print("Avant :", vec)
