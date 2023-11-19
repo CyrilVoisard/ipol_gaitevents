@@ -90,7 +90,7 @@ def compute_quality_index(steps_lim, seg_lim):
       i = i + abs(alt_back[k+1]-alt_back[k])
   qi = round(100*i/(len(alt_go) + len(alt_back)-2), 4)
 
-  return qi
+  return (len(alt_go)
     
 
 def correct_steps_lim(steps_lim, seg_lim):
