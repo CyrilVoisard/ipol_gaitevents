@@ -8,11 +8,11 @@ import os
 from package import deal_stride
 
 
-def plot_stepdetection(steps_rf, steps_lf, data_rf, data_lf, freq, output, corrected=False):
+def plot_stepdetection_construction(steps_rf, steps_lf, data_rf, data_lf, freq, output, corrected=False):
     #steps_rf = steps_lim[steps_lim['Foot']==1]
     #steps_lf = steps_lim[steps_lim['Foot']==0]
   
-    nom = "Gait events detection"
+    name = "Gait events detection - "
 
     fig, ax = plt.subplots(4, figsize=(20, 12), sharex=True, sharey=False)
 
@@ -21,11 +21,11 @@ def plot_stepdetection(steps_rf, steps_lf, data_rf, data_lf, freq, output, corre
     ax[2].grid()
     ax[3].grid()
 
-    ax[0].set(ylabel='Jerk total', title=nom + "Left Foot")
+    ax[0].set(ylabel='Jerk total', title=name + "Left Foot")
     ax[0].yaxis.set_tick_params(labelsize=12)
     ax[1].set(xlabel='Time (s)', ylabel='Gyr ML')
     ax[1].xaxis.set_tick_params(labelsize=12)
-    ax[2].set(ylabel='Jerk total', title=nom + "Right Foot")
+    ax[2].set(ylabel='Jerk total', title=name + "Right Foot")
     ax[2].yaxis.set_tick_params(labelsize=12)
     ax[3].set(xlabel='Time (s)', ylabel='Gyr ML')
     ax[3].xaxis.set_tick_params(labelsize=12)
@@ -139,6 +139,6 @@ def plot_stepdetection(steps_rf, steps_lf, data_rf, data_lf, freq, output, corre
     ax[3].legend(handles=[red_patch, green_patch], loc="upper left")
 
     # save the fig
-    path_out = os.path.join(output, "steps.svg")
+    path_out = os.path.join(output, "steps_construction.svg")
     plt.savefig(path_out, dpi=80,
                     transparent=True, bbox_inches="tight")
