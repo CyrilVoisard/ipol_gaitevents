@@ -88,7 +88,7 @@ def compute_quality_index(steps_lim, seg_lim):
       i = i + abs(alt_go[k+1]-alt_go[k])
   for k in range(len(alt_back)-1):
       i = i + abs(alt_back[k+1]-alt_back[k])
-  qi = round(100*i/(len(alt_go) + len(alt_back)-2), 4)
+  qi = round(100*i/(len(alt_go) + len(alt_back)-2))
 
   return qi
     
