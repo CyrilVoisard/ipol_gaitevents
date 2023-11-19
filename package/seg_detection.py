@@ -16,9 +16,12 @@ def disp_seg(seg):
     print(seg)
 
 
-def plot_seg_detection(seg_lim, data_lb, freq, output):
+def plot_seg_detection(seg_lim, data_lb, regression, freq, output):
     # Graphic signals
     t_full, angle_x_full = signals_for_seg(data_lb)
+
+    # Regression coefficient
+    [a_go, b_go, a_back, b_back] = regression
 
     # Figure initialisation et signal brut
     plt.rcParams["figure.figsize"] = (20, 10)
@@ -35,13 +38,28 @@ def plot_seg_detection(seg_lim, data_lb, freq, output):
     # Marqueurs de la segmentation de la marche en rouge pour le demi-tour
     ax.vlines(seg_lim[1] / freq, -50, 230, 'red', '-', linewidth=2, label="$u_{go}$ and $u_{back}$")
     ax.vlines(seg_lim[2] / freq, -50, 230, 'red', '-', linewidth=2)
+    # Marqueurs du début et de la fin en noir
+    ax.vlines(seg_lim[0] / freq, -50, 230, 'k', '-', linewidth=2, label="$start$ and $end$")
+    ax.vlines(seg_lim[3] / freq, -50, 230, 'k', '-', linewidth=2)
     fig.legend(fontsize=15)
 
     # save the fig
     path_out = os.path.join(output, "phases_seg.svg")
     plt.savefig(path_out, dpi=80,
                     transparent=True, bbox_inches="tight")
-    
+
+    # construction lignes 
+    ax.vlines(t_full.iloc[mid_index], -50, 230, 'orange', '--', linewidth = 2)
+    x = np.linspace(t_full.iloc[0], t_full.iloc[-1], len(t))
+    y = a_go*x + b_go
+    ax.plot(x, y, 'orange', linewidth = 2, label = "affine schematization")
+    y = a_back*x + b_back
+    ax.plot(x, y, 'orange', linewidth = 2)
+
+    # save the fig with construction lignes
+    path_out = os.path.join(output, "phases_seg_construction.svg")
+    plt.savefig(path_out, dpi=80,
+                    transparent=True, bbox_inches="tight")
 
 
 def seg_detection(data_lb, steps_lim, freq):
@@ -84,7 +102,7 @@ def seg_detection(data_lb, steps_lim, freq):
     # seg = [0, start_uturn, end_uturn, len(data_lb["Gyr_X"])]
     seg = [0, int(100*x_inter_go), int(100*x_inter_back), len(data_lb["Gyr_X"])]
 
-    return seg
+    return seg, [a_go, b_go, a_back, b_back]
 
 
 def signals_for_seg(data_lb):
