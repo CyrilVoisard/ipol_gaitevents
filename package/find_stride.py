@@ -76,19 +76,14 @@ def plot_annotate_full_sig(data, start_ref, end_ref, patho_stride_annotations, p
         # ax.legend()
         ax.grid()
 
-    if download:
-        # On enregistre la nouvelle figure
-        if pied == 1:
-            titre = id_exp + "_droit_stride_full_signal.png"
-        if pied == 0:
-            titre = id_exp + "_gauche_stride_full_signal.png"
-        os.chdir(output)
-        plt.savefig(titre, bbox_inches="tight")
-        # plt.show()
-        plt.close('all')
-
-    return None
-
+    # figure save
+    if pied == 1:
+        titre = "steps_right.svg"
+    if pied == 0:
+        titre = "steps_left.svg"
+    os.chdir(output)
+    plt.savefig(titre, bbox_inches="tight")
+                             
 
 def plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride_annotations, s_y1, s_y2, path, pied,
                                     id_exp, freq=100, gr=False, exo=None, comp=None, start=0, download=False, output=0):
@@ -170,16 +165,13 @@ def plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride
     ax_stride.legend()
     ax_stride.grid()
 
-    if download:
-        # On enregistre la nouvelle figure
-        if pied == 1:
-            titre = id_exp + "_droit_stride_estimation.png"
-        if pied == 0:
-            titre = id_exp + "_gauche_stride_estimation.png"
-        os.chdir(output)
-        plt.savefig(titre, bbox_inches="tight")
-        # plt.show()
-        plt.close('all')
+    # figure save
+    if pied == 1:
+        titre = "steps_right.svg"
+    if pied == 0:
+        titre = "steps_left.svg"
+    os.chdir(output)
+    plt.savefig(titre, bbox_inches="tight")
 
     return comp
 
