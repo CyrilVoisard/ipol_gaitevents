@@ -115,7 +115,7 @@ def print_seg_detection(seg_lim, freq):
         print(info_msg.format(**display_dict), file=f)
         
 
-def print_steps_detection(steps_lim_full, steps_lim_corrected, freq):
+def print_steps_detection(seg_lim_full, seg_lim_corrected, steps_lim_full, steps_lim_corrected, freq):
     """Dump the trial parameters computed from the gait events detection.  
 
     Parameters
@@ -123,12 +123,12 @@ def print_steps_detection(steps_lim_full, steps_lim_corrected, freq):
         steps_lim_corrected {dataframe} -- pandas dataframe with gait events after elimination of the extra trial steps
     """
 
-    steps_dict = {"TrialDuration": (np.max(steps_lim_full["HS"]), np.max(steps_lim_full["TO"])), 
+    steps_dict = {"TrialDuration": (seg_lim_full[3] - seg_lim_full[0])/freq, 
                   "LeftGaitCycles": len(steps_lim_full[steps_lim_full["Foot"]==0]), 
-                  "RightGaitCycles": 1000, 
-                  "WalkingSpeed": 1000, 
-                  "LeftGaitCyclesOk": 1000, 
-                  "RightGaitCyclesOk": 1000
+                  "RightGaitCycles": len(steps_lim_full[steps_lim_full["Foot"]==1]), 
+                  "WalkingSpeed": (seg_lim_corrected[3] - seg_lim_corrected[0] - seg_lim_corrected[2] + seg_lim_corrected[1])/freq, 
+                  "LeftGaitCyclesOk": len(steps_lim_corrected[steps_lim_corrected["Foot"]==0]), 
+                  "RightGaitCyclesOk": len(steps_lim_corrected[steps_lim_corrected["Foot"]==1])
                  }
 
     display_dict = {'Raw': "Raw data",
@@ -182,17 +182,17 @@ if __name__ == "__main__":
     steps_rf, steps_lf, steps_lim_full = dtw_detection.steps_detection_full(data_rf, data_lf, freq)
     
     # phase boundaries detection and figure
-    seg_lim = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
+    seg_lim_full = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
 
     # quality index and 
-    qi, steps_lim_corrected, seg_lim_corrected = quality.print_quality_index(steps_lim_full, seg_lim, output=data_WD)
+    qi, steps_lim_corrected, seg_lim_corrected = quality.print_quality_index(steps_lim_full, seg_lim_full, output=data_WD)
 
     # print phases and figure
     print_seg_detection(seg_lim_corrected, freq)
     seg_detection.plot_seg_detection(seg_lim_corrected, data_lb, freq, output=data_WD)
 
     # print validated gait events and figure 
-    print_steps_detection(steps_lim_full, steps_lim_corrected, freq)
+    print_steps_detection(seg_lim_full, seg_lim_corrected, steps_lim_full, steps_lim_corrected, freq)
     #plot_stepdetection.plot_stepdetection(steps_lim_corrected, data_rf, data_lf, freq, output=data_WD, corrected=True)
     plot_stepdetection.plot_stepdetection(steps_rf, steps_lf, data_rf, data_lf, freq, output=data_WD, corrected=True)
 
