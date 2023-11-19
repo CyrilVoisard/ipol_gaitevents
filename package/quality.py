@@ -2,6 +2,7 @@ import os
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from scipy import stats
 
 
 def print_quality_index(steps_lim_full, seg_lim, output):
