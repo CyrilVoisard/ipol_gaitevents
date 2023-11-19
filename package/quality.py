@@ -113,7 +113,7 @@ def correct_steps_lim(steps_lim, seg_lim):
   # suppression des pas du demi-tour et des pas en dehors des limites précédement estimées
   correct = []
   for i in range(len(steps_lim)):
-      if inside([steps_lim["HS"], steps_lim["TO"]], seg_lim_corrected):
+      if inside([steps_lim["HS"][i], steps_lim["TO"][i], seg_lim_corrected):
           correct.append(1)
       else:
           correct.append(0)
