@@ -83,10 +83,10 @@ def print_seg_detection(seg_lim, freq):
         seg_lim {dataframe} -- pandas dataframe with phases events 
     """
 
-    seg_lim_dict = {'Start': seg_lim[0],
-                    'U-Turn start': seg_lim[1],
-                    'U-Turn end': seg_lim[2],
-                    'End': seg_lim[3]}
+    seg_lim_dict = {'Start': int(seg_lim[0]),
+                    'U-Turn start': int(seg_lim[1]),
+                    'U-Turn end': int(seg_lim[2]),
+                    'End': int(seg_lim[3])}
 
     display_dict = {'Start_title': "Trial start",
                     'Start': "{Start}".format(**seg_lim_dict),
