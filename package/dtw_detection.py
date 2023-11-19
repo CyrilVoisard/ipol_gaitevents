@@ -7,20 +7,20 @@ from tslearn import metrics
 from package import find_stride, deal_stride, plot_stepdetection
 
 
-def steps_detection_full(data_rf, data_lf, freq):
-    steps_rf = steps_detection(data_rf, data_lf, 1, freq)
-    steps_lf = steps_detection(data_lf, data_rf, 0, freq)
+def steps_detection_full(data_rf, data_lf, freq, output):
+    steps_rf = steps_detection(data_rf, data_lf, 1, freq, output)
+    steps_lf = steps_detection(data_lf, data_rf, 0, freq, output)
     
     full = np.concatenate((steps_rf, steps_lf))
 
     return steps_rf, steps_lf, pd.DataFrame(full, columns=["Foot", "Phase", "HO", "TO", "HS", "FF", "Score"])
 
 
-def steps_detection(data, data_other_side, foot, freq):
+def steps_detection(data, data_other_side, foot, freq, output):
     x = data["Gyr_Y"]
     z = deal_stride.calculate_jerk_tot(data, freq)
 
-    gyr_ok, acc_ok, stride_annotations_ok, comp = find_stride.annotate_stride_estimation(data, data_other_side, foot, freq)
+    gyr_ok, acc_ok, stride_annotations_ok, comp = find_stride.annotate_stride_estimation(data, data_other_side, foot, freq, output=output)
 
     cost = matrix_cost(x, z, gyr_ok, acc_ok)
 
