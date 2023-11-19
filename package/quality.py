@@ -158,7 +158,7 @@ def get_bornes(steps_lim, seg_lim):
 
       # search for the estimated end of the trial: start from the end and work backwards
       find_end = 0
-      i = np.argmin(abs(np.array(hs_f) - (seg_lim.iloc[2, 0] + 0.5 * (seg_lim.iloc[2, 0] - start))))
+      i = np.argmin(abs(np.array(hs_f) - (seg_lim[2] + 0.5 * (seg_lim[2] - start))))
 
       while (not find_end) & (i < len(hs_f)):
           if abs(hs_f[i] - hs_f[i - 2]) < 3 * strT:  # si la durée entre les strides i et i+2 (durée attendue 2*strT) est inférieure 3*strT, on considère qu'on est encore dans l'épreuve
