@@ -115,7 +115,7 @@ def print_seg_detection(seg_lim, freq):
         print(info_msg.format(**display_dict), file=f)
         
 
-def print_steps_detection(steps_lim_corrected):
+def print_steps_detection(steps_lim_full, steps_lim_corrected, freq):
     """Dump the trial parameters computed from the gait events detection.  
 
     Parameters
@@ -123,12 +123,12 @@ def print_steps_detection(steps_lim_corrected):
         steps_lim_corrected {dataframe} -- pandas dataframe with gait events after elimination of the extra trial steps
     """
 
-    steps_dict = {"TrialDuration": 1000, 
-                  "LeftGaitCycles": 1000, 
-                  "RightGaitCycles": 1000, 
+    steps_dict = {"TrialDuration": np.max(steps_lim_full), 
+                  "LeftGaitCycles": len(steps_lim_full[steps_lim_full["Foot]==0]), 
+                  "RightGaitCycles": len(steps_lim_full[steps_lim_full["Foot]==1]), 
                   "WalkingSpeed": 1000, 
-                  "LeftGaitCyclesOk": 1000, 
-                  "RightGaitCyclesOk": 1000
+                  "LeftGaitCyclesOk": len(steps_lim_corrected[steps_lim_corrected["Foot]==0]), 
+                  "RightGaitCyclesOk": len(steps_lim_corrected[steps_lim_corrected["Foot]==1])
                  }
 
     display_dict = {'Raw': "Raw data",
@@ -188,11 +188,11 @@ if __name__ == "__main__":
     qi, steps_lim_corrected, seg_lim_corrected = quality.print_quality_index(steps_lim_full, seg_lim, output=data_WD)
 
     # print phases and figure
-    print_seg_detection(seg_lim, freq)
+    print_seg_detection(seg_lim_corrected, freq)
     seg_detection.plot_seg_detection(seg_lim_corrected, data_lb, freq, output=data_WD)
 
     # print validated gait events and figure 
-    print_steps_detection(steps_lim_corrected)
+    print_steps_detection(steps_lim_full, steps_lim_corrected, freq)
     #plot_stepdetection.plot_stepdetection(steps_lim_corrected, data_rf, data_lf, freq, output=data_WD, corrected=True)
     plot_stepdetection.plot_stepdetection(steps_rf, steps_lf, data_rf, data_lf, freq, output=data_WD, corrected=True)
 
