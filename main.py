@@ -179,7 +179,7 @@ if __name__ == "__main__":
     data_lf = import_data.import_XSens(os.path.join(data_WD, args.i2))
     
     # gait events and steps detection
-    steps_rf, steps_lf, steps_lim_full = dtw_detection.steps_detection_full(data_rf, data_lf, freq)
+    steps_rf, steps_lf, steps_lim_full = dtw_detection.steps_detection_full(data_rf, data_lf, freq, output=data_WD)
     
     # phase boundaries detection and figure
     seg_lim_full, regression = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
