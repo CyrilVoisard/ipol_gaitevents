@@ -81,8 +81,8 @@ def compute_quality_index(steps_lim, seg_lim):
   
   # estimation of stride alternation
   steps_lim_sort = steps_lim.sort_values(by = ['HS', 'TO'])
-  alt_go = steps_lim_sort[steps_lim_sort['HS'] < seg_lim[1]]['Foot'].tolist()
-  alt_back = steps_lim_sort[steps_lim_sort['HS'] > seg_lim[2]]['Foot'].tolist()
+  alt_go = steps_lim_sort[steps_lim_sort['HS'] < int(seg_lim[1])]['Foot'].tolist()
+  alt_back = steps_lim_sort[steps_lim_sort['HS'] > int(seg_lim[2])]['Foot'].tolist()
   i = 0
   for k in range(len(alt_go)-1):
       i = i + abs(alt_go[k+1]-alt_go[k])
