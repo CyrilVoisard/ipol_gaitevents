@@ -189,7 +189,7 @@ if __name__ == "__main__":
 
     # print phases and figure
     print_seg_detection(seg_lim, freq)
-    seg_detection.plot_seg_detection(seg_lim_corrected, steps_lim_full, data_lb, freq, output=data_WD)
+    seg_detection.plot_seg_detection(seg_lim_corrected, data_lb, freq, output=data_WD)
 
     # print validated gait events and figure 
     print_steps_detection(steps_lim_corrected)
