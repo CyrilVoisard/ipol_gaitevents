@@ -50,7 +50,7 @@ def plot_seg_detection(seg_lim, data_lb, regression, freq, output):
 
     # construction lignes 
     ax.vlines(t_full.iloc[mid_index], -50, 230, 'orange', '--', linewidth = 2)
-    x = np.linspace(t_full.iloc[0], t_full.iloc[-1], len(t))
+    x = np.linspace(t_full.iloc[0], t_full.iloc[-1], len(t_full))
     y = a_go*x + b_go
     ax.plot(x, y, 'orange', linewidth = 2, label = "affine schematization")
     y = a_back*x + b_back
