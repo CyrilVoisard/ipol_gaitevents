@@ -123,12 +123,12 @@ def print_steps_detection(steps_lim_full, steps_lim_corrected, freq):
         steps_lim_corrected {dataframe} -- pandas dataframe with gait events after elimination of the extra trial steps
     """
 
-    steps_dict = {"TrialDuration": 1000, 
-                  "LeftGaitCycles": len(steps_lim_full[steps_lim_full["Foot]==0]), 
-                  "RightGaitCycles": len(steps_lim_full[steps_lim_full["Foot]==1]), 
+    steps_dict = {"TrialDuration": np.max(steps_lim_full), 
+                  "LeftGaitCycles": 1000, 
+                  "RightGaitCycles": 1000, 
                   "WalkingSpeed": 1000, 
-                  "LeftGaitCyclesOk": len(steps_lim_corrected[steps_lim_corrected["Foot]==0]), 
-                  "RightGaitCyclesOk": len(steps_lim_corrected[steps_lim_corrected["Foot]==1])
+                  "LeftGaitCyclesOk": 1000, 
+                  "RightGaitCyclesOk": 1000
                  }
 
     display_dict = {'Raw': "Raw data",
