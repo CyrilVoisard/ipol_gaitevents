@@ -194,7 +194,7 @@ if __name__ == "__main__":
     # print validated gait events and figure 
     print_steps_detection(seg_lim_full, seg_lim_corrected, steps_lim_full, steps_lim_corrected, freq)
     #plot_stepdetection.plot_stepdetection(steps_lim_corrected, data_rf, data_lf, freq, output=data_WD, corrected=True)
-    plot_stepdetection.plot_stepdetection(steps_rf, steps_lf, data_rf, data_lf, freq, output=data_WD, corrected=True)
+    plot_stepdetection.plot_stepdetection_construction(steps_rf, steps_lf, data_rf, data_lf, freq, output=data_WD, corrected=True)
 
     print("ok charge")
     sys.exit(0)
