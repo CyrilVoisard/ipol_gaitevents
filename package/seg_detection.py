@@ -21,7 +21,7 @@ def plot_seg_detection(seg_lim, data_lb, regression, freq, output):
     t_full, angle_x_full = signals_for_seg(data_lb)
 
     # Regression coefficient
-    [a_go, b_go, a_back, b_back] = regression
+    [a_go, b_go, mid_index, a_back, b_back] = regression
 
     # Figure initialisation et signal brut
     plt.rcParams["figure.figsize"] = (20, 10)
@@ -102,7 +102,7 @@ def seg_detection(data_lb, steps_lim, freq):
     # seg = [0, start_uturn, end_uturn, len(data_lb["Gyr_X"])]
     seg = [0, int(100*x_inter_go), int(100*x_inter_back), len(data_lb["Gyr_X"])]
 
-    return seg, [a_go, b_go, a_back, b_back]
+    return seg, [a_go, b_go, mid_index, a_back, b_back]
 
 
 def signals_for_seg(data_lb):
