@@ -21,7 +21,7 @@ def plot_stepdetection(steps_rf, steps_lf, data_rf, data_lf, freq, output, corre
 
     ax[0].set(xlabel='Time (s)', ylabel='Gyr ML', title=name + "Left Foot")
     ax[0].xaxis.set_tick_params(labelsize=12)
-    ax[1].set(ylabel='', title=name + "Trial phases")
+    ax[1].set(ylabel='Phases')
     ax[2].set(xlabel='Time (s)', ylabel='Gyr ML', title=name + "Left Foot")
     ax[2].xaxis.set_tick_params(labelsize=12)
 
