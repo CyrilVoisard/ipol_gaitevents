@@ -125,9 +125,9 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, freq, output):
                     transparent=True, bbox_inches="tight")
 
 
-def plot_stepdetection_construction(steps_rf, steps_lf, data_rf, data_lf, freq, output, corrected=False):
-    #steps_rf = steps_lim[steps_lim['Foot']==1]
-    #steps_lf = steps_lim[steps_lim['Foot']==0]
+def plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output, corrected=False):
+    steps_rf = steps_lim[(steps_lim['Foot']==1)].to_numpy()
+    steps_lf = steps_lim[(steps_lim['Foot']==0)].to_numpy()
   
     name = "Gait events detection - "
 
