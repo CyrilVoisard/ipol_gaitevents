@@ -17,6 +17,7 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, freq, output):
     fig, ax = plt.subplots(3, figsize=(20, 9), sharex=True, sharey=False, gridspec_kw={'height_ratios':[10,1,10]})
 
     ax[0].grid()
+    ax[1].set_visible(False)
     ax[2].grid()
 
     ax[0].set(xlabel='Time (s)', ylabel='Gyr ML', title=name + "Left Foot")
