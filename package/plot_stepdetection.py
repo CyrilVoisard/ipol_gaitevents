@@ -46,7 +46,7 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
 
     # Phase 4: waiting
     ax[1].add_patch(patches.Rectangle((seg_lim[3]/freq, 0),  # (x,y)
-                                      (len(data_rf-seg_lim[3])/freq,  # width
+                                      (len(data_rf)-seg_lim[3])/freq,  # width
                                       1,  # height
                                       color="blue"))
 
