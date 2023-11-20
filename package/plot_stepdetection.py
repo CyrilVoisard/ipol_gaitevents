@@ -8,7 +8,7 @@ import os
 from package import deal_stride
 
 
-def plot_stepdetection(steps_lim, data_rf, data_lf, freq, output):
+def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
     steps_rf = steps_lim[(steps_lim['Foot']==1) & (steps_lim['Correct']==1)].to_numpy()
     steps_lf = steps_lim[(steps_lim['Foot']==0) & (steps_lim['Correct']==1)].to_numpy()
   
@@ -19,6 +19,20 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, freq, output):
     ax[0].grid()
     ax[1].set_visible(False)
     ax[2].grid()
+
+    # Phases segmentation 
+    # Phase 0: waiting
+    ax[1].add_patch(patches.Rectangle((0, 0),  # (x,y)
+                                      seg_lim[0],  # width
+                                      1,  # height
+                                      color="blue"))
+    # Phase 1: go
+
+    # Phase 2: u-turn
+
+    # Phase 3: back
+
+    # Phase 4: waiting
 
     ax[0].set(xlabel='Time (s)', ylabel='Gyr ML', title=name + "Left Foot")
     ax[0].xaxis.set_tick_params(labelsize=12)
