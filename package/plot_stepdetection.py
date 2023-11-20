@@ -14,7 +14,7 @@ def plot_stepdetection(steps_rf, steps_lf, data_rf, data_lf, freq, output, corre
   
     name = "Gait events detection - "
 
-    fig, ax = plt.subplots(3, figsize=(20, 12), sharex=True, sharey=False)
+    fig, ax = plt.subplots(3, figsize=(20, 12), sharex=True, sharey=False, gridspec_kw={'heigth_ratios': [10, 1, 10]})
 
     ax[0].grid()
     ax[1].grid()
