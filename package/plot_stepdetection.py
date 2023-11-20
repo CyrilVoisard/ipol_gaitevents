@@ -17,13 +17,13 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
     fig, ax = plt.subplots(3, figsize=(20, 9), sharex=True, sharey=False, gridspec_kw={'height_ratios':[10,1,10]})
 
     ax[0].grid()
-    ax[1].set_visible(False)
+    #ax[1].set_visible(False)
     ax[2].grid()
 
     # Phases segmentation 
     # Phase 0: waiting
     ax[1].add_patch(patches.Rectangle((0, 0),  # (x,y)
-                                      seg_lim[0],  # width
+                                      seg_lim[0]/freq,  # width
                                       1,  # height
                                       color="blue"))
     # Phase 1: go
