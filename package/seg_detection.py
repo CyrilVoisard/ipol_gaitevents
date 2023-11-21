@@ -42,7 +42,7 @@ def plot_seg_detection(seg_lim, data_lb, regression, freq, output):
     ax.plot(x, y, 'orange', linewidth = 2, label = "affine schematization")
     y = a_back*x + b_back
     ax.plot(x, y, 'orange', linewidth = 2)
-    x = np.linspace((-50-b_u)/a_u, (230-b_u)/a_u, len(t[mid_index-125:mid_index+125]))
+    x = np.linspace((-50-b_u)/a_u, (230-b_u)/a_u, len(t_full[mid_index-125:mid_index+125]))
     y = a_u*x + b_u
     ax.plot(x, y, 'orange', linewidth = 2)
     
