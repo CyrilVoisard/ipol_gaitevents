@@ -25,30 +25,30 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
     ax[1].add_patch(patches.Rectangle((0, 0),  # (x,y)
                                       seg_lim[0]/freq,  # width
                                       1,  # height
-                                      color="blue"))
+                                      alpha=0.1, color="k"))
     # Phase 1: go
     ax[1].add_patch(patches.Rectangle((seg_lim[0]/freq, 0),  # (x,y)
                                       (seg_lim[1]-seg_lim[0])/freq,  # width
                                       1,  # height
-                                      color="green"))
+                                      alpha=0.3, color="k"))
 
     # Phase 2: u-turn
     ax[1].add_patch(patches.Rectangle((seg_lim[1]/freq, 0),  # (x,y)
                                       (seg_lim[2]-seg_lim[1])/freq,  # width
                                       1,  # height
-                                      color="red"))
+                                      alpha=0.5, color="k"))
 
     # Phase 3: back
     ax[1].add_patch(patches.Rectangle((seg_lim[2]/freq, 0),  # (x,y)
                                       (seg_lim[3]-seg_lim[2])/freq,  # width
                                       1,  # height
-                                      color="green"))
+                                      alpha=0.3, color="k"))
 
     # Phase 4: waiting
     ax[1].add_patch(patches.Rectangle((seg_lim[3]/freq, 0),  # (x,y)
                                       (len(data_rf)-seg_lim[3])/freq,  # width
                                       1,  # height
-                                      color="blue"))
+                                      alpha=0.1, color="k"))
 
     ax[0].set(xlabel='Time (s)', ylabel='Gyr ML', title=name + "Left Foot")
     ax[0].xaxis.set_tick_params(labelsize=12)
