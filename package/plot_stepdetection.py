@@ -30,19 +30,19 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
     ax[1].add_patch(patches.Rectangle((seg_lim[0]/freq, 0),  # (x,y)
                                       (seg_lim[1]-seg_lim[0])/freq,  # width
                                       1,  # height
-                                      alpha=0.3, color="k"))
+                                      alpha=0.2, color="k"))
 
     # Phase 2: u-turn
     ax[1].add_patch(patches.Rectangle((seg_lim[1]/freq, 0),  # (x,y)
                                       (seg_lim[2]-seg_lim[1])/freq,  # width
                                       1,  # height
-                                      alpha=0.5, color="k"))
+                                      alpha=0.3, color="k"))
 
     # Phase 3: back
     ax[1].add_patch(patches.Rectangle((seg_lim[2]/freq, 0),  # (x,y)
                                       (seg_lim[3]-seg_lim[2])/freq,  # width
                                       1,  # height
-                                      alpha=0.3, color="k"))
+                                      alpha=0.2, color="k"))
 
     # Phase 4: waiting
     ax[1].add_patch(patches.Rectangle((seg_lim[3]/freq, 0),  # (x,y)
