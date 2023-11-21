@@ -1,29 +1,16 @@
-# Objective: Detection of gait phase segmentation based on angular position in the plane orthogonal to X for U-turn
-# and movement onset detection. The XSens experiment is divided into 3 phases: go, U-turn, back.
-
-# Output file includes 2 timestamps delineating the U-turn.
-
 import os
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import linregress
-# from semio_package import features as ft
-
-
-def disp_seg(seg):
-    seg.columns = ['Index de temps (en 0.01s)']
-    seg.index = ['Début marche', 'Début demi-tour', 'Fin demi-tour', 'Fin marche']
-    print(seg)
-
 
 def plot_seg_detection(seg_lim, data_lb, regression, freq, output):
     # Graphic signals
     t_full, angle_x_full = signals_for_seg(data_lb)
 
     # Regression coefficient
-    [a_go, b_go, mid_index, a_back, b_back] = regression
+    [a_go, b_go, mid_index, a_u, b_u, a_back, b_back] = regression
 
-    # Figure initialisation et signal brut
+    # Raw signal and figure initialisation
     plt.rcParams["figure.figsize"] = (20, 10)
     fig, ax = plt.subplots()
     ax.plot(t_full, angle_x_full, linewidth=3, label='angular position')
@@ -35,7 +22,7 @@ def plot_seg_detection(seg_lim, data_lb, regression, freq, output):
     ax.xaxis.set_tick_params(labelsize=12)
     ax.set(title="Position angulaire selon X : ")
 
-    # Marqueurs de la segmentation de la marche en rouge pour le demi-tour
+    # Phases segmentation delimitation 
     ax.vlines(seg_lim[1] / freq, -50, 230, 'red', '-', linewidth=2, label="$u_{go}$ and $u_{back}$")
     ax.vlines(seg_lim[2] / freq, -50, 230, 'red', '-', linewidth=2)
     # Marqueurs du début et de la fin en noir
@@ -43,20 +30,22 @@ def plot_seg_detection(seg_lim, data_lb, regression, freq, output):
     ax.vlines(seg_lim[3] / freq, -50, 230, 'k', '-', linewidth=2)
     fig.legend(fontsize=15)
 
-    # save the fig
+    # save fig 1 with construction lines
     path_out = os.path.join(output, "phases_seg.svg")
     plt.savefig(path_out, dpi=80,
                     transparent=True, bbox_inches="tight")
 
-    # construction lignes 
+    # construction lines  
     ax.vlines(t_full.iloc[mid_index], -50, 230, 'orange', '--', linewidth = 2)
     x = np.linspace(t_full.iloc[0], t_full.iloc[-1], len(t_full))
     y = a_go*x + b_go
     ax.plot(x, y, 'orange', linewidth = 2, label = "affine schematization")
     y = a_back*x + b_back
     ax.plot(x, y, 'orange', linewidth = 2)
-
-    # save the fig with construction lignes
+    y = a_u*x + b_u
+    ax.plot(x, y, 'orange', linewidth = 2)
+    
+    # save the fig 2 with construction lines
     path_out = os.path.join(output, "phases_seg_construction.svg")
     plt.savefig(path_out, dpi=80,
                     transparent=True, bbox_inches="tight")
@@ -65,6 +54,7 @@ def plot_seg_detection(seg_lim, data_lb, regression, freq, output):
 def seg_detection(data_lb, steps_lim, freq):
     start = int(np.min(steps_lim["TO"]))
     end = int(np.max(steps_lim["HS"]))
+    
     # useful signals
     t_full, angle_x_full = signals_for_seg(data_lb)
 
@@ -91,18 +81,10 @@ def seg_detection(data_lb, steps_lim, freq):
     x_inter_back = (b_back - b_u) / (a_u - a_back)
     approx_seg_lim = [start, freq * x_inter_go, freq * x_inter_back, end]
 
-    # U-Turn boundaries
-    # strT = ft.stride_time(data_lb, approx_seg_lim, steps_lim, freq=freq)
-    # print(x_inter_go, strT, start, approx_seg_lim)
-    # start_uturn = 100 * (x_inter_go - strT) + np.argmin(
-    # angle_x[int(100 * x_inter_go - 100 * strT - start):int(100 * x_inter_go - start)])
-    # end_uturn = int(100 * x_inter_back) + np.argmax(
-    # angle_x[int(100 * x_inter_back - start):int(100 * x_inter_back + 100 * strT - start)])
-
     # seg = [0, start_uturn, end_uturn, len(data_lb["Gyr_X"])]
     seg = [0, int(100*x_inter_go), int(100*x_inter_back), len(data_lb["Gyr_X"])]
 
-    return seg, [a_go, b_go, mid_index, a_back, b_back]
+    return seg, [a_go, b_go, mid_index, a_u, b_u, a_back, b_back]
 
 
 def signals_for_seg(data_lb):
