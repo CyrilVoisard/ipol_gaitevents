@@ -30,7 +30,7 @@ def plot_seg_detection(seg_lim, data_lb, regression, freq, output):
     ax.vlines(seg_lim[3] / freq, -50, 230, 'k', '-', linewidth=2)
     fig.legend(fontsize=15)
 
-    # save fig 1 with construction lines
+    # save fig 1 without construction lines
     path_out = os.path.join(output, "phases_seg.svg")
     plt.savefig(path_out, dpi=80,
                     transparent=True, bbox_inches="tight")
