@@ -14,7 +14,9 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
     Parameters
     ----------
         steps_lim {dataframe} -- pandas dataframe with the detected gait events
-        seg_lim {dataframe} -- pandas dataframe with phases events 
+        seg_lim {dataframe} -- pandas dataframe with phases events
+        data_rf {dataframe} -- pandas dataframe with data from the right foot sensor
+        data_lf {dataframe} -- pandas dataframe with data from the left foot sensor
         freq {int} -- acquisition frequency 
         output {str} -- folder path for output fig
     """
@@ -167,6 +169,18 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
 
 
 def plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output, corrected=False):
+    """Plot the construction figure for step detection and save the fig in the output folder as png file. 
+
+    Parameters
+    ----------
+        steps_lim {dataframe} -- pandas dataframe with the detected gait events
+        seg_lim {dataframe} -- pandas dataframe with phases events
+        data_rf {dataframe} -- pandas dataframe with data from the right foot sensor
+        data_lf {dataframe} -- pandas dataframe with data from the left foot sensor
+        freq {int} -- acquisition frequency 
+        output {str} -- folder path for output fig
+    """
+    
     steps_rf = steps_lim[(steps_lim['Foot']==1)].to_numpy()
     steps_lf = steps_lim[(steps_lim['Foot']==0)].to_numpy()
   
