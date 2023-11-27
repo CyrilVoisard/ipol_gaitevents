@@ -9,6 +9,16 @@ from package import deal_stride
 
 
 def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
+    """Plot the final figure for step detection and save the fig in the output folder as png file. 
+
+    Parameters
+    ----------
+        steps_lim {dataframe} -- pandas dataframe with the detected gait events
+        seg_lim {dataframe} -- pandas dataframe with phases events 
+        freq {int} -- acquisition frequency 
+        output {str} -- folder path for output fig
+    """
+    
     steps_rf = steps_lim[(steps_lim['Foot']==1) & (steps_lim['Correct']==1)].to_numpy()
     steps_lf = steps_lim[(steps_lim['Foot']==0) & (steps_lim['Correct']==1)].to_numpy()
   
