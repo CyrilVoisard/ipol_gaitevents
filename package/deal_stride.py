@@ -28,10 +28,7 @@ def stride_sain_decal(len_estimation, freq=100):
 
 
 def stride_sain(len_estimation, freq=100):
-    # 'STEama_OK2_20180720_GCS_01' 3ème pied gauche
-
-    # n_ajout = max(0, len_estimation - 118) // 2
-
+    
     gyr_ref_100 = np.array([1.26760644e-01, 1.11668357e-01, 8.32307508e-02, 5.23749713e-02,
                             2.49340487e-02, 8.49469197e-04, -2.21600981e-02, -4.43579484e-02,
                             -6.35252125e-02, -7.98064015e-02, -1.02934550e-01, -1.55891377e-01,
@@ -113,22 +110,14 @@ def stride_sain(len_estimation, freq=100):
                               'HO': round(10*freq/100) + len(ajout * n_ajout),
                               'TO': round(32*freq/100) + len(ajout * n_ajout)}
 
-    # print("Ajustement taille : ", len_estimation, len(gyr_ref))
-    # print(len(ajout * n_ajout))
-
     return gyr_ref, np.sqrt(jerk_ref), stride_ref_annotations
 
 
 def plot_annotate_stride(gyr, acc, stride_annotations, output):
-    try:
-        gyr = gyr.to_numpy()
-        acc = acc.to_numpy()
-    except:
-        None
-    dgyr = np.array(np.diff(gyr).tolist() + [0])
+
     fig, ax = plt.subplots(2, figsize=(5, 8))
     ax[0].plot(gyr / np.max(abs(gyr)))
-    # ax[0].plot(dgyr / np.max(abs(dgyr)))
+
     mi, ma = -1, 1
     ax[0].vlines(stride_annotations["HS"], mi, ma, 'black', label="Heel Strike")
     ax[0].vlines(stride_annotations["FF"], mi, ma, 'green', label="Foot Flat")
@@ -150,7 +139,6 @@ def plot_annotate_stride(gyr, acc, stride_annotations, output):
     titre = "stride_reference.png"
     os.chdir(output)
     plt.savefig(titre, bbox_inches="tight")
-    # plt.show()
     plt.close()
 
     return None
@@ -167,13 +155,13 @@ def annotate(path, stride_annotations):
         if path[i][1] == stride_annotations["HO"]:
             new_stride_annotations["HO"] = path[i][0]
         if path[len(path) - i - 1][1] == stride_annotations["TO"]:
-            # print(path[len(path) - i - 5:len(path) - i +20])
             new_stride_annotations["TO"] = path[len(path) - i - 1][0]
 
     return new_stride_annotations
 
 
 def calculate_jerk_tot(data, freq=100):
+    
     jerk_tot = np.sqrt(
         np.diff(data["FreeAcc_X"]) ** 2 + np.diff(data["FreeAcc_Z"]) ** 2 + np.diff(data["FreeAcc_Y"]) ** 2)
     jerk_tot = np.array(jerk_tot.tolist() + [0])
