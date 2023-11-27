@@ -166,7 +166,10 @@ def calculate_jerk_tot(data, freq=100):
         np.diff(data["FreeAcc_X"]) ** 2 + np.diff(data["FreeAcc_Z"]) ** 2 + np.diff(data["FreeAcc_Y"]) ** 2)
     jerk_tot = np.array(jerk_tot.tolist() + [0])
     y = pd.DataFrame(jerk_tot)
+    # Rolling the jerk with a center window 
     y_mean = y.rolling(9, center=True, win_type='boxcar').sum()
     y_mean = y_mean.fillna(0)
+    # Transpose to have a numpy array 
     z = y_mean.to_numpy().transpose()[0]
+    
     return z
