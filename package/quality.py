@@ -188,11 +188,23 @@ def get_bornes(steps_lim, seg_lim):
   return start, end
 
 
-def inside(liste, seg_lim):
+def inside(stride_events, seg_lim):
+    """Returns 1 if the considered stride is inside the trail boundaries (in the go or back phases), otherwise returns 0. 
+
+    Parameters
+    ----------
+        stride_events {list} -- numerical vector with the stride events
+        seg_lim {dataframe} -- pandas dataframe with phases events 
+
+    Returns
+    -------
+        vec1 {list} -- numerical vector corresponding to vec without outliers 
+    """
+    
     out = 0
     in_go = 0
     in_back = 0
-    for x in liste:
+    for x in stride_events:
         if x < seg_lim[0]:
             out = 1
         else:
@@ -221,13 +233,24 @@ def inside(liste, seg_lim):
                     return 1
 
 
-def rmoutliers(vec, limite=2):
-    # print("Avant :", vec)
+def rmoutliers(vec, limit=2.0):
+    """Remove outliers from a vector
+
+    Parameters
+    ----------
+        vec {list} -- numerical vector
+        limit {float} -- z-score limit (default egal 2.0)
+
+    Returns
+    -------
+        vec1 {list} -- numerical vector corresponding to vec without outliers 
+    """
+    
     z = np.abs(stats.zscore(vec))
     vec1 = []
     for i in range(len(vec)):
-        if z[i] < limite:  # La valeur à partir de laquelle on peut supprimer les données peut varier
+        if z[i] < limit:  # Outliers limit
             vec1.append(vec[i])
-    # print("Après :", vec1)
+    
     return vec1
 
