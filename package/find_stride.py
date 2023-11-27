@@ -13,16 +13,26 @@ from package import deal_stride #, validation
 
 def annotate_stride_estimation(data, data_autre, pied, r=2, type_sig="Gyr_Y", gr=False, exo=["vide"],
                                comp=["vide"], id_exp=0, freq=100, download=False, output=0):
-    # print("Jalon 3")
+    """Plot the final figure for step detection and save the fig in the output folder as png file. 
+
+    Parameters
+    ----------
+        steps_lim {dataframe} -- pandas dataframe with the detected gait events
+        seg_lim {dataframe} -- pandas dataframe with phases events
+        data_rf {dataframe} -- pandas dataframe with data from the right foot sensor
+        data_lf {dataframe} -- pandas dataframe with data from the left foot sensor
+        freq {int} -- acquisition frequency 
+        output {str} -- folder path for output fig
+    """
+                                 
     gyr_estimation, acc_estimation, start_ref, end_ref = find_stride_estimation(data, data_autre, pied,
                                                                                 "Gyr_Y", gr, id_exp,
                                                                                 freq, download, output)
-    # print("Jalon 4")
+    
     len_estimation = len(gyr_estimation)
     gyr_ref, acc_ref, stride_ref_annotations = find_stride_ref(data, data_autre, pied, len_estimation,
                                                                type_sig="Gyr_Y", freq=freq,
                                                                gr=gr)
-    # print("Jalon 5")
 
     s_y1 = np.array([1 * acc_estimation / (np.max(acc_estimation)), 1 * gyr_estimation / (np.max(abs(gyr_estimation)))])
     s_y1 = s_y1.transpose()
@@ -136,8 +146,8 @@ def plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride
     mi, ma = min(- 1 + gyr_estimation / (np.max(abs(gyr_estimation)))), max(acc_estimation / (np.max(acc_estimation)))
 
     ax_stride.vlines(patho_stride_annotations["HS"], mi, ma, 'black', label="Heel Strike")
-    ax_stride.vlines(patho_stride_annotations["FF"], mi, ma, 'violet', label="Foot Flat")
-    ax_stride.vlines(patho_stride_annotations["HO"], mi, ma, 'green', label="Heel Off")
+    # ax_stride.vlines(patho_stride_annotations["FF"], mi, ma, 'violet', label="Foot Flat")
+    # ax_stride.vlines(patho_stride_annotations["HO"], mi, ma, 'green', label="Heel Off")
     ax_stride.vlines(patho_stride_annotations["TO"], mi, ma, 'red', label="Toe Off")
     if exo is not None:
         exo_p = exo[exo[:, 4] == pied]
