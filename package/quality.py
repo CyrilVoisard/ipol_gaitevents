@@ -56,10 +56,13 @@ def plot_quality_index(qi, path):
   
     ax.set_axis_off()
     ax.set_ylim(0,1.5)
-    if (qi<10) or (qi == 100):
+    if qi<10:
         ax.annotate(qi,xy=( 1.25*np.pi, .3),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
     else :
-        ax.annotate(qi,xy=( 1.18*np.pi, .5),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
+        if  qi == 100: 
+            ax.annotate(qi,xy=( 1.11*np.pi, .7),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
+        else:
+            ax.annotate(qi,xy=( 1.18*np.pi, .5),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
   
     plt.savefig(path, dpi=80,
                     transparent=True, bbox_inches="tight")
