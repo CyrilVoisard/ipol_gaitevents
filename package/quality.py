@@ -56,7 +56,7 @@ def plot_quality_index(qi, path):
   
     ax.set_axis_off()
     ax.set_ylim(0,1.5)
-    if qi<10:
+    if (qi<10) or (qi == 100):
         ax.annotate(qi,xy=( 1.25*np.pi, .3),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
     else :
         ax.annotate(qi,xy=( 1.18*np.pi, .5),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
