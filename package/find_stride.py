@@ -276,8 +276,8 @@ def autocorr_indexes(y, thres=0.7, min_dist=80, freq=100):
     ndarray containing the numeric indexes of the non-biased autocorrelation that were detected.
     """
   
-    if isinstance(y, np.ndarray) and np.issubdtype(y.dtype, np.unsignedinteger):
-        raise ValueError("y must be signed")
+    #if isinstance(y, np.ndarray) and np.issubdtype(y.dtype, np.unsignedinteger):
+     #   raise ValueError("y must be signed")
 
     i = round(min_dist*freq/100)
     thres = thres * (np.max(y[i:]) - np.max(np.min(y[i:i + np.argmax(y[i:])]), 0)) + np.max(
