@@ -93,5 +93,28 @@ def filter_sig(data, type_sig, order, fc):
     data[type_sig + "_Z"] = low_pass_filter(data[type_sig + "_Z"], order, fc)
 
     return data
+    
+
+def low_pass_filter(sig, order=8, fc=14, fe=100):
+    """Definition of a Butterworth low-pass filter
+
+    Arguments:
+        sig {dataframe} -- pandas dataframe
+        order {int} -- order of the Butterworth low-pass filter
+        fc {int} -- cut-off frequency of the Butterworth low-pass filter
+        fe {int} -- acquisition frequency for the data
+    Returns
+    -------
+    ndarray
+        filter
+    """
+    
+    f_nyq = fe / 2.  # Hz
+
+    # definition of the Butterworth low-pass filter
+    (b, a) = butter(N=order, Wn=(fc / f_nyq), btype='low', analog=False)
+
+    # application
+    return filtfilt(b, a, sig)
 
 
