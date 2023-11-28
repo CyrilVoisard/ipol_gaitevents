@@ -263,6 +263,19 @@ def len_stride(data, roll=1, freq=100):
 
 
 def autocorr_indexes(y, thres=0.7, min_dist=80, freq=100):
+    """Find autocorrelation local maxima indexes.
+
+    Parameters
+    ----------
+    y {ndarray} -- containing non-biased autocorrelation.
+    thres {float} -- normalized threshold between [0., 1.]. Only the peaks with amplitude higher than the threshold will be detected.
+    min_dist {int} -- minimum distance between two peaks. 
+        
+    Returns
+    -------
+    ndarray containing the numeric indexes of the non-biased autocorrelation that were detected.
+    """
+    
     if isinstance(y, np.ndarray) and np.issubdtype(y.dtype, np.unsignedinteger):
         raise ValueError("y must be signed")
 
