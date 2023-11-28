@@ -107,29 +107,6 @@ def plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride
     # ax_stride.vlines(patho_stride_annotations["FF"], mi, ma, 'violet', label="Foot Flat")
     # ax_stride.vlines(patho_stride_annotations["HO"], mi, ma, 'green', label="Heel Off")
     ax_stride.vlines(patho_stride_annotations["TO"], mi, ma, 'red', label="Toe Off")
-    if exo is not None:
-        exo_p = exo[exo[:, 4] == pied]
-        to_tapis_liste = np.array(exo_p[:, 1])
-        to_tapis = round(validation.find_nearest(100 * to_tapis_liste - start, patho_stride_annotations["TO"]))
-        if abs(patho_stride_annotations["TO"] - to_tapis) < 100:
-            ax_stride.vlines(to_tapis, mi, ma, 'red', '--', label="Toe Off Tapis")
-            ax_stride.text(0.2, 0.2, 'TO_ecart : ' + str(patho_stride_annotations["TO"] - to_tapis),
-                           fontweight='bold', color='red', fontsize=12)
-            diff_to = patho_stride_annotations["TO"] - to_tapis
-        else:
-            diff_to = None
-
-        hs_tapis_liste = np.array(exo_p[:, 0])
-        hs_tapis = round(validation.find_nearest(100 * hs_tapis_liste - start, patho_stride_annotations["HS"]))
-        if abs(patho_stride_annotations["HS"] - hs_tapis) < 100:
-            ax_stride.vlines(hs_tapis, mi, ma, 'black', '--', label="Heel Strike Tapis")
-            ax_stride.text(0.2, 0.8, 'HS_ecart : ' + str(patho_stride_annotations["HS"] - hs_tapis),
-                           fontweight='bold', color='black', fontsize=12)
-            diff_hs = patho_stride_annotations["HS"] - hs_tapis
-        else:
-            diff_hs = None
-        if comp is not None:
-            comp.append([id_exp[:min(10, len(id_exp))], id_exp[:min(19, len(id_exp))], id_exp, pied, diff_to, diff_hs])
     ax_stride.legend()
     ax_stride.grid()
 
