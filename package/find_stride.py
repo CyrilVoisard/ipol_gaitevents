@@ -27,7 +27,7 @@ def annotate_stride_estimation(data_1, data_2, foot, r=2, comp=["vide"], freq=10
     gyr_estimation, acc_estimation, start_ref, end_ref = find_stride_estimation(data_1, data_2, foot, freq)
     
     len_estimation = len(gyr_estimation)
-    gyr_ref, acc_ref, stride_ref_annotations = find_stride_ref(data, data_2, foot, len_estimation, freq=freq)
+    gyr_ref, acc_ref, stride_ref_annotations = find_stride_ref(data_1, data_2, foot, len_estimation, freq=freq)
 
     s_y1 = np.array([1 * acc_estimation / (np.max(acc_estimation)), 1 * gyr_estimation / (np.max(abs(gyr_estimation)))])
     s_y1 = s_y1.transpose()
