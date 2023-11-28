@@ -57,42 +57,6 @@ def annotate_stride_estimation(data, data_autre, pied, r=2, type_sig="Gyr_Y", gr
     print('RAS stride')
 
     return gyr_estimation, acc_estimation, patho_stride_annotations, comp
-
-
-def plot_annotate_full_sig(data, start_ref, end_ref, patho_stride_annotations, pied, id_exp,
-                           gr=False, download=False, output=0):
-    fig = plt.figure(figsize=(25, 25))
-
-    colonnes = data.columns
-
-    for i in range(len(colonnes[2:])):
-        ax = fig.add_subplot(5, 5, i + 1)
-
-        x = data[colonnes[2 + i]]
-        stride_sig = x[start_ref:end_ref].to_numpy()
-        ax.plot(stride_sig)
-        mi, ma = min(stride_sig), max(stride_sig)
-
-        ax.vlines(patho_stride_annotations["HS_min"], mi, ma, 'black', '--', label="Heel Strike Min")
-        ax.vlines(patho_stride_annotations["HS"], mi, ma, 'black', label="Heel Strike")
-        ax.vlines(patho_stride_annotations["HS_max"], mi, ma, 'black', '--', label="Heel Strike Max")
-        ax.vlines(patho_stride_annotations["FF"], mi, ma, 'green', label="Foot Flat")
-        ax.vlines(patho_stride_annotations["HO"], mi, ma, 'green', label="Heel Off")
-        ax.vlines(patho_stride_annotations["TO_min"], mi, ma, 'red', '--', label="Toe Off Min")
-        ax.vlines(patho_stride_annotations["TO"], mi, ma, 'red', label="Toe Off")
-        ax.vlines(patho_stride_annotations["TO_max"], mi, ma, 'red', '--', label="Toe Off Max")
-        #print("col", colonnes[2 + i])
-        ax.set_xlabel(colonnes[2 + i])
-        # ax.legend()
-        ax.grid()
-
-    # figure save
-    if pied == 1:
-        titre = "steps_right.svg"
-    if pied == 0:
-        titre = "steps_left.svg"
-    os.chdir(output)
-    plt.savefig(titre, bbox_inches="tight")
                              
 
 def plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride_annotations, s_y1, s_y2, path, pied,
