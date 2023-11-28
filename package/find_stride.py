@@ -208,6 +208,21 @@ def len_stride_estimation(data_1, data_2, roll=1, freq=100):
 
 
 def len_stride_one_side(data, roll=1, freq=100):
+    """Import and pre-process the data from a file.
+
+    Arguments:
+        data {pandas Dataframe} -- da
+        start {int} -- start of the calibration period
+        end {int} -- end of the calibration period
+        order {int} -- order of the Butterworth low-pass filter
+        fc {int} -- cut-off frequency of the Butterworth low-pass filter
+
+    Returns
+    -------
+    Pandas dataframe
+        data
+    """
+    
     x_11 = data["FreeAcc_X"]
     test_11 = x_11.to_numpy()
     x_12 = data["FreeAcc_Y"]
@@ -256,6 +271,29 @@ def autocorr_indexes(y, thres=0.7, min_dist=80, freq=100):
 
     return index_list[(index_list > i)]
   
+
+def autocorr(f):
+    """Autocorrelation non-biased indicator.
+
+    Parameters
+    ----------
+    f -- ndarray 
+        1D data to compute autocorrelation.
+        
+    Returns
+    -------
+    acf -- ndarray
+        Array containing non-biased autocorrelation.
+    """
+    N = len(f)
+    fvi = np.fft.fft(f, n=2 * N)
+    acf = np.real(np.fft.ifft(fvi * np.conjugate(fvi))[:N])
+    d = N - np.arange(N)
+    acf = acf / d  #  non biased indicator
+    acf = acf / acf[0]
+  
+    return acf
+
 
 def indexes(y, thres=0.3, min_dist=1, thres_abs=False):
     """Peak detection routine.
@@ -352,26 +390,3 @@ def indexes(y, thres=0.3, min_dist=1, thres_abs=False):
         peaks = np.arange(y.size)[~rem]
 
     return peaks
-  
-
-def autocorr(f):
-    """Autocorrelation non-biased indicator.
-
-    Parameters
-    ----------
-    f -- ndarray 
-        1D data to compute autocorrelation.
-        
-    Returns
-    -------
-    acf -- ndarray
-        Array containing non-biased autocorrelation.
-    """
-    N = len(f)
-    fvi = np.fft.fft(f, n=2 * N)
-    acf = np.real(np.fft.ifft(fvi * np.conjugate(fvi))[:N])
-    d = N - np.arange(N)
-    acf = acf / d  #  non biased indicator
-    acf = acf / acf[0]
-  
-    return acf
