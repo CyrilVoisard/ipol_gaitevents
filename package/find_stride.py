@@ -11,7 +11,7 @@ from scipy import stats
 from package import deal_stride
 
 
-def annotate_stride_estimation(data, data_autre, pied, r=2, comp=["vide"], freq=100, output=0):
+def annotate_stride_estimation(data_1, data_2, pied, r=2, comp=["vide"], freq=100, output=0):
     """Plot the final figure for step detection and save the fig in the output folder as png file. 
 
     Parameters
@@ -24,10 +24,10 @@ def annotate_stride_estimation(data, data_autre, pied, r=2, comp=["vide"], freq=
         output {str} -- folder path for output fig
     """
                                  
-    gyr_estimation, acc_estimation, start_ref, end_ref = find_stride_estimation(data, data_autre, pied, freq)
+    gyr_estimation, acc_estimation, start_ref, end_ref = find_stride_estimation(data_1, data_2, pied, freq)
     
     len_estimation = len(gyr_estimation)
-    gyr_ref, acc_ref, stride_ref_annotations = find_stride_ref(data, data_autre, pied, len_estimation, freq=freq)
+    gyr_ref, acc_ref, stride_ref_annotations = find_stride_ref(data, data_2, pied, len_estimation, freq=freq)
 
     s_y1 = np.array([1 * acc_estimation / (np.max(acc_estimation)), 1 * gyr_estimation / (np.max(abs(gyr_estimation)))])
     s_y1 = s_y1.transpose()
@@ -35,20 +35,12 @@ def annotate_stride_estimation(data, data_autre, pied, r=2, comp=["vide"], freq=
     s_y2 = np.array([1 * acc_ref / (np.max(acc_ref)), 1 * gyr_ref / (np.max(abs(gyr_ref)))])
     s_y2 = s_y2.transpose()
 
-    # print("Jalon 6")
-
-    # Avec la dtw étape 3
     path, sim = metrics.dtw_path(s_y1, s_y2, global_constraint="itakura", itakura_max_slope=r)
-
-    # print("Jalon 7")
 
     patho_stride_annotations = deal_stride.annotate(path, stride_ref_annotations)
 
-    #print("start 1", start_ref)
-
     comp = plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride_annotations, s_y1, s_y2, path,
                                            pied, freq=freq, comp=comp, start=start_ref, output=output)
-    print('RAS stride')
 
     return gyr_estimation, acc_estimation, patho_stride_annotations, comp
                              
@@ -63,7 +55,7 @@ def plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride
 
     fig = plt.figure(1, figsize=(8, 8))
 
-    # definitions for the axes
+    # axes definition
     left, bottom = 0.02, 0.1
     w_ts = h_ts = 0.2
     left_h = left + w_ts + 0.02
@@ -104,8 +96,8 @@ def plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride
     mi, ma = min(- 1 + gyr_estimation / (np.max(abs(gyr_estimation)))), max(acc_estimation / (np.max(acc_estimation)))
 
     ax_stride.vlines(patho_stride_annotations["HS"], mi, ma, 'black', label="Heel Strike")
-    # ax_stride.vlines(patho_stride_annotations["FF"], mi, ma, 'violet', label="Foot Flat")
-    # ax_stride.vlines(patho_stride_annotations["HO"], mi, ma, 'green', label="Heel Off")
+    ax_stride.vlines(patho_stride_annotations["FF"], mi, ma, 'violet', label="Foot Flat")
+    ax_stride.vlines(patho_stride_annotations["HO"], mi, ma, 'green', label="Heel Off")
     ax_stride.vlines(patho_stride_annotations["TO"], mi, ma, 'red', label="Toe Off")
     ax_stride.legend()
     ax_stride.grid()
@@ -175,13 +167,13 @@ def find_stride_ref(data, data_autre, pied, len_estimation, freq=100):
     return gyr_ref_decal[str(decal_estim)], acc_ref_decal[str(decal_estim)], stride_ref_decal_annotations[str(decal_estim)]
 
 
-def find_stride_estimation(data, data_autre, pied, freq=100):
+def find_stride_estimation(data_1, data_2, pied, freq=100):
                              
     x = data["Gyr_Y"]
     z = deal_stride.calculate_jerk_tot(data)
     t = data["PacketCounter"]
 
-    window = int(len_stride_estimation(data, data_autre, roll=1, freq=freq))
+    window = int(len_stride_estimation(data_1, data_2, roll=1, freq=freq))
 
     # matrix profile
     mp_profile = mp.compute(x.to_numpy(), windows=window)
@@ -204,18 +196,18 @@ def find_stride_estimation(data, data_autre, pied, freq=100):
     return x[start_ref:end_ref].to_numpy(), z[start_ref:end_ref], start_ref, end_ref
 
 
-def len_stride_estimation(data, data_autre, roll=1, freq=100):
+def len_stride_estimation(data_1, data_2, roll=1, freq=100):
                             
-    len_stride_data = len_stride(data, roll=roll, freq=freq)
-    len_stride_data_autre = len_stride(data_autre, roll=roll, freq=freq)
+    len_stride_data_1 = len_stride_one_side(data_1, roll=roll, freq=freq)
+    len_stride_data_2 = len_stride_one_side(data_2, roll=roll, freq=freq)
     
-    if len_stride_data / len_stride_data_autre >= 1.5:
-        return len_stride_data_autre
+    if len_stride_data_1 / len_stride_data_2 >= 1.5:
+        return len_stride_data_2
     else:
-        return len_stride_data
+        return len_stride_data_1
 
 
-def len_stride(data, roll=1, freq=100):
+def len_stride_one_side(data, roll=1, freq=100):
     x_11 = data["FreeAcc_X"]
     test_11 = x_11.to_numpy()
     x_12 = data["FreeAcc_Y"]
