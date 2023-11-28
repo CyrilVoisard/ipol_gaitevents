@@ -11,7 +11,7 @@ from scipy import stats
 from package import deal_stride
 
 
-def annotate_stride_estimation(data_1, data_2, pied, r=2, comp=["vide"], freq=100, output=0):
+def annotate_stride_estimation(data_1, data_2, foot, r=2, comp=["vide"], freq=100, output=0):
     """Plot the final figure for step detection and save the fig in the output folder as png file. 
 
     Parameters
@@ -24,10 +24,10 @@ def annotate_stride_estimation(data_1, data_2, pied, r=2, comp=["vide"], freq=10
         output {str} -- folder path for output fig
     """
                                  
-    gyr_estimation, acc_estimation, start_ref, end_ref = find_stride_estimation(data_1, data_2, pied, freq)
+    gyr_estimation, acc_estimation, start_ref, end_ref = find_stride_estimation(data_1, data_2, foot, freq)
     
     len_estimation = len(gyr_estimation)
-    gyr_ref, acc_ref, stride_ref_annotations = find_stride_ref(data, data_2, pied, len_estimation, freq=freq)
+    gyr_ref, acc_ref, stride_ref_annotations = find_stride_ref(data, data_2, foot, len_estimation, freq=freq)
 
     s_y1 = np.array([1 * acc_estimation / (np.max(acc_estimation)), 1 * gyr_estimation / (np.max(abs(gyr_estimation)))])
     s_y1 = s_y1.transpose()
@@ -40,12 +40,12 @@ def annotate_stride_estimation(data_1, data_2, pied, r=2, comp=["vide"], freq=10
     patho_stride_annotations = deal_stride.annotate(path, stride_ref_annotations)
 
     comp = plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride_annotations, s_y1, s_y2, path,
-                                           pied, freq=freq, comp=comp, start=start_ref, output=output)
+                                           foot, freq=freq, comp=comp, start=start_ref, output=output)
 
     return gyr_estimation, acc_estimation, patho_stride_annotations, comp
                              
 
-def plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride_annotations, s_y1, s_y2, path, pied,
+def plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride_annotations, s_y1, s_y2, path, foot,
                                    freq=100, comp=None, start=0, output=0):
 
     sz_1 = s_y1.shape[0]
@@ -103,9 +103,9 @@ def plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride
     ax_stride.grid()
 
     # figure save
-    if pied == 1:
+    if foot == 1:
         titre = "steps_right.svg"
-    if pied == 0:
+    if foot == 0:
         titre = "steps_left.svg"
     os.chdir(output)
     plt.savefig(titre, bbox_inches="tight")
@@ -113,9 +113,9 @@ def plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride
     return comp
 
 
-def find_stride_ref(data, data_autre, pied, len_estimation, freq=100):
+def find_stride_ref(data, data_autre, foot, len_estimation, freq=100):
     gyr_ref_decal, acc_ref_decal, stride_ref_decal_annotations = deal_stride.stride_sain_decal(int(len_estimation), freq)
-    gyr_estimation, acc_estimation, p, q = find_stride_estimation(data, data_autre, pied, freq=freq)
+    gyr_estimation, acc_estimation, p, q = find_stride_estimation(data, data_autre, foot, freq=freq)
 
     cout = []
     for j in range(0, len(gyr_estimation)):
@@ -167,29 +167,45 @@ def find_stride_ref(data, data_autre, pied, len_estimation, freq=100):
     return gyr_ref_decal[str(decal_estim)], acc_ref_decal[str(decal_estim)], stride_ref_decal_annotations[str(decal_estim)]
 
 
-def find_stride_estimation(data_1, data_2, pied, freq=100):
-                             
-    x = data["Gyr_Y"]
-    z = deal_stride.calculate_jerk_tot(data)
-    t = data["PacketCounter"]
+def find_stride_estimation(data_1, data_2, foot, freq=100):
+    """Find a signal subset of the foot of interest to be considered as the reference step. 
+    Selection using a matrix profile technique with an annotation vector. 
+    
+    Arguments:
+        data_1 {pandas Dataframe} -- dataframe with data from the foot sensor of interest
+        data_2 {pandas Dataframe} -- dataframe with data from the foot sensor of the other side
+        foot {int} -- size of the window center rolling. Default is 1, meaning no window rolling
+        freq {int} -- acquisition frequency (Hz)
 
+    Returns
+    -------
+    ndarray, ndarray, int, int
+       
+    """
+
+    # signals of interest: time, gyration in the axial plane, jerk norm
+    t = data_1["PacketCounter"]
+    x = data_1["Gyr_Y"]
+    z = deal_stride.calculate_jerk_tot(data)
+
+    # search window size : mean stride time estimation
     window = int(len_stride_estimation(data_1, data_2, roll=1, freq=freq))
 
     # matrix profile
     mp_profile = mp.compute(x.to_numpy(), windows=window)
 
+    # annotation vector for matrix profile in order to promote swing phase in the center of the window
     av = []
     x_norm = x / np.max(abs(x))
     z_norm = z / np.max(z)
     for i in range(len(x) - window + 1):
         av.append(np.sum(abs(x_norm[i + window // 3: i + 2 * window // 3])) # ** 2
                   + np.sum(abs(z_norm[i + window // 3: i + 2 * window // 3])))
-
     av = av / np.max(av)
-
     mp_profile = mp.transform.apply_av(mp_profile, "custom", av)
     mp_profile = mp.discover.motifs(mp_profile, k=1, use_cmp=True)
 
+    # extraction of the beginning and end of the sub-series which will be the reference stride
     start_ref = mp_profile['motifs'][0]["motifs"][0]
     end_ref = start_ref + window
 
@@ -197,10 +213,26 @@ def find_stride_estimation(data_1, data_2, pied, freq=100):
 
 
 def len_stride_estimation(data_1, data_2, roll=1, freq=100):
+    """Estimate the mean stride time from both feet data computed from autocorrelations. The first foot is the interest foot.  
+    The second foot acts as a safety net, in case autocorrelation is limiting on the interest foot. 
+    
+    Arguments:
+        data_1 {pandas Dataframe} -- dataframe with data from the foot sensor of interest
+        data_2 {pandas Dataframe} -- dataframe with data from the foot sensor of the other side
+        roll {int} -- size of the window center rolling. Default is 1, meaning no window rolling
+        freq {int} -- acquisition frequency (Hz)
+
+    Returns
+    -------
+    int
+        mean stride time estimation
+    """
                             
     len_stride_data_1 = len_stride_one_side(data_1, roll=roll, freq=freq)
     len_stride_data_2 = len_stride_one_side(data_2, roll=roll, freq=freq)
-    
+
+    # if the two estimates are too far apart, it's likely that one of the peak detections is faulty (the two estimates should be equal).
+    # if the foot of interest is defective, we take the lowest. 
     if len_stride_data_1 / len_stride_data_2 >= 1.5:
         return len_stride_data_2
     else:
@@ -208,19 +240,17 @@ def len_stride_estimation(data_1, data_2, roll=1, freq=100):
 
 
 def len_stride_one_side(data, roll=1, freq=100):
-    """Import and pre-process the data from a file.
-
+    """Estimate the mean stride time from one foot data computed from autocorrelations.
+    
     Arguments:
-        data {pandas Dataframe} -- da
-        start {int} -- start of the calibration period
-        end {int} -- end of the calibration period
-        order {int} -- order of the Butterworth low-pass filter
-        fc {int} -- cut-off frequency of the Butterworth low-pass filter
+        data {pandas Dataframe} -- dataframe with data from one of the foot sensor
+        roll {int} -- size of the window center rolling. Default is 1, meaning no window rolling
+        freq {int} -- acquisition frequency (Hz)
 
     Returns
     -------
-    Pandas dataframe
-        data
+    int
+        index of the first peak of the time series computed from autocorrelations of FreeAcc_X, FreeAcc_Y, FreeAcc_Z, and Gyr_Y
     """
     
     x_11 = data["FreeAcc_X"]
@@ -242,6 +272,7 @@ def len_stride_one_side(data, roll=1, freq=100):
 
     if len(index_pic) > 0:
       return index_pic[0]
+        
     else:
         return 0
 
