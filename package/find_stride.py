@@ -386,6 +386,18 @@ def indexes(y, thres=0.3, min_dist=1, thres_abs=False):
   
 
 def autocorr(f):
+    """Autocorrelation non-biased indicator.
+
+    Parameters
+    ----------
+    f -- ndarray 
+        1D data to compute autocorrelation.
+        
+    Returns
+    -------
+    acf -- ndarray
+        Array containing non-biased autocorrelation.
+    """
     N = len(f)
     fvi = np.fft.fft(f, n=2 * N)
     acf = np.real(np.fft.ifft(fvi * np.conjugate(fvi))[:N])
