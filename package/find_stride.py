@@ -8,7 +8,7 @@ from tslearn import metrics
 import dtwalign
 from scipy import stats
 
-from package import deal_stride #, validation
+from package import deal_stride
 
 
 def annotate_stride_estimation(data, data_autre, pied, r=2, type_sig="Gyr_Y", gr=False, exo=["vide"],
@@ -278,120 +278,10 @@ def find_stride_estimation(data, data_autre, pied, type_sig="Gyr_Y", gr=False, i
     return x[start_ref:end_ref].to_numpy(), z[start_ref:end_ref], start_ref, end_ref
 
 
-def plot_matrix_profile(mp_profile, x, z, window, pied, id_exp, gr=False, download=False, output=0):
-    fig_mat = plt.figure(figsize=(20, 10))
-    ax_mat = fig_mat.add_subplot(2, 1, 1)
-    ax_mat.plot(x.to_numpy())
-    ax_mat.plot(z + 1)
-    ax_mat.set_xlim([0, np.size(x.to_numpy())])
-    ax_mat.plot(x[mp_profile['motifs'][0]['motifs'][0]:mp_profile['motifs'][0]['motifs'][0] + window], 'black',
-                label='Motif')
-    ax_mat.plot(x[mp_profile['motifs'][0]['motifs'][1]:mp_profile['motifs'][0]['motifs'][1] + window], 'r',
-                label='Motif')
-    ax_mat.legend()
-    ax_mat.set_ylabel('Input signal')
-    ax_mat = fig_mat.add_subplot(2, 1, 2)
-    ax_mat.plot(mp_profile['cmp'])
-    ax_mat.set_xlim([0, np.size(x)])
-    ax_mat.set_ylabel('Corrected Matrix Profile')
-    ind = np.argmin(mp_profile['cmp'])
-    ax_mat.plot(ind, mp_profile['cmp'][ind], '*r')
-    ax_mat.legend(("Corrected matrix profile", "Minimum matrix profile value"))
-    if download:
-        # On enregistre la nouvelle figure
-        if pied == 1:
-            titre = id_exp + "_droit_matrix_profile.png"
-        if pied == 0:
-            titre = id_exp + "_gauche_matrix_profile.png"
-        os.chdir(output)
-        plt.savefig(titre, bbox_inches="tight")
-        plt.close('all')
-
-    return None
-
-
-def plot_autocorr_bilat(data_pied_gauche, data_pied_droit, id_exp, freq, output, roll=1):
-    # print("autocorr", freq)
-    fig, ax = plt.subplots(1, 3, figsize=(24, 6))  # En ligne
-
-    # Pied gauche
-    data = data_pied_gauche.copy()
-    x_11 = data["FreeAcc_X"]
-    test_11 = x_11.to_numpy()
-    x_12 = data["FreeAcc_Y"]
-    test_12 = x_12.to_numpy()
-    x_13 = data["FreeAcc_Z"]
-    test_13 = x_13.to_numpy()
-    x_2 = data["Gyr_Y"]
-    test_2 = x_2.to_numpy()
-    acf = (autocorr(test_11) / 3 + autocorr(test_12) / 3 + autocorr(test_13)) / 3 / 2 + autocorr(test_2) / 2
-
-    y = pd.DataFrame(acf)
-    y_mean = y.rolling(roll, center=True, win_type='cosine').mean()
-    y_mean = y_mean.fillna(0)
-    y_mean_np = y_mean.to_numpy().transpose()[0]
-
-    index_pic = autocorr_indexes(y_mean_np[:len(y_mean_np) // 4], freq=freq)
-    # print(len(y_mean_np) // 4, index_pic)
-
-    ax[0].plot(test_11 / max(abs(test_11)) + 4, label="FreeAcc_X")
-    ax[0].plot(test_12 / max(abs(test_12)) + 2, label="FreeAcc_Y")
-    ax[0].plot(test_13 / max(abs(test_13)), label="FreeAcc_Z")
-    ax[0].plot(test_2 / max(abs(test_2)) - 2, label="Gyr_Y")
-    ax[0].set_xlabel("Normalized signals - Left foot")
-    ax[0].set_yticks([])
-    ax[0].legend()
-
-    acf_toplot = acf[:min(len(acf) // 2, 1000)]
-
-    ax[2].plot(acf_toplot + 0.5, label="autocorrelation left")
-    ax[2].vlines(index_pic[0], 1.5, 0.1, 'r', '--')
-
-    # Pied gauche
-    data = data_pied_droit.copy()
-    x_11 = data["FreeAcc_X"]
-    test_11 = x_11.to_numpy()
-    x_12 = data["FreeAcc_Y"]
-    test_12 = x_12.to_numpy()
-    x_13 = data["FreeAcc_Z"]
-    test_13 = x_13.to_numpy()
-    x_2 = data["Gyr_Y"]
-    test_2 = x_2.to_numpy()
-    acf = (autocorr(test_11) / 3 + autocorr(test_12) / 3 + autocorr(test_13)) / 3 / 2 + autocorr(test_2) / 2
-
-    y = pd.DataFrame(acf)
-    y_mean = y.rolling(roll, center=True, win_type='cosine').mean()
-    y_mean = y_mean.fillna(0)
-    y_mean_np = y_mean.to_numpy().transpose()[0]
-
-    index_pic = autocorr_indexes(y_mean_np[:len(y_mean_np) // 4], freq=freq)
-
-    ax[1].plot(test_11 / max(abs(test_11)) + 4, label="FreeAcc_X")
-    ax[1].plot(test_12 / max(abs(test_12)) + 2, label="FreeAcc_Y")
-    ax[1].plot(test_13 / max(abs(test_13)), label="FreeAcc_Z")
-    ax[1].plot(test_2 / max(abs(test_2)) - 2, label="Gyr_Y")
-    ax[1].set_xlabel("Normalized signals - Right foot")
-    ax[1].set_yticks([])
-    ax[1].legend()
-
-    acf_toplot = acf[:min(len(acf) // 2, 1000)]
-
-    ax[2].plot(acf_toplot - 1, label="autocorrelation right")
-    ax[2].vlines(index_pic[0], 0, -1.6, 'r', '--', label="value with autocorrelation")
-    ax[2].set_xlabel("Autocorrelation")
-    ax[2].set_ylabel("Right foot            -            Left foot")
-    ax[2].set_yticks([])
-    ax[2].legend()
-
-    titre = id_exp + "_full_autocorrelation.png"
-    os.chdir(output)
-    plt.savefig(titre, bbox_inches="tight")
-    plt.close('all')
-
 
 def len_stride_estimation(data, data_autre, roll=1, str_gr=0, pied=100, id_exp='None',
                           freq=100, download=False, output=0):
-    # print("stride", freq)
+                            
     len_stride_data = len_stride(data, roll=1, freq=freq)
     len_stride_data_autre = len_stride(data_autre, roll=1, freq=freq)
 
@@ -423,7 +313,6 @@ def len_stride(data, roll=1, str_gr=0, pied=100, id_exp='None', freq=100, downlo
     y_mean = y_mean.fillna(0)
     y_mean_np = y_mean.to_numpy().transpose()[0]
 
-    # print("len", freq)
     index_pic = autocorr_indexes(y_mean_np[:len(y_mean_np) // 4], freq=freq)
 
     if len(index_pic) > 0:
@@ -450,7 +339,6 @@ def len_stride(data, roll=1, str_gr=0, pied=100, id_exp='None', freq=100, downlo
                 titre = id_exp + "_gauche_autocorrelation.png"
             os.chdir(output)
             plt.savefig(titre, bbox_inches="tight")
-            # plt.show()
             plt.close('all')
         return index_pic[0]
     else:
@@ -458,21 +346,18 @@ def len_stride(data, roll=1, str_gr=0, pied=100, id_exp='None', freq=100, downlo
 
 
 def autocorr_indexes(y, thres=0.7, min_dist=80, thres_abs=False, freq=100):
+  
     if isinstance(y, np.ndarray) and np.issubdtype(y.dtype, np.unsignedinteger):
         raise ValueError("y must be signed")
-    # print("indexes", freq)
+
     i = round(80*freq/100)
     thres = thres * (np.max(y[i:]) - np.max(np.min(y[i:i + np.argmax(y[i:])]), 0)) + np.max(
         np.min(y[i:i + np.argmax(y[i:])]), 0)
 
-    # print(i, thres)
-
-    # plt.plot(y)
-    # plt.show()
-
     index_list = indexes(y, thres=thres, min_dist=min_dist, thres_abs=True)
 
     return index_list[(index_list > i)]
+  
 
 def indexes(y, thres=0.3, min_dist=1, thres_abs=False):
     """Peak detection routine.
@@ -511,10 +396,8 @@ def indexes(y, thres=0.3, min_dist=1, thres_abs=False):
 
     # compute first order difference
     dy = np.diff(y)
-    # print("dy", dy)
 
     # propagate left and right values successively to fill all plateau pixels (0-value)
-    # print("where", np.where(dy == 0))
     zeros, = np.where(dy == 0)
 
     # check if the signal is totally flat
@@ -570,6 +453,7 @@ def indexes(y, thres=0.3, min_dist=1, thres_abs=False):
         peaks = np.arange(y.size)[~rem]
 
     return peaks
+  
 
 def autocorr(f):
     N = len(f)
