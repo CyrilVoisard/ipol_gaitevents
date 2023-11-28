@@ -11,8 +11,7 @@ from scipy import stats
 from package import deal_stride
 
 
-def annotate_stride_estimation(data, data_autre, pied, r=2, type_sig="Gyr_Y", gr=False, exo=["vide"],
-                               comp=["vide"], id_exp=0, freq=100, download=False, output=0):
+def annotate_stride_estimation(data, data_autre, pied, r=2, comp=["vide"], freq=100, output=0):
     """Plot the final figure for step detection and save the fig in the output folder as png file. 
 
     Parameters
@@ -25,14 +24,10 @@ def annotate_stride_estimation(data, data_autre, pied, r=2, type_sig="Gyr_Y", gr
         output {str} -- folder path for output fig
     """
                                  
-    gyr_estimation, acc_estimation, start_ref, end_ref = find_stride_estimation(data, data_autre, pied,
-                                                                                "Gyr_Y", gr, id_exp,
-                                                                                freq, download, output)
+    gyr_estimation, acc_estimation, start_ref, end_ref = find_stride_estimation(data, data_autre, pied, freq)
     
     len_estimation = len(gyr_estimation)
-    gyr_ref, acc_ref, stride_ref_annotations = find_stride_ref(data, data_autre, pied, len_estimation,
-                                                               type_sig="Gyr_Y", freq=freq,
-                                                               gr=gr)
+    gyr_ref, acc_ref, stride_ref_annotations = find_stride_ref(data, data_autre, pied, len_estimation, freq=freq)
 
     s_y1 = np.array([1 * acc_estimation / (np.max(acc_estimation)), 1 * gyr_estimation / (np.max(abs(gyr_estimation)))])
     s_y1 = s_y1.transpose()
@@ -52,15 +47,14 @@ def annotate_stride_estimation(data, data_autre, pied, r=2, type_sig="Gyr_Y", gr
     #print("start 1", start_ref)
 
     comp = plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride_annotations, s_y1, s_y2, path,
-                                           pied, id_exp, freq=freq, gr=gr, exo=None,
-                                           comp=comp, start=start_ref, download=download, output=output)
+                                           pied, freq=freq, comp=comp, start=start_ref, output=output)
     print('RAS stride')
 
     return gyr_estimation, acc_estimation, patho_stride_annotations, comp
                              
 
 def plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride_annotations, s_y1, s_y2, path, pied,
-                                    id_exp, freq=100, gr=False, exo=None, comp=None, start=0, download=False, output=0):
+                                   freq=100, comp=None, start=0, output=0):
 
     sz_1 = s_y1.shape[0]
     sz_2 = s_y2.shape[0]
@@ -150,10 +144,9 @@ def plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride
     return comp
 
 
-def find_stride_ref(data, data_autre, pied, len_estimation, type_sig="Gyr_Y", freq=100, gr=False, id_exp=0,
-                    download=False, output=0):
+def find_stride_ref(data, data_autre, pied, len_estimation, freq=100):
     gyr_ref_decal, acc_ref_decal, stride_ref_decal_annotations = deal_stride.stride_sain_decal(int(len_estimation), freq)
-    gyr_estimation, acc_estimation, p, q = find_stride_estimation(data, data_autre, pied, type_sig, gr, freq=freq)
+    gyr_estimation, acc_estimation, p, q = find_stride_estimation(data, data_autre, pied, freq=freq)
 
     cout = []
     for j in range(0, len(gyr_estimation)):
@@ -202,21 +195,18 @@ def find_stride_ref(data, data_autre, pied, len_estimation, type_sig="Gyr_Y", fr
 
     decal_estim = decal_estim % len(gyr_estimation)
 
-    return gyr_ref_decal[str(decal_estim)], acc_ref_decal[str(decal_estim)], stride_ref_decal_annotations[
-        str(decal_estim)]
+    return gyr_ref_decal[str(decal_estim)], acc_ref_decal[str(decal_estim)], stride_ref_decal_annotations[str(decal_estim)]
 
 
-def find_stride_estimation(data, data_autre, pied, type_sig="Gyr_Y", gr=False, id_exp=0, freq=100, download=False,
-                           output=0):
-    # print("find", freq)
+def find_stride_estimation(data, data_autre, pied, freq=100):
+                             
     x = data["Gyr_Y"]
     z = deal_stride.calculate_jerk_tot(data)
     t = data["PacketCounter"]
 
-    window = int(len_stride_estimation(data, data_autre, roll=1, pied=pied, id_exp=id_exp, freq=freq,
-                                       download=download, output=output))
+    window = int(len_stride_estimation(data, data_autre, roll=1, freq=freq))
 
-    # Avec le matrix profile
+    # matrix profile
     mp_profile = mp.compute(x.to_numpy(), windows=window)
 
     av = []
@@ -230,11 +220,6 @@ def find_stride_estimation(data, data_autre, pied, type_sig="Gyr_Y", gr=False, i
 
     mp_profile = mp.transform.apply_av(mp_profile, "custom", av)
     mp_profile = mp.discover.motifs(mp_profile, k=1, use_cmp=True)
-    plt.close()
-
-    if download:
-        plot_matrix_profile(mp_profile, x_norm, z_norm, window, pied, id_exp=id_exp, gr=gr, download=True,
-                            output=output)
 
     start_ref = mp_profile['motifs'][0]["motifs"][0]
     end_ref = start_ref + window
@@ -242,26 +227,18 @@ def find_stride_estimation(data, data_autre, pied, type_sig="Gyr_Y", gr=False, i
     return x[start_ref:end_ref].to_numpy(), z[start_ref:end_ref], start_ref, end_ref
 
 
-
-def len_stride_estimation(data, data_autre, roll=1, str_gr=0, pied=100, id_exp='None',
-                          freq=100, download=False, output=0):
+def len_stride_estimation(data, data_autre, roll=1, freq=100):
                             
-    len_stride_data = len_stride(data, roll=1, freq=freq)
-    len_stride_data_autre = len_stride(data_autre, roll=1, freq=freq)
-
-    if download:
-        if pied == 1:
-            plot_autocorr_bilat(data_autre, data, id_exp=id_exp, freq=freq, output=output)
-        if pied == 0:
-            plot_autocorr_bilat(data, data_autre, id_exp=id_exp, freq=freq, output=output)
+    len_stride_data = len_stride(data, roll=roll, freq=freq)
+    len_stride_data_autre = len_stride(data_autre, roll=roll, freq=freq)
+    
     if len_stride_data / len_stride_data_autre >= 1.5:
-        # print("autre", len_stride_data_autre)
         return len_stride_data_autre
     else:
         return len_stride_data
 
 
-def len_stride(data, roll=1, str_gr=0, pied=100, id_exp='None', freq=100, download=False, output=0):
+def len_stride(data, roll=1, freq=100):
     x_11 = data["FreeAcc_X"]
     test_11 = x_11.to_numpy()
     x_12 = data["FreeAcc_Y"]
@@ -280,41 +257,29 @@ def len_stride(data, roll=1, str_gr=0, pied=100, id_exp='None', freq=100, downlo
     index_pic = autocorr_indexes(y_mean_np[:len(y_mean_np) // 4], freq=freq)
 
     if len(index_pic) > 0:
-        if download:
-            fig, ax = plt.subplots(1, 2, figsize=(20, 7))  # En ligne
-            ax[0].plot(test_11 / max(abs(test_11)) + 4, label="FreeAcc_X")
-            ax[0].plot(test_12 / max(abs(test_12)) + 2, label="FreeAcc_Y")
-            ax[0].plot(test_13 / max(abs(test_13)), label="FreeAcc_Z")
-            ax[0].plot(test_2 / max(abs(test_2)) - 2, label="Gyr_Y")
-            ax[0].set_xlabel("Normalized signals")
-            ax[0].legend()
-
-            acf_toplot = acf[:min(len(acf) // 2, 1000)]
-            y = pd.DataFrame(acf_toplot)
-
-            ax[1].plot(acf_toplot, label="autocorrelation")
-            ax[1].plot(y.rolling(roll, center=True, win_type='cosine').mean(), label=f"mean with 50 points")
-            ax[1].vlines(index_pic[0], 1, -0.5, 'r', '--', label="value with autocorrelation")
-            ax[1].set_xlabel("Autocorrelation")
-            ax[1].legend()
-            if pied == 1:
-                titre = id_exp + "_droit_autocorrelation.png"
-            if pied == 0:
-                titre = id_exp + "_gauche_autocorrelation.png"
-            os.chdir(output)
-            plt.savefig(titre, bbox_inches="tight")
-            plt.close('all')
-        return index_pic[0]
+      return index_pic[0]
     else:
         return 0
 
 
-def autocorr_indexes(y, thres=0.7, min_dist=80, thres_abs=False, freq=100):
+def autocorr_indexes(y, thres=0.7, min_dist=80, freq=100):
+  """Find autocorrelation local maxima indexes.
+
+    Parameters
+    ----------
+    y {ndarray} -- containing non-biased autocorrelation.
+    thres {float} -- normalized threshold between [0., 1.]. Only the peaks with amplitude higher than the threshold will be detected.
+    min_dist {int} -- minimum distance between two peaks. 
+        
+    Returns
+    -------
+    ndarray containing the numeric indexes of the non-biased autocorrelation that were detected.
+    """
   
     if isinstance(y, np.ndarray) and np.issubdtype(y.dtype, np.unsignedinteger):
         raise ValueError("y must be signed")
 
-    i = round(80*freq/100)
+    i = round(min_dist*freq/100)
     thres = thres * (np.max(y[i:]) - np.max(np.min(y[i:i + np.argmax(y[i:])]), 0)) + np.max(
         np.min(y[i:i + np.argmax(y[i:])]), 0)
 
@@ -350,6 +315,7 @@ def indexes(y, thres=0.3, min_dist=1, thres_abs=False):
         Array containing the numeric indexes of the peaks that were detected.
         When using with Pandas DataFrames, iloc should be used to access the values at the returned positions.
     """
+  
     if isinstance(y, np.ndarray) and np.issubdtype(y.dtype, np.unsignedinteger):
         raise ValueError("y must be signed")
 
@@ -420,10 +386,24 @@ def indexes(y, thres=0.3, min_dist=1, thres_abs=False):
   
 
 def autocorr(f):
+  """Autocorrelation non-biased indicator.
+
+    Parameters
+    ----------
+    f -- ndarray 
+        1D data to compute autocorrelation.
+        
+    Returns
+    -------
+    acf -- ndarray
+        Array containing non-biased autocorrelation.
+    """
+  
     N = len(f)
     fvi = np.fft.fft(f, n=2 * N)
     acf = np.real(np.fft.ifft(fvi * np.conjugate(fvi))[:N])
     d = N - np.arange(N)
-    acf = acf / d # pour avoir un indicateur non biaisé
+    acf = acf / d  #  non biased indicator
     acf = acf / acf[0]
+  
     return acf
