@@ -12,16 +12,24 @@ from package import deal_stride
 
 
 def annotate_ref_stride(data_1, data_2, foot, r=2, comp=["vide"], freq=100, output=0):
-    """Plot the final figure for stride detection and save the fig in the output folder as png file. 
-
-    Parameters
-    ----------
-        steps_lim {dataframe} -- pandas dataframe with the detected gait events
-        seg_lim {dataframe} -- pandas dataframe with phases events
-        data_rf {dataframe} -- pandas dataframe with data from the right foot sensor
-        data_lf {dataframe} -- pandas dataframe with data from the left foot sensor
-        freq {int} -- acquisition frequency 
+    """Find, annote and plot a signal subset of the foot of interest to be considered as the reference stride. 
+    Annotation of the model stride with the gait events (TO, HS, FF, HO). 
+    
+    Arguments:
+        data_1 {pandas Dataframe} -- dataframe with data from the foot sensor of interest
+        data_2 {pandas Dataframe} -- dataframe with data from the foot sensor of the other side
+        foot {int} -- 0 for left, 1 for right
+        r {float} -- size of the Itakura parallelogram to restrict the DTW
+        comp {} -- 
+        freq {int} -- acquisition frequency (Hz)
         output {str} -- folder path for output fig
+
+    Returns
+    -------
+    ndarray, ndarray, ndarray
+       gyration time series of the reference stride {ndarray}
+       jerk time series of the reference stride {ndarray}
+       annotation of gait events of the reference stride in the trial {ndarray}
     """
                                  
     gyr_ref, acc_ref, start_ref, end_ref = find_ref_stride(data_1, data_2, foot, freq)
@@ -37,15 +45,16 @@ def annotate_ref_stride(data_1, data_2, foot, r=2, comp=["vide"], freq=100, outp
 
     path, sim = metrics.dtw_path(s_y1, s_y2, global_constraint="itakura", itakura_max_slope=r)
 
-    patho_stride_annotations = deal_stride.annotate(path, stride_model_annotations)
+    ref_stride_annotations = deal_stride.annotate(path, stride_model_annotations)
 
-    comp = plot_annotate_ref_stride(gyr_ref, acc_ref, patho_stride_annotations, s_y1, s_y2, path,
+    # comp = 
+    plot_annotate_ref_stride(gyr_ref, acc_ref, ref_stride_annotations, s_y1, s_y2, path,
                                            foot, freq=freq, comp=comp, start=start_ref, output=output)
 
-    return gyr_ref, acc_ref, patho_stride_annotations, comp
+    return gyr_ref, acc_ref, ref_stride_annotations, comp
                              
 
-def plot_annotate_ref_stride(gyr_ref, acc_ref, patho_stride_annotations, s_y1, s_y2, path, foot,
+def plot_annotate_ref_stride(gyr_ref, acc_ref, ref_stride_annotations, s_y1, s_y2, path, foot,
                                    freq=100, comp=None, start=0, output=0):
 
     sz_1 = s_y1.shape[0]
@@ -95,10 +104,10 @@ def plot_annotate_ref_stride(gyr_ref, acc_ref, patho_stride_annotations, s_y1, s
     ax_stride.plot(- 1 + gyr_ref / (np.max(abs(gyr_ref))), "y-", linewidth=3.)
     mi, ma = min(- 1 + gyr_ref / (np.max(abs(gyr_ref)))), max(acc_ref / (np.max(acc_ref)))
 
-    ax_stride.vlines(patho_stride_annotations["HS"], mi, ma, 'black', label="Heel Strike")
-    ax_stride.vlines(patho_stride_annotations["FF"], mi, ma, 'violet', label="Foot Flat")
-    ax_stride.vlines(patho_stride_annotations["HO"], mi, ma, 'green', label="Heel Off")
-    ax_stride.vlines(patho_stride_annotations["TO"], mi, ma, 'red', label="Toe Off")
+    ax_stride.vlines(ref_stride_annotations["HS"], mi, ma, 'black', label="Heel Strike")
+    ax_stride.vlines(ref_stride_annotations["FF"], mi, ma, 'violet', label="Foot Flat")
+    ax_stride.vlines(ref_stride_annotations["HO"], mi, ma, 'green', label="Heel Off")
+    ax_stride.vlines(ref_stride_annotations["TO"], mi, ma, 'red', label="Toe Off")
     ax_stride.legend()
     ax_stride.grid()
 
@@ -110,7 +119,7 @@ def plot_annotate_ref_stride(gyr_ref, acc_ref, patho_stride_annotations, s_y1, s
     os.chdir(output)
     plt.savefig(titre, bbox_inches="tight")
 
-    return comp
+    # return comp
 
 
 def find_model_stride(data_1, data_2, foot, len_ref, freq=100):
