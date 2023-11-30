@@ -172,6 +172,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     freq = int(args.freq)
+
+    # quality index tab
+    q1 = [0, 0]  # protocol observation quality [only one u-turn, no steps ]
+    q2 = []  # intrinsic detection quality
+    q3 = []  # extrinsic detection quality 
     
     # load data
     data_lb = import_data.import_XSens(os.path.join(data_WD, args.i0))
@@ -179,10 +184,10 @@ if __name__ == "__main__":
     data_lf = import_data.import_XSens(os.path.join(data_WD, args.i2))
     
     # gait events and steps detection
-    steps_rf, steps_lf, steps_lim_full = dtw_detection.steps_detection_full(data_rf, data_lf, freq, output=data_WD)
+    steps_lim_full, q2 = dtw_detection.steps_detection_full(data_rf, data_lf, freq, output=data_WD)
     
     # phase boundaries detection and figure
-    seg_lim_full, regression = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
+    seg_lim_full, regression, q1 = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
 
     # quality index and 
     qi, steps_lim_corrected, seg_lim_corrected = quality.print_quality_index(steps_lim_full, seg_lim_full, output=data_WD)
