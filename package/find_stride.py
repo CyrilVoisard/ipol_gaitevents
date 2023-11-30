@@ -11,7 +11,7 @@ from scipy import stats
 from package import deal_stride
 
 
-def annotate_ref_stride(data_1, data_2, foot, r=2, comp=["vide"], freq=100, output=0):
+def annotate_ref_stride(data_1, data_2, foot, r=2, freq=100, output=0):
     """Find, annote and plot a signal subset of the foot of interest to be considered as the reference stride. 
     Annotation of the model stride with the gait events (TO, HS, FF, HO). 
     
@@ -20,7 +20,6 @@ def annotate_ref_stride(data_1, data_2, foot, r=2, comp=["vide"], freq=100, outp
         data_2 {pandas Dataframe} -- dataframe with data from the foot sensor of the other side
         foot {int} -- 0 for left, 1 for right
         r {float} -- size of the Itakura parallelogram to restrict the DTW
-        comp {} -- 
         freq {int} -- acquisition frequency (Hz)
         output {str} -- folder path for output fig
 
@@ -47,15 +46,14 @@ def annotate_ref_stride(data_1, data_2, foot, r=2, comp=["vide"], freq=100, outp
 
     ref_stride_annotations = deal_stride.annotate(path, stride_model_annotations)
 
-    # comp = 
     plot_annotate_ref_stride(gyr_ref, acc_ref, ref_stride_annotations, s_y1, s_y2, path,
-                                           foot, freq=freq, comp=comp, start=start_ref, output=output)
+                                           foot, freq=freq, start=start_ref, output=output)
 
-    return gyr_ref, acc_ref, ref_stride_annotations, comp
+    return gyr_ref, acc_ref, ref_stride_annotations
                              
 
 def plot_annotate_ref_stride(gyr_ref, acc_ref, ref_stride_annotations, s_y1, s_y2, path, foot,
-                                   freq=100, comp=None, start=0, output=0):
+                                   freq=100, start=0, output=0):
 
     sz_1 = s_y1.shape[0]
     sz_2 = s_y2.shape[0]
@@ -118,8 +116,6 @@ def plot_annotate_ref_stride(gyr_ref, acc_ref, ref_stride_annotations, s_y1, s_y
         titre = "stride_left.svg"
     os.chdir(output)
     plt.savefig(titre, bbox_inches="tight")
-
-    # return comp
 
 
 def find_model_stride(data_1, data_2, foot, len_ref, freq=100):
