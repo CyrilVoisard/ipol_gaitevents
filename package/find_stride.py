@@ -49,7 +49,9 @@ def annotate_ref_stride(data_1, data_2, foot, r=2, freq=100, output=0):
     plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_y2, path,
                                            foot, freq=freq, start=start_ref, output=output)
 
-    return gyr_ref, jerk_ref, ref_stride_annotations
+    q2_stride = 50
+
+    return gyr_ref, jerk_ref, ref_stride_annotations, q2_stride
                              
 
 def plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_y2, path, foot, freq=100, start=0, output=0):
