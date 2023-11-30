@@ -13,7 +13,7 @@ from package import deal_stride
 
 def annotate_ref_stride(data_1, data_2, foot, r=2, freq=100, output=0):
     """Find, annote and plot a signal subset of the foot of interest to be considered as the reference stride. 
-    Annotation of the model stride with the gait events (TO, HS, FF, HO). 
+    Annotation of the reference stride with the gait events (TO, HS, FF, HO). 
     
     Arguments:
         data_1 {pandas Dataframe} -- dataframe with data from the foot sensor of interest
@@ -31,35 +31,51 @@ def annotate_ref_stride(data_1, data_2, foot, r=2, freq=100, output=0):
        annotation of gait events of the reference stride in the trial {ndarray}
     """
                                  
-    gyr_ref, acc_ref, start_ref, end_ref = find_ref_stride(data_1, data_2, foot, freq)
+    gyr_ref, jerk_ref, start_ref, end_ref = find_ref_stride(data_1, data_2, foot, freq)
     
     len_ref = len(gyr_ref)
-    gyr_model, acc_model, stride_model_annotations = find_model_stride(data_1, data_2, foot, len_ref, freq=freq)
+    gyr_model, jerk_model, stride_model_annotations = find_model_stride(data_1, data_2, foot, len_ref, freq=freq)
 
-    s_y1 = np.array([1 * acc_ref / (np.max(acc_ref)), 1 * gyr_ref / (np.max(abs(gyr_ref)))])
+    s_y1 = np.array([1 * jerk_ref / (np.max(jerk_ref)), 1 * gyr_ref / (np.max(abs(gyr_ref)))])
     s_y1 = s_y1.transpose()
 
-    s_y2 = np.array([1 * acc_model / (np.max(acc_model)), 1 * gyr_ref / (np.max(abs(gyr_model)))])
+    s_y2 = np.array([1 * jerk_model / (np.max(jerk_model)), 1 * gyr_ref / (np.max(abs(gyr_model)))])
     s_y2 = s_y2.transpose()
 
     path, sim = metrics.dtw_path(s_y1, s_y2, global_constraint="itakura", itakura_max_slope=r)
 
     ref_stride_annotations = deal_stride.annotate(path, stride_model_annotations)
 
-    plot_annotate_ref_stride(gyr_ref, acc_ref, ref_stride_annotations, s_y1, s_y2, path,
+    plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_y2, path,
                                            foot, freq=freq, start=start_ref, output=output)
 
-    return gyr_ref, acc_ref, ref_stride_annotations
+    return gyr_ref, jerk_ref, ref_stride_annotations
                              
 
-def plot_annotate_ref_stride(gyr_ref, acc_ref, ref_stride_annotations, s_y1, s_y2, path, foot,
-                                   freq=100, start=0, output=0):
+def plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_y2, path, foot, freq=100, start=0, output=0):
+    """Plot the reference stride and its construction. 
+    Annotation of the reference stride with the gait events (TO, HS, FF, HO). 
+    
+    Arguments:
+        gyr_ref {ndarray} -- array with the gyration from the reference stride
+        jerk_ref {ndarray} -- array with the jerk from the reference stride
+        ref_stride_annotations {} -- 
+        s_y1 {} -- 
+        s_y2 {} -- 
+        path {} -- 
+        foot {int} -- 0 for left, 1 for right
+        freq {int} -- acquisition frequency (Hz)
+        output {str} -- folder path for output fig
+
+    Returns
+    -------
+    fig
+    """
 
     sz_1 = s_y1.shape[0]
     sz_2 = s_y2.shape[0]
 
     plt.close('all')
-
     fig = plt.figure(1, figsize=(8, 8))
 
     # axes definition
@@ -80,6 +96,7 @@ def plot_annotate_ref_stride(gyr_ref, acc_ref, ref_stride_annotations, s_y1, s_y
     ax_s_x = plt.axes(rect_s_x, sharex=ax_gram)
     ax_s_y = plt.axes(rect_s_y)
 
+    # matrix computation
     mat = cdist(s_y1, s_y2)
 
     ax_gram.imshow(mat, origin='lower')
@@ -98,10 +115,11 @@ def plot_annotate_ref_stride(gyr_ref, acc_ref, ref_stride_annotations, s_y1, s_y
     ax_s_y.axis("off")
     ax_s_y.set_ylim((0, sz_1 - 1))
 
-    ax_stride.plot(acc_ref / (np.max(acc_ref)), "b-", linewidth=3.)
+    ax_stride.plot(jerk_ref / (np.max(jerk_ref)), "b-", linewidth=3.)
     ax_stride.plot(- 1 + gyr_ref / (np.max(abs(gyr_ref))), "y-", linewidth=3.)
-    mi, ma = min(- 1 + gyr_ref / (np.max(abs(gyr_ref)))), max(acc_ref / (np.max(acc_ref)))
+    mi, ma = min(- 1 + gyr_ref / (np.max(abs(gyr_ref)))), max(jerk_ref / (np.max(jerk_ref)))
 
+    # annotations computation
     ax_stride.vlines(ref_stride_annotations["HS"], mi, ma, 'black', label="Heel Strike")
     ax_stride.vlines(ref_stride_annotations["FF"], mi, ma, 'violet', label="Foot Flat")
     ax_stride.vlines(ref_stride_annotations["HO"], mi, ma, 'green', label="Heel Off")
@@ -137,15 +155,15 @@ def find_model_stride(data_1, data_2, foot, len_ref, freq=100):
        annotation of gait events of the found model stride in the trial {ndarray}
     """
     
-    gyr_model_decal, acc_model_decal, stride_model_decal_annotations = deal_stride.stride_sain_decal(int(len_ref), freq)
-    gyr_ref, acc_ref, p, q = find_ref_stride(data_1, data_2, foot, freq=freq)
+    gyr_model_decal, jerk_model_decal, stride_model_decal_annotations = deal_stride.stride_sain_decal(int(len_ref), freq)
+    gyr_ref, jerk_ref, p, q = find_ref_stride(data_1, data_2, foot, freq=freq)
 
     cout = []
     for j in range(0, len(gyr_ref)):
         u = gyr_ref / (np.max(abs(gyr_ref)))
         v = gyr_model_decal[str(j)] / (np.max(abs(gyr_model_decal[str(j)])))
-        w = acc_ref / (np.max(abs(acc_ref)))
-        h = acc_model_decal[str(j)] / (np.max(abs(acc_model_decal[str(j)])))
+        w = jerk_ref / (np.max(abs(jerk_ref)))
+        h = jerk_model_decal[str(j)] / (np.max(abs(jerk_model_decal[str(j)])))
         cout.append(stats.pearsonr(u, v[0:len(u)])[0] + stats.pearsonr(w, h[0:len(w)])[0])
 
     cout = np.array(cout)
@@ -187,7 +205,7 @@ def find_model_stride(data_1, data_2, foot, len_ref, freq=100):
 
     decal_estim = decal_estim % len(gyr_ref)
 
-    return gyr_model_decal[str(decal_estim)], acc_model_decal[str(decal_estim)], stride_model_decal_annotations[str(decal_estim)]
+    return gyr_model_decal[str(decal_estim)], jerk_model_decal[str(decal_estim)], stride_model_decal_annotations[str(decal_estim)]
 
 
 def find_ref_stride(data_1, data_2, foot, freq=100):
