@@ -16,11 +16,11 @@ def steps_detection_full(data_rf, data_lf, freq, output):
     return steps_rf, steps_lf, pd.DataFrame(full, columns=["Foot", "Phase", "HO", "TO", "HS", "FF", "Score"])
 
 
-def steps_detection(data, data_other_side, foot, freq, output):
-    x = data["Gyr_Y"]
-    z = deal_stride.calculate_jerk_tot(data, freq)
+def steps_detection(data_1, data_2, foot, freq, output):
+    x = data_1["Gyr_Y"]
+    z = deal_stride.calculate_jerk_tot(data_1, freq)
 
-    gyr_ok, acc_ok, stride_annotations_ok, comp = find_stride.annotate_stride_estimation(data, data_other_side, foot, freq, output=output)
+    gyr_ok, acc_ok, stride_annotations_ok, comp = find_stride.annotate_ref_stride(data_1, data_2, foot, freq, output=output)
 
     cost = matrix_cost(x, z, gyr_ok, acc_ok)
 
