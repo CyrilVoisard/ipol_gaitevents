@@ -11,8 +11,8 @@ from scipy import stats
 from package import deal_stride
 
 
-def annotate_stride_estimation(data_1, data_2, foot, r=2, comp=["vide"], freq=100, output=0):
-    """Plot the final figure for step detection and save the fig in the output folder as png file. 
+def annotate_ref_stride(data_1, data_2, foot, r=2, comp=["vide"], freq=100, output=0):
+    """Plot the final figure for stride detection and save the fig in the output folder as png file. 
 
     Parameters
     ----------
@@ -24,28 +24,28 @@ def annotate_stride_estimation(data_1, data_2, foot, r=2, comp=["vide"], freq=10
         output {str} -- folder path for output fig
     """
                                  
-    gyr_estimation, acc_estimation, start_ref, end_ref = find_stride_estimation(data_1, data_2, foot, freq)
+    gyr_ref, acc_ref, start_ref, end_ref = find_ref_stride(data_1, data_2, foot, freq)
     
-    len_estimation = len(gyr_estimation)
-    gyr_ref, acc_ref, stride_ref_annotations = find_stride_ref(data_1, data_2, foot, len_estimation, freq=freq)
+    len_ref = len(gyr_ref)
+    gyr_model, acc_model, stride_model_annotations = find_model_stride(data_1, data_2, foot, len_ref, freq=freq)
 
-    s_y1 = np.array([1 * acc_estimation / (np.max(acc_estimation)), 1 * gyr_estimation / (np.max(abs(gyr_estimation)))])
+    s_y1 = np.array([1 * acc_ref / (np.max(acc_ref)), 1 * gyr_ref / (np.max(abs(gyr_ref)))])
     s_y1 = s_y1.transpose()
 
-    s_y2 = np.array([1 * acc_ref / (np.max(acc_ref)), 1 * gyr_ref / (np.max(abs(gyr_ref)))])
+    s_y2 = np.array([1 * acc_model / (np.max(acc_model)), 1 * gyr_ref / (np.max(abs(gyr_model)))])
     s_y2 = s_y2.transpose()
 
     path, sim = metrics.dtw_path(s_y1, s_y2, global_constraint="itakura", itakura_max_slope=r)
 
-    patho_stride_annotations = deal_stride.annotate(path, stride_ref_annotations)
+    patho_stride_annotations = deal_stride.annotate(path, stride_model_annotations)
 
-    comp = plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride_annotations, s_y1, s_y2, path,
+    comp = plot_annotate_ref_stride(gyr_ref, acc_ref, patho_stride_annotations, s_y1, s_y2, path,
                                            foot, freq=freq, comp=comp, start=start_ref, output=output)
 
-    return gyr_estimation, acc_estimation, patho_stride_annotations, comp
+    return gyr_ref, acc_ref, patho_stride_annotations, comp
                              
 
-def plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride_annotations, s_y1, s_y2, path, foot,
+def plot_annotate_ref_stride(gyr_ref, acc_ref, patho_stride_annotations, s_y1, s_y2, path, foot,
                                    freq=100, comp=None, start=0, output=0):
 
     sz_1 = s_y1.shape[0]
@@ -91,9 +91,9 @@ def plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride
     ax_s_y.axis("off")
     ax_s_y.set_ylim((0, sz_1 - 1))
 
-    ax_stride.plot(acc_estimation / (np.max(acc_estimation)), "b-", linewidth=3.)
-    ax_stride.plot(- 1 + gyr_estimation / (np.max(abs(gyr_estimation))), "y-", linewidth=3.)
-    mi, ma = min(- 1 + gyr_estimation / (np.max(abs(gyr_estimation)))), max(acc_estimation / (np.max(acc_estimation)))
+    ax_stride.plot(acc_ref / (np.max(acc_ref)), "b-", linewidth=3.)
+    ax_stride.plot(- 1 + gyr_ref / (np.max(abs(gyr_ref))), "y-", linewidth=3.)
+    mi, ma = min(- 1 + gyr_ref / (np.max(abs(gyr_ref)))), max(acc_ref / (np.max(acc_ref)))
 
     ax_stride.vlines(patho_stride_annotations["HS"], mi, ma, 'black', label="Heel Strike")
     ax_stride.vlines(patho_stride_annotations["FF"], mi, ma, 'violet', label="Foot Flat")
@@ -104,25 +104,43 @@ def plot_annotate_stride_estimation(gyr_estimation, acc_estimation, patho_stride
 
     # figure save
     if foot == 1:
-        titre = "steps_right.svg"
+        titre = "stride_right.svg"
     if foot == 0:
-        titre = "steps_left.svg"
+        titre = "stride_left.svg"
     os.chdir(output)
     plt.savefig(titre, bbox_inches="tight")
 
     return comp
 
 
-def find_stride_ref(data, data_autre, foot, len_estimation, freq=100):
-    gyr_ref_decal, acc_ref_decal, stride_ref_decal_annotations = deal_stride.stride_sain_decal(int(len_estimation), freq)
-    gyr_estimation, acc_estimation, p, q = find_stride_estimation(data, data_autre, foot, freq=freq)
+def find_model_stride(data_1, data_2, foot, len_ref, freq=100):
+    """Find a signal subset of the foot of interest to be considered as the model stride. 
+    Annotation of the model stride with the gait events (TO, HS, FF, HO). 
+    
+    Arguments:
+        data_1 {pandas Dataframe} -- dataframe with data from the foot sensor of interest
+        data_2 {pandas Dataframe} -- dataframe with data from the foot sensor of the other side
+        foot {int} -- 0 for left, 1 for right
+        len_ref {int} -- size of the attended model stride
+        freq {int} -- acquisition frequency (Hz)
+
+    Returns
+    -------
+    ndarray, ndarray, ndarray
+       gyration time series of the found model stride {ndarray}
+       jerk time series of the found model stride {ndarray}
+       annotation of gait events of the found model stride in the trial {ndarray}
+    """
+    
+    gyr_model_decal, acc_model_decal, stride_model_decal_annotations = deal_stride.stride_sain_decal(int(len_ref), freq)
+    gyr_ref, acc_ref, p, q = find_ref_stride(data_1, data_2, foot, freq=freq)
 
     cout = []
-    for j in range(0, len(gyr_estimation)):
-        u = gyr_estimation / (np.max(abs(gyr_estimation)))
-        v = gyr_ref_decal[str(j)] / (np.max(abs(gyr_ref_decal[str(j)])))
-        w = acc_estimation / (np.max(abs(acc_estimation)))
-        h = acc_ref_decal[str(j)] / (np.max(abs(acc_ref_decal[str(j)])))
+    for j in range(0, len(gyr_ref)):
+        u = gyr_ref / (np.max(abs(gyr_ref)))
+        v = gyr_model_decal[str(j)] / (np.max(abs(gyr_model_decal[str(j)])))
+        w = acc_ref / (np.max(abs(acc_ref)))
+        h = acc_model_decal[str(j)] / (np.max(abs(acc_model_decal[str(j)])))
         cout.append(stats.pearsonr(u, v[0:len(u)])[0] + stats.pearsonr(w, h[0:len(w)])[0])
 
     cout = np.array(cout)
@@ -136,8 +154,8 @@ def find_stride_ref(data, data_autre, foot, len_estimation, freq=100):
 
     if len(pic_cout) == 3:
         p1_3 = pic_cout[2] - pic_cout[0]
-        p2_1 = pic_cout[0] + len(gyr_estimation) - pic_cout[1]
-        p3_2 = pic_cout[1] + len(gyr_estimation) - pic_cout[2]
+        p2_1 = pic_cout[0] + len(gyr_ref) - pic_cout[1]
+        p3_2 = pic_cout[1] + len(gyr_ref) - pic_cout[2]
         if (p1_3 <= p2_1) & (p1_3 <= p3_2):
             decal_estim = pic_cout[1]
         else:
@@ -150,37 +168,40 @@ def find_stride_ref(data, data_autre, foot, len_estimation, freq=100):
             max_cout = max(cout[pic_cout[1]], cout[pic_cout[0]])
             cout_norm_0 = max(0, cout[pic_cout[0]] - 0.75 * max_cout)
             cout_norm_1 = max(0, cout[pic_cout[1]] - 0.75 * max_cout)
-            if abs(pic_cout[0] - pic_cout[1]) < len(gyr_estimation) // 2:
+            if abs(pic_cout[0] - pic_cout[1]) < len(gyr_ref) // 2:
                 cout1 = cout_norm_1/(cout_norm_0 + cout_norm_1)
                 decal_estim = int(min(pic_cout[0], pic_cout[1]) + abs(cout1 * (pic_cout[0] - pic_cout[1])))
             else:
                 cout0 = cout_norm_0 / (cout_norm_1 + cout_norm_0)
-                ecart = min(pic_cout[0], pic_cout[1]) + len(gyr_estimation) - max(pic_cout[0], pic_cout[1])
+                ecart = min(pic_cout[0], pic_cout[1]) + len(gyr_ref) - max(pic_cout[0], pic_cout[1])
                 decal_estim = int(max(pic_cout[0], pic_cout[1]) + ecart * cout0)
         else:
             if len(pic_cout) == 0:
                 pic_cout = [0]
             decal_estim = int(np.median(pic_cout))
 
-    decal_estim = decal_estim % len(gyr_estimation)
+    decal_estim = decal_estim % len(gyr_ref)
 
-    return gyr_ref_decal[str(decal_estim)], acc_ref_decal[str(decal_estim)], stride_ref_decal_annotations[str(decal_estim)]
+    return gyr_model_decal[str(decal_estim)], acc_model_decal[str(decal_estim)], stride_model_decal_annotations[str(decal_estim)]
 
 
-def find_stride_estimation(data_1, data_2, foot, freq=100):
-    """Find a signal subset of the foot of interest to be considered as the reference step. 
+def find_ref_stride(data_1, data_2, foot, freq=100):
+    """Find a signal subset of the foot of interest to be considered as the reference stride. 
     Selection using a matrix profile technique with an annotation vector. 
     
     Arguments:
         data_1 {pandas Dataframe} -- dataframe with data from the foot sensor of interest
         data_2 {pandas Dataframe} -- dataframe with data from the foot sensor of the other side
-        foot {int} -- size of the window center rolling. Default is 1, meaning no window rolling
+        foot {int} -- 0 for left, 1 for right
         freq {int} -- acquisition frequency (Hz)
 
     Returns
     -------
     ndarray, ndarray, int, int
-       
+       gyration time series of the found reference stride {ndarray}
+       jerk time series of the found reference stride {ndarray}
+       beginning sample number of the found reference stride in the trial {int}
+       ending sample number of the found reference stride in the trial {int}
     """
 
     # signals of interest: time, gyration in the axial plane, jerk norm
