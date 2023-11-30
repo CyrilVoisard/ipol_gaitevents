@@ -8,19 +8,21 @@ from package import find_stride, deal_stride, plot_stepdetection
 
 
 def steps_detection_full(data_rf, data_lf, freq, output):
-    steps_rf = steps_detection(data_rf, data_lf, 1, freq, output)
-    steps_lf = steps_detection(data_lf, data_rf, 0, freq, output)
+    steps_rf, q1_rf = steps_detection(data_rf, data_lf, 1, freq, output)
+    steps_lf, q1_lf = steps_detection(data_lf, data_rf, 0, freq, output)
     
     full = np.concatenate((steps_rf, steps_lf))
+    q2 = (q2_rf + q2_lf)/2
 
-    return steps_rf, steps_lf, pd.DataFrame(full, columns=["Foot", "Phase", "HO", "TO", "HS", "FF", "Score"])
+    return pd.DataFrame(full, columns=["Foot", "Phase", "HO", "TO", "HS", "FF", "Score"]), q2
 
 
-def steps_detection(data_1, data_2, foot, freq, output):
+def steps_detection(data_1, data_2, foot, freq, output)
+    
     x = data_1["Gyr_Y"]
     z = deal_stride.calculate_jerk_tot(data_1, freq)
 
-    gyr_ok, acc_ok, stride_annotations_ok = find_stride.annotate_ref_stride(data_1, data_2, foot, freq, output=output)
+    gyr_ok, acc_ok, stride_annotations_ok, q2_side = find_stride.annotate_ref_stride(data_1, data_2, foot, freq, output=output)
 
     cost = matrix_cost(x, z, gyr_ok, acc_ok)
 
@@ -69,23 +71,17 @@ def steps_detection(data_1, data_2, foot, freq, output):
             step.append(ff)
             step.append(sim_min)
             steps_list.append(step)
-        #else:
-         #   print("Step déjà rentré : ", ho, to, hs, ff)
-          #  print(F[to:hs], F[hs:to])
 
     steps_list = np.array(steps_list)
     steps_list = steps_list[steps_list[:, 3].argsort()]
 
-    return steps_list
+    return steps_list, q2_side
 
 
 def affine_annotate_dtw(x, y, start, gyr, acc, stride_annotations, disp=False):
     L = len(gyr)
     end = start + L
-
-    dx = np.array(np.diff(x).tolist() + [0])
-    dgyr = np.array(np.diff(gyr).tolist() + [0])
-
+    
     # parameters
     s_y1 = np.array([y[start:end] / np.max(y[start:end]),
                      x[start:end] / np.max(abs(x[start:end]))])
