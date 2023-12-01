@@ -15,7 +15,7 @@ def steps_detection_full(data_rf, data_lf, freq, output):
     steps_lim = pd.DataFrame(full, columns=["Foot", "Phase", "HO", "TO", "HS", "FF", "Score"])
     q2 = (q2_rf + q2_lf)/2
 
-    return steps_lim
+    return steps_lim, q2
 
 
 def steps_detection(data_1, data_2, foot, freq, output):
