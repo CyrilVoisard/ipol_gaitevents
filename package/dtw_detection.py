@@ -8,8 +8,8 @@ from package import find_stride, deal_stride, plot_stepdetection
 
 
 def steps_detection_full(data_rf, data_lf, freq, output):
-    steps_rf, q1_rf = steps_detection(data_rf, data_lf, 1, freq, output)
-    steps_lf, q1_lf = steps_detection(data_lf, data_rf, 0, freq, output)
+    steps_rf, q2_rf = steps_detection(data_rf, data_lf, 1, freq, output)
+    steps_lf, q2_lf = steps_detection(data_lf, data_rf, 0, freq, output)
     
     full = np.concatenate((steps_rf, steps_lf))
     steps_lim = pd.DataFrame(full, columns=["Foot", "Phase", "HO", "TO", "HS", "FF", "Score"])
