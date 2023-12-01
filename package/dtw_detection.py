@@ -12,9 +12,10 @@ def steps_detection_full(data_rf, data_lf, freq, output):
     steps_lf, q1_lf = steps_detection(data_lf, data_rf, 0, freq, output)
     
     full = np.concatenate((steps_rf, steps_lf))
+    steps_lim = pd.DataFrame(full, columns=["Foot", "Phase", "HO", "TO", "HS", "FF", "Score"])
     q2 = (q2_rf + q2_lf)/2
 
-    return pd.DataFrame(full, columns=["Foot", "Phase", "HO", "TO", "HS", "FF", "Score"]), q2
+    return steps_lim, q2
 
 
 def steps_detection(data_1, data_2, foot, freq, output)
