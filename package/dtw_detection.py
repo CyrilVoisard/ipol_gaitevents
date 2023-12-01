@@ -18,7 +18,7 @@ def steps_detection_full(data_rf, data_lf, freq, output):
     return steps_lim
 
 
-def steps_detection(data_1, data_2, foot, freq, output)
+def steps_detection(data_1, data_2, foot, freq, output):
     
     x = data_1["Gyr_Y"]
     z = deal_stride.calculate_jerk_tot(data_1, freq)
