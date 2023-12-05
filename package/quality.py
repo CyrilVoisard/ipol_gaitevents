@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from scipy import stats
 
 
-def print_quality_index(steps_lim_full, seg_lim, output):
+def print_all_quality_index(steps_lim_full, seg_lim, output):
     """Compute the quality index of the trial gait events detection (between 0 and 100) and produce a picture of the number surrounded by an appropriately colored circle. 
     Add quality index formula ? 
 
@@ -30,18 +30,19 @@ def print_quality_index(steps_lim_full, seg_lim, output):
     qi_corrected = compute_quality_index(steps_lim_corrected[steps_lim_corrected["Correct"]==1], seg_lim_corrected)
     path_corrected = os.path.join(output, "quality_index_corrected.svg")
     plot_quality_index(qi_corrected, path_corrected)
+
+    plt.savefig(path, dpi=80, transparent=True, bbox_inches="tight")
   
     return qi_corrected, steps_lim_corrected, seg_lim_corrected
 
 
-def plot_quality_index(q1, q2, q3, path):
+def plot_quality_index(q, ax):
     """Compute the quality index of the trial gait events detection (between 0 and 100) and produce a picture of the number surrounded by an appropriately colored circle. 
-    Add quality index formula ? 
 
     Parameters
     ----------
         qi {int} -- quality index 
-        path {str} -- file path for output fig
+        ax {} -- ax in output fig
     """
   
     # plot qi
@@ -64,8 +65,7 @@ def plot_quality_index(q1, q2, q3, path):
         else:
             ax.annotate(qi,xy=( 1.18*np.pi, .5),color=colormap(.05+0.90*(qi/max_qi)),fontsize=50)
   
-    plt.savefig(path, dpi=80,
-                    transparent=True, bbox_inches="tight")
+    return ax
     
 
 def correct_detection(steps_lim, seg_lim):
