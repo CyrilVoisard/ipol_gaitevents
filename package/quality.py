@@ -25,7 +25,7 @@ def print_quality_index(steps_lim_full, seg_lim, output):
     path_raw = os.path.join(output, "quality_index_raw.svg")
     plot_quality_index(qi_raw, path_raw)
   
-    steps_lim_corrected, seg_lim_corrected = correct_steps_lim(steps_lim_full, seg_lim)
+    steps_lim_corrected, seg_lim_corrected = correct_detection(steps_lim_full, seg_lim)
   
     qi_corrected = compute_quality_index(steps_lim_corrected[steps_lim_corrected["Correct"]==1], seg_lim_corrected)
     path_corrected = os.path.join(output, "quality_index_corrected.svg")
@@ -34,7 +34,7 @@ def print_quality_index(steps_lim_full, seg_lim, output):
     return qi_corrected, steps_lim_corrected, seg_lim_corrected
 
 
-def plot_quality_index(qi, path):
+def plot_quality_index(q1, q2, q3, path):
     """Compute the quality index of the trial gait events detection (between 0 and 100) and produce a picture of the number surrounded by an appropriately colored circle. 
     Add quality index formula ? 
 
@@ -66,37 +66,9 @@ def plot_quality_index(qi, path):
   
     plt.savefig(path, dpi=80,
                     transparent=True, bbox_inches="tight")
-
-
-def compute_quality_index(steps_lim, seg_lim):
-  """Compute the quality index of the trial gait events detection (between 0 and 100)
-  Add quality index formula ? 
-
-    Parameters
-    ----------
-        steps_lim {dataframe} -- pandas dataframe with gait events
-        seg_lim {dataframe} -- pandas dataframe with phases events 
-
-    Returns
-    -------
-        qi {int} -- quality index 
-    """
-  
-  # estimation of stride alternation
-  steps_lim_sort = steps_lim.sort_values(by = ['HS', 'TO'])
-  alt_go = steps_lim_sort[steps_lim_sort['HS'] < int(seg_lim[1])]['Foot'].tolist()
-  alt_back = steps_lim_sort[steps_lim_sort['HS'] > int(seg_lim[2])]['Foot'].tolist()
-  i = 0
-  for k in range(len(alt_go)-1):
-      i = i + abs(alt_go[k+1]-alt_go[k])
-  for k in range(len(alt_back)-1):
-      i = i + abs(alt_back[k+1]-alt_back[k])
-  qi = round(100*i/(len(alt_go) + len(alt_back)-2))
-
-  return qi
     
 
-def correct_steps_lim(steps_lim, seg_lim):
+def correct_detection(steps_lim, seg_lim):
   """Correction of the steps_lim dataframe. U-turn steps 
 
     Parameters
@@ -123,8 +95,40 @@ def correct_steps_lim(steps_lim, seg_lim):
       
   steps_lim_corrected = steps_lim.copy()
   steps_lim_corrected["Correct"] = correct
+
+  # 
+  q1_1 = 100 - 10*len(steps_lim_corrected["Correct"]==0])
+  #
+  q3 = compute_q3(steps_lim_corrected[steps_lim_corrected["Correct"]==1], seg_lim_corrected)
     
-  return steps_lim_corrected, seg_lim_corrected
+  return steps_lim_corrected, seg_lim_corrected, q1_1, q3
+
+
+def compute_q3(steps_lim, seg_lim):
+  """Compute the quality index of the trial gait events detection (between 0 and 100) referring to extrinsic quality : right-left step alternation
+
+    Parameters
+    ----------
+        steps_lim {dataframe} -- pandas dataframe with gait events
+        seg_lim {dataframe} -- pandas dataframe with phases events 
+
+    Returns
+    -------
+        qi {int} -- quality index 
+    """
+  
+  # estimation of stride alternation
+  steps_lim_sort = steps_lim.sort_values(by = ['HS', 'TO'])
+  alt_go = steps_lim_sort[steps_lim_sort['HS'] < int(seg_lim[1])]['Foot'].tolist()
+  alt_back = steps_lim_sort[steps_lim_sort['HS'] > int(seg_lim[2])]['Foot'].tolist()
+  i = 0
+  for k in range(len(alt_go)-1):
+      i = i + abs(alt_go[k+1]-alt_go[k])
+  for k in range(len(alt_back)-1):
+      i = i + abs(alt_back[k+1]-alt_back[k])
+  q3 = round(100*i/(len(alt_go) + len(alt_back)-2))
+
+  return q3
 
 
 def get_bornes(steps_lim, seg_lim):
