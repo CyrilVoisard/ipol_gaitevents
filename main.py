@@ -190,7 +190,8 @@ if __name__ == "__main__":
     seg_lim_full, regression, q1[0] = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
 
     # quality index and 
-    qi, steps_lim_corrected, seg_lim_corrected = quality.print_quality_index(steps_lim_full, seg_lim_full, output=data_WD)
+    steps_lim_corrected, seg_lim_corrected, q1[1], q3 = quality.correct_detection(steps_lim_full, seg_lim_full)
+    # quality.plot_quality_index(q1, q2, q3, output=data_WD)
 
     # print phases and figure
     print_seg_detection(seg_lim_corrected, freq)
