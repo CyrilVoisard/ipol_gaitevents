@@ -97,7 +97,7 @@ def correct_detection(steps_lim, seg_lim):
   steps_lim_corrected["Correct"] = correct
 
   # 
-  q1_1 = 100 - 10*len(steps_lim_corrected["Correct"]==0])
+  q1_1 = 100 - 10*len(steps_lim_corrected[steps_lim_corrected["Correct"]==0])
   #
   q3 = compute_q3(steps_lim_corrected[steps_lim_corrected["Correct"]==1], seg_lim_corrected)
     
