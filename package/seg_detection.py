@@ -53,6 +53,11 @@ def plot_seg_detection(seg_lim, data_lb, regression, freq, output):
 
 
 def seg_detection(data_lb, steps_lim, freq):
+
+    # qualité : respect du protocole avec une seule rotation pouvant correspondre à un demi tour détectée au niveau du tour.
+    q = 100
+
+    # boundaries
     start = int(np.min(steps_lim["TO"]))
     end = int(np.max(steps_lim["HS"]))
     
@@ -85,7 +90,7 @@ def seg_detection(data_lb, steps_lim, freq):
     # seg = [0, start_uturn, end_uturn, len(data_lb["Gyr_X"])]
     seg = [0, int(100*x_inter_go), int(100*x_inter_back), len(data_lb["Gyr_X"])]
 
-    return seg, [a_go, b_go, mid_index, a_u, b_u, a_back, b_back]
+    return seg, [a_go, b_go, mid_index, a_u, b_u, a_back, b_back], q
 
 
 def signals_for_seg(data_lb):
