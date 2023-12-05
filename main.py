@@ -174,9 +174,9 @@ if __name__ == "__main__":
     freq = int(args.freq)
 
     # quality index tab
-    q1 = [0, 0]  # protocol observation quality [only one u-turn, no steps ]
-    q2 = []  # intrinsic detection quality
-    q3 = []  # extrinsic detection quality 
+    q1 = [0, 0]  # protocol observation quality [only one u-turn, no steps outside the limits]
+    q2 = [0, 0]  # intrinsic detection quality [autocorrelation coefficient, DTW coefficient]
+    q3 = [0]  # extrinsic detection quality [right-left step alternation]
     
     # load data
     data_lb = import_data.import_XSens(os.path.join(data_WD, args.i0))
@@ -187,7 +187,7 @@ if __name__ == "__main__":
     steps_lim_full, q2 = dtw_detection.steps_detection_full(data_rf, data_lf, freq, output=data_WD)
     
     # phase boundaries detection and figure
-    seg_lim_full, regression, q1 = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
+    seg_lim_full, regression, q1[0] = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
 
     # quality index and 
     qi, steps_lim_corrected, seg_lim_corrected = quality.print_quality_index(steps_lim_full, seg_lim_full, output=data_WD)
