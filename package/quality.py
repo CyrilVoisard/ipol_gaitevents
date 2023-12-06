@@ -22,7 +22,7 @@ def print_all_quality_index(q1, q2, q3, output):
         steps_lim_corrected {dataframe} -- pandas dataframe with gait events after elimination of the extra trial steps
     """
 
-    fig = plt.figure(figsize=(6, 6))
+    fig = plt.figure(figsize=(6, 5))
     gs = GridSpec(nrows=3, ncols=2, width_ratios = [3, 1])
     ax0 = fig.add_subplot(gs[:, 0])
     ax1 = fig.add_subplot(gs[0, 1])
