@@ -42,7 +42,7 @@ def plot_quality_index(q, ax):
 
     Parameters
     ----------
-        qi {int} -- quality index 
+        q {int} -- quality index 
         ax {} -- ax in output fig
     """
   
@@ -58,10 +58,10 @@ def plot_quality_index(q, ax):
   
     ax.set_axis_off()
     ax.set_ylim(0,1.5)
-    if qi<10:
+    if q<10:
         ax.annotate(q, xy=( 1.25*np.pi, .3), color=colormap(.05+0.90*(q/max_q)), fontsize=50)
     else :
-        if  qi == 100: 
+        if  q == 100: 
             ax.annotate(q, xy=(1.11*np.pi, .7), color=colormap(.05+0.90*(q/max_q)), fontsize=50)
         else:
             ax.annotate(q, xy=(1.18*np.pi, .5), color=colormap(.05+0.90*(q/max_q)), fontsize=50)
