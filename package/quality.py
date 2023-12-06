@@ -25,6 +25,7 @@ def print_all_quality_index(q1, q2, q3, output):
     fig = plt.figure(figsize=(6, 5))
     gs = GridSpec(nrows=3, ncols=2, width_ratios = [3, 1])
     ax0 = fig.add_subplot(gs[:, 0])
+    ax0 = plot_quality_index(q_mean, ax0)
     ax1 = fig.add_subplot(gs[0, 1])
     ax1 = fig.add_subplot(gs[1, 1])
     ax1 = fig.add_subplot(gs[2, 1])
