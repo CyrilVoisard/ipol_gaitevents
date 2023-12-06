@@ -57,7 +57,7 @@ def plot_quality_index(q, ax, scale):
     # f, ax = plt.subplots(nrows=1, ncols=1, figsize=(4,4),subplot_kw=dict(projection='polar'))
     #Scatter version
     yval = np.ones_like(xval)
-    ax.scatter(xval, yval, c=xval, s=300, cmap=colormap, norm=norm, linewidths=1)
+    ax.scatter(xval, yval, c=xval, s=300/scale, cmap=colormap, norm=norm, linewidths=1)
   
     ax.set_axis_off()
     ax.set_ylim(0,1.5)
