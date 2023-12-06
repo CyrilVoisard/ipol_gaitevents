@@ -191,7 +191,7 @@ if __name__ == "__main__":
 
     # quality index and 
     steps_lim_corrected, seg_lim_corrected, q1[1], q3 = quality.correct_detection(steps_lim_full, seg_lim_full)
-    quality.plot_quality_index(q1, q2, q3, output=data_WD)
+    quality.print_all_quality_index(q1, q2, q3, output=data_WD)
 
     # print phases and figure
     print_seg_detection(seg_lim_corrected, freq)
