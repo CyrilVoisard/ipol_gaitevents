@@ -28,10 +28,6 @@ def print_all_quality_index(q1, q2, q3, output):
     ax1 = fig.add_subplot(gs[0, 1])
     ax1 = fig.add_subplot(gs[1, 1])
     ax1 = fig.add_subplot(gs[2, 1])
-    
-    ax2.plot(time, score)
-    ax3 = fig.add_axes([0.6, 0.6, 0.2, 0.2])
-    ax3.hist(distribution)
 
     path = os.path.join(output, "quality_index_raw.svg")
 
