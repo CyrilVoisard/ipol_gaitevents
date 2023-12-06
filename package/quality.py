@@ -33,8 +33,6 @@ def print_all_quality_index(q1, q2, q3, output):
 
     plt.savefig(path, dpi=80, transparent=True, bbox_inches="tight")
   
-    return qi_corrected, steps_lim_corrected, seg_lim_corrected
-
 
 def plot_quality_index(q, ax):
     """Compute the quality index of the trial gait events detection (between 0 and 100) and produce a picture of the number surrounded by an appropriately colored circle. 
