@@ -24,11 +24,11 @@ def print_all_quality_index(q1, q2, q3, output):
 
     fig = plt.figure(figsize=(6, 5))
     gs = GridSpec(nrows=3, ncols=2, width_ratios = [3, 1])
-    ax0 = fig.add_subplot(gs[:, 0])
+    ax0 = fig.add_subplot(gs[:, 0], subplot_kw=dict(projection='polar'))
     ax0 = plot_quality_index(q_mean, ax0)
-    ax1 = fig.add_subplot(gs[0, 1])
-    ax1 = fig.add_subplot(gs[1, 1])
-    ax1 = fig.add_subplot(gs[2, 1])
+    ax1 = fig.add_subplot(gs[0, 1],subplot_kw=dict(projection='polar'))
+    ax1 = fig.add_subplot(gs[1, 1],subplot_kw=dict(projection='polar'))
+    ax1 = fig.add_subplot(gs[2, 1], subplot_kw=dict(projection='polar'))
 
     path = os.path.join(output, "quality_index_raw.svg")
 
@@ -49,7 +49,7 @@ def plot_quality_index(q, ax):
     xval = np.arange(0, 2*np.pi*(.05+0.90*(qi/max_qi)), 0.01)
     colormap = plt.get_cmap("RdYlGn")
     norm = mpl.colors.Normalize(0.0, 2*np.pi)
-    f, ax = plt.subplots(nrows=1, ncols=1, figsize=(4,4),subplot_kw=dict(projection='polar'))
+    # f, ax = plt.subplots(nrows=1, ncols=1, figsize=(4,4),subplot_kw=dict(projection='polar'))
     #Scatter version
     yval = np.ones_like(xval)
     ax.scatter(xval, yval, c=xval, s=300, cmap=colormap, norm=norm, linewidths=0)
