@@ -2,10 +2,11 @@ import os
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from matplotlib.gridspec import GridSpec
 from scipy import stats
 
 
-def print_all_quality_index(steps_lim_full, seg_lim, output):
+def print_all_quality_index(q1, q2, q3, output):
     """Compute the quality index of the trial gait events detection (between 0 and 100) and produce a picture of the number surrounded by an appropriately colored circle. 
     Add quality index formula ? 
 
@@ -21,15 +22,18 @@ def print_all_quality_index(steps_lim_full, seg_lim, output):
         steps_lim_corrected {dataframe} -- pandas dataframe with gait events after elimination of the extra trial steps
     """
 
-    qi_raw = compute_quality_index(steps_lim_full, seg_lim)
-    path_raw = os.path.join(output, "quality_index_raw.svg")
-    plot_quality_index(qi_raw, path_raw)
-  
-    steps_lim_corrected, seg_lim_corrected = correct_detection(steps_lim_full, seg_lim)
-  
-    qi_corrected = compute_quality_index(steps_lim_corrected[steps_lim_corrected["Correct"]==1], seg_lim_corrected)
-    path_corrected = os.path.join(output, "quality_index_corrected.svg")
-    plot_quality_index(qi_corrected, path_corrected)
+    fig = plt.figure(figsize=(7, 7))
+    gs = GridSpec(nrows=3, ncols=2)
+    ax0 = fig.add_subplot(gs[:, 0])
+    ax1 = fig.add_subplot(gs[0, 1])
+    ax1 = fig.add_subplot(gs[1, 1])
+    ax1 = fig.add_subplot(gs[2, 1])
+    
+    ax2.plot(time, score)
+    ax3 = fig.add_axes([0.6, 0.6, 0.2, 0.2])
+    ax3.hist(distribution)
+
+    path = os.path.join(output, "quality_index_raw.svg")
 
     plt.savefig(path, dpi=80, transparent=True, bbox_inches="tight")
   
