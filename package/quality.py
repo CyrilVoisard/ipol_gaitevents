@@ -22,25 +22,25 @@ def print_all_quality_index(q1, q2, q3, output):
         steps_lim_corrected {dataframe} -- pandas dataframe with gait events after elimination of the extra trial steps
     """
 
-    q_mean = round(1/3 * (np.mean(q1) + np.mean(q2) + np.mean(q3)), 0)
+    q_mean = round(1/3 * (np.mean(q1) + np.mean(q2) + np.mean(q3)))
 
     fig = plt.figure(figsize=(6, 5))
     gs = GridSpec(nrows=3, ncols=2, width_ratios = [3, 1])
     ax0 = fig.add_subplot(gs[:, 0], projection='polar')
-    ax0 = plot_quality_index(q_mean, ax0)
+    ax0 = plot_quality_index(q_mean, ax0, scale = 1)
     ax1 = fig.add_subplot(gs[0, 1], projection='polar')
-    ax1 = plot_quality_index(round(np.mean(q1), 0), ax1)
+    ax1 = plot_quality_index(round(np.mean(q1)), ax1, scale = 3)
     ax2 = fig.add_subplot(gs[1, 1], projection='polar')
-    ax2 = plot_quality_index(round(np.mean(q2), 0), ax2)
+    ax2 = plot_quality_index(round(np.mean(q2)), ax2, scale = 3)
     ax3 = fig.add_subplot(gs[2, 1], projection='polar')
-    ax3 = plot_quality_index(round(np.mean(q3), 0), ax3)
+    ax3 = plot_quality_index(round(np.mean(q3)), ax3, scale = 3)
 
     path = os.path.join(output, "quality_index_raw.svg")
 
     plt.savefig(path, dpi=80, transparent=True, bbox_inches="tight")
   
 
-def plot_quality_index(q, ax):
+def plot_quality_index(q, ax, scale):
     """Compute the quality index of the trial gait events detection (between 0 and 100) and produce a picture of the number surrounded by an appropriately colored circle. 
 
     Parameters
@@ -57,17 +57,17 @@ def plot_quality_index(q, ax):
     # f, ax = plt.subplots(nrows=1, ncols=1, figsize=(4,4),subplot_kw=dict(projection='polar'))
     #Scatter version
     yval = np.ones_like(xval)
-    ax.scatter(xval, yval, c=xval, s=300, cmap=colormap, norm=norm, linewidths=0)
+    ax.scatter(xval, yval, c=xval, s=300, cmap=colormap, norm=norm, linewidths=1)
   
     ax.set_axis_off()
     ax.set_ylim(0,1.5)
     if q<10:
-        ax.annotate(q, xy=( 1.25*np.pi, .3), color=colormap(.05+0.90*(q/max_q)), fontsize=50)
+        ax.annotate(q, xy=( 1.25*np.pi, .3), color=colormap(.05+0.90*(q/max_q)), fontsize=50/scale)
     else :
         if  q == 100: 
-            ax.annotate(q, xy=(1.11*np.pi, .7), color=colormap(.05+0.90*(q/max_q)), fontsize=50)
+            ax.annotate(q, xy=(1.11*np.pi, .7), color=colormap(.05+0.90*(q/max_q)), fontsize=50/scale)
         else:
-            ax.annotate(q, xy=(1.18*np.pi, .5), color=colormap(.05+0.90*(q/max_q)), fontsize=50)
+            ax.annotate(q, xy=(1.18*np.pi, .5), color=colormap(.05+0.90*(q/max_q)), fontsize=50/scale)
   
     return ax
     
