@@ -66,7 +66,7 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
                                       (len(data_rf)-seg_lim[3])/freq,  # width
                                       1,  # height
                                       alpha=0.1, color="k"))
-    ax[1].text(seg_lim[3]/freq + (seg_lim[4]-seg_lim[3])/(2*freq), 0.5, 'waiting', fontsize = 9, horizontalalignment='center', verticalalignment='center')
+    ax[1].text(seg_lim[3]/freq + (len(data_rf)-seg_lim[3])/(2*freq), 0.5, 'waiting', fontsize = 9, horizontalalignment='center', verticalalignment='center')
 
     ax[0].set(xlabel='Time (s)', ylabel='Gyr ML')
     ax[0].set_title(label = name + "Left Foot", weight='bold')
