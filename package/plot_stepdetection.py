@@ -38,13 +38,14 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
                                       seg_lim[0]/freq,  # width
                                       1,  # height
                                       alpha=0.1, color="k"))
-    ax[1].text(0.22, 0.79, 'Test', fontsize = 14, fontweight='bold')
+    ax[1].text(seg_lim[0]/(2*freq), 0.5, 'waiting phase', fontsize = 14, fontweight='bold')
     
     # Phase 1: go
     ax[1].add_patch(patches.Rectangle((seg_lim[0]/freq, 0),  # (x,y)
                                       (seg_lim[1]-seg_lim[0])/freq,  # width
                                       1,  # height
                                       alpha=0.2, color="k"))
+    ax[1].text((seg_lim[2]+seg_lim[1])/(2*freq), 0.5, 'straight phase (go)', fontsize = 14, fontweight='bold')
 
     # Phase 2: u-turn
     ax[1].add_patch(patches.Rectangle((seg_lim[1]/freq, 0),  # (x,y)
