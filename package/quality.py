@@ -33,7 +33,7 @@ def print_all_quality_index(q1, q2, q3, output):
     ax1 = plot_quality_index(round(np.mean(q1)), ax1, scale = 3)
     ax1.set_title("Protocol quality score", fontsize = 10)
     label_position=ax1.get_rlabel_position()
-    ax1.text(np.radians(label_position+10),ax.get_rmax()/2.,'My label',rotation=label_position,ha='center',va='center')
+    ax1.text(np.radians(label_position+10),ax1.get_rmax()/2.,'My label',rotation=label_position,ha='center',va='center')
     ax2 = fig.add_subplot(gs[1, 1], projection='polar')
     ax2 = plot_quality_index(round(np.mean(q2)), ax2, scale = 3)
     ax2.set_title("Intrinsec quality score", fontsize = 10)
