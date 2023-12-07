@@ -63,6 +63,7 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
                                       alpha=0.1, color="k"))
 
     ax[0].set(xlabel='Time (s)', ylabel='Gyr ML', title=name + "Left Foot")
+    ax[0].set_title(weight='bold')
     ax[0].xaxis.set_tick_params(labelsize=12)
     ax[1].set(ylabel='Phases')
     ax[2].set(xlabel='Time (s)', ylabel='Gyr ML', title=name + "Left Foot")
