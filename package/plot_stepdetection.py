@@ -62,11 +62,12 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
                                       1,  # height
                                       alpha=0.1, color="k"))
 
-    ax[0].set(xlabel='Time (s)', ylabel='Gyr ML', title=name + "Left Foot")
+    ax[0].set(xlabel='Time (s)', ylabel='Gyr ML')
     ax[0].set_title(label = name + "Left Foot", weight='bold')
     ax[0].xaxis.set_tick_params(labelsize=12)
-    ax[1].set(ylabel='Phases')
-    ax[2].set(xlabel='Time (s)', ylabel='Gyr ML', title=name + "Left Foot")
+    ax[1].set(ylabel='Phases', weight='bold')
+    ax[2].set(xlabel='Time (s)', ylabel='Gyr ML')
+    ax[2].set_title(label = name + "Right Foot", weight='bold')
     ax[2].xaxis.set_tick_params(labelsize=12)
 
     # ---------------------------- Left foot data ---------------------------------------------
@@ -194,11 +195,13 @@ def plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output, c
     ax[2].grid()
     ax[3].grid()
 
-    ax[0].set(ylabel='Jerk total', title=name + "Left Foot")
+    ax[0].set(ylabel='Jerk total')
+    ax[0].set_title(label = name + "Left Foot", weight='bold')
     ax[0].yaxis.set_tick_params(labelsize=12)
     ax[1].set(xlabel='Time (s)', ylabel='Gyr ML')
     ax[1].xaxis.set_tick_params(labelsize=12)
-    ax[2].set(ylabel='Jerk total', title=name + "Right Foot")
+    ax[2].set(ylabel='Jerk total')
+    ax[2].set_title(label = name + "Right Foot", weight='bold')
     ax[2].yaxis.set_tick_params(labelsize=12)
     ax[3].set(xlabel='Time (s)', ylabel='Gyr ML')
     ax[3].xaxis.set_tick_params(labelsize=12)
