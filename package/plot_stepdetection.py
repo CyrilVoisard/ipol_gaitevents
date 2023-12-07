@@ -38,32 +38,35 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
                                       seg_lim[0]/freq,  # width
                                       1,  # height
                                       alpha=0.1, color="k"))
-    ax[1].text(seg_lim[0]/(freq), 0.5, 'waiting phase', fontsize = 9, horizontalalignment='center', verticalalignment='center')
+    ax[1].text(seg_lim[0]/(2*freq), 0.5, 'waiting', fontsize = 9, horizontalalignment='center', verticalalignment='center')
     
     # Phase 1: go
     ax[1].add_patch(patches.Rectangle((seg_lim[0]/freq, 0),  # (x,y)
                                       (seg_lim[1]-seg_lim[0])/freq,  # width
                                       1,  # height
                                       alpha=0.2, color="k"))
-    ax[1].text(seg_lim[1]/freq + (seg_lim[2]-seg_lim[1])/(2*freq), 0.5, 'straight phase (go)', fontsize = 9, horizontalalignment='center', verticalalignment='center')
+    ax[1].text(seg_lim[0]/freq + (seg_lim[1]-seg_lim[0])/(2*freq), 0.5, 'straight (go)', fontsize = 9, horizontalalignment='center', verticalalignment='center')
 
     # Phase 2: u-turn
     ax[1].add_patch(patches.Rectangle((seg_lim[1]/freq, 0),  # (x,y)
                                       (seg_lim[2]-seg_lim[1])/freq,  # width
                                       1,  # height
                                       alpha=0.3, color="k"))
+    ax[1].text(seg_lim[1]/freq + (seg_lim[2]-seg_lim[1])/(2*freq), 0.5, 'u-turn', fontsize = 9, horizontalalignment='center', verticalalignment='center')
 
     # Phase 3: back
     ax[1].add_patch(patches.Rectangle((seg_lim[2]/freq, 0),  # (x,y)
                                       (seg_lim[3]-seg_lim[2])/freq,  # width
                                       1,  # height
                                       alpha=0.2, color="k"))
+    ax[1].text(seg_lim[2]/freq + (seg_lim[3]-seg_lim[2])/(2*freq), 0.5, 'straight (back)', fontsize = 9, horizontalalignment='center', verticalalignment='center')
 
     # Phase 4: waiting
     ax[1].add_patch(patches.Rectangle((seg_lim[3]/freq, 0),  # (x,y)
                                       (len(data_rf)-seg_lim[3])/freq,  # width
                                       1,  # height
                                       alpha=0.1, color="k"))
+    ax[1].text(seg_lim[3]/freq + (seg_lim[4]-seg_lim[3])/(2*freq), 0.5, 'waiting', fontsize = 9, horizontalalignment='center', verticalalignment='center')
 
     ax[0].set(xlabel='Time (s)', ylabel='Gyr ML')
     ax[0].set_title(label = name + "Left Foot", weight='bold')
