@@ -38,6 +38,8 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
                                       seg_lim[0]/freq,  # width
                                       1,  # height
                                       alpha=0.1, color="k"))
+    ax[1].
+    
     # Phase 1: go
     ax[1].add_patch(patches.Rectangle((seg_lim[0]/freq, 0),  # (x,y)
                                       (seg_lim[1]-seg_lim[0])/freq,  # width
@@ -65,7 +67,7 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
     ax[0].set(xlabel='Time (s)', ylabel='Gyr ML')
     ax[0].set_title(label = name + "Left Foot", weight='bold')
     ax[0].xaxis.set_tick_params(labelsize=12)
-    ax[1].set(ylabel='Phases', weight='bold')
+    ax[1].set(ylabel='Phases')
     ax[2].set(xlabel='Time (s)', ylabel='Gyr ML')
     ax[2].set_title(label = name + "Right Foot", weight='bold')
     ax[2].xaxis.set_tick_params(labelsize=12)
