@@ -62,7 +62,7 @@ def seg_detection(data_lb, steps_lim, freq):
     t_full, angle_x_full = signals_for_seg(data_lb)
 
     # qualité : respect du protocole avec une seule rotation pouvant correspondre à un demi tour détectée au niveau du tour.
-    count = 0
+    count = -1
     for i in range(len(angle_x_full)-1):
         if (angle_x_full[i] - 90)*(angle_x_full[i+1] - 90) < 0:
             count = count + 1
