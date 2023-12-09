@@ -5,7 +5,7 @@ from datetime import datetime
 
 def json_report(seg_lim, steps_lim, freq, output):
     dict_events = dict()
-    dict_events["Detection date"] = datetime.now()
+    dict_events["Detection date"] = str(datetime.now())
     dict_events["Freq"] = freq
     
     dict_events["TrialBoundaries"] = [int(seg_lim[0]), int(seg_lim[3])]
