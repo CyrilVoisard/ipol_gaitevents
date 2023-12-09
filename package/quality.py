@@ -39,7 +39,7 @@ def print_all_quality_index(q1, q2, q3, output):
     ax3 = plot_quality_index(round(np.mean(q3)), ax3, scale = 3)
     ax3.text(0.7, 0.33, 'Extrinsec quality score', fontsize = 9, fontweight='bold', transform=plt.gcf().transFigure)
 
-    path = os.path.join(output, "quality_index_raw.svg")
+    path = os.path.join(output, "quality_index.svg")
 
     plt.savefig(path, dpi=80, transparent=True, bbox_inches="tight")
   
