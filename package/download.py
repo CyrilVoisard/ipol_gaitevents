@@ -7,7 +7,7 @@ def json_report(seg_lim_corrected, steps_lim_corrected, freq, output):
     dict_events["Freq"] = freq
     
     dict_events["TrialBoundaries"] = [int(seg_lim_corrected[0]), int(seg_lim_corrected[3])]
-    dict_events["UTurnBoundaries"] = [seg_lim_corrected[1]), seg_lim_corrected[2])]
+    dict_events["UTurnBoundaries"] = [int(seg_lim_corrected[1]), int(seg_lim_corrected[2])]
 
     strides = steps_lim_corrected[steps_lim_corrected["Correct"] == True]
     strides_lf = []
