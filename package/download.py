@@ -14,7 +14,7 @@ def json_report(seg_lim, steps_lim, freq, output):
     steps_lim_lf = []
     steps_lim_rf = []
     for i in range(len(steps_lim)):
-        if steps_lim["Correct"][i]==1:
+        if steps_lim["Correct"][i]!=0:
             if steps_lim["Foot"][i]==1:
                 steps_lim_rf.append([int(steps_lim["TO"][i]), int(steps_lim["HS"][i])])
             else:
