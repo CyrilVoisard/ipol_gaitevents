@@ -14,7 +14,7 @@ def json_report(seg_lim, steps_lim, freq, output):
     strides_lf = []
     strides_rf = []
     for i in range(len(strides)):
-        print("i", i)
+        print("i", i, strides["TO"][i])
         if strides["Foot"][i]==1:
             strides_rf.append([int(strides["TO"][i]), int(strides["HS"][i])])
         else:
