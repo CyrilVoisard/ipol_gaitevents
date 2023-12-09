@@ -201,7 +201,8 @@ def get_bornes(steps_lim, seg_lim):
 
 
 def inside(stride_events, seg_lim):
-    """Returns 1 if the considered stride is inside the trail boundaries (in the go or back phases), otherwise returns 0. 
+    """Returns 1 if the considered stride is inside the trail boundaries (in the go or back phases), 10 if the stride is 
+    inside the u_turn phase, otherwise returns 0. 
 
     Parameters
     ----------
@@ -215,13 +216,14 @@ def inside(stride_events, seg_lim):
     
     out = 0
     in_go = 0
+    u_turn = 0
     in_back = 0
     for x in stride_events:
         if x < seg_lim[0]:
             out = 1
         else:
             if (x > seg_lim[1]) and (x < seg_lim[2]):
-                out = 1
+                u_turn = 1
             else:
                 if x > seg_lim[3]:
                     out = 1
@@ -232,17 +234,21 @@ def inside(stride_events, seg_lim):
                         if (x <= seg_lim[3]) and (x >= seg_lim[2]):
                             in_go = 1
 
-    if out + in_go + in_back == 0:
+    if out + in_go + in_back + u_turn == 0:
         return 0
     else:
         if out == 1:
             return 0
-        else:
-            if in_go + in_back == 2:
-                return 0
+        else :
+            if u_turn == 1:
+                return 10
             else:
-                if in_go + in_back == 1:
-                    return 1
+                if in_go + in_back == 2:
+                    return 0
+                else:
+                    if in_go + in_back == 1:
+                        return 1
+                
 
 
 def rmoutliers(vec, limit=2.0):
