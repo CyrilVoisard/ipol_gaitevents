@@ -30,8 +30,11 @@ def annotate_ref_stride(data_1, data_2, foot, r=2, freq=100, output=0):
        jerk time series of the reference stride {ndarray}
        annotation of gait events of the reference stride in the trial {ndarray}
     """
+
+    # quality intrinsec
+    q2_stride = [0, 0]
                                  
-    gyr_ref, jerk_ref, start_ref, end_ref = find_ref_stride(data_1, data_2, foot, freq)
+    gyr_ref, jerk_ref, start_ref, end_ref, q2_stride[0] = find_ref_stride(data_1, data_2, foot, freq)
     
     len_ref = len(gyr_ref)
     gyr_model, jerk_model, stride_model_annotations = find_model_stride(data_1, data_2, foot, len_ref, freq=freq)
@@ -49,7 +52,7 @@ def annotate_ref_stride(data_1, data_2, foot, r=2, freq=100, output=0):
     plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_y2, path,
                                            foot, freq=freq, start=start_ref, output=output)
 
-    q2_stride = 50
+    q2_stride[1] = max(0, round(100-sim))
 
     return gyr_ref, jerk_ref, ref_stride_annotations, q2_stride
                              
@@ -235,7 +238,7 @@ def find_ref_stride(data_1, data_2, foot, freq=100):
     z = deal_stride.calculate_jerk_tot(data_1)
 
     # search window size : mean stride time estimation
-    window = int(len_stride_estimation(data_1, data_2, roll=1, freq=freq))
+    window, autocorr = int(len_stride_estimation(data_1, data_2, roll=1, freq=freq))
 
     # matrix profile
     mp_profile = mp.compute(x.to_numpy(), windows=window)
@@ -255,7 +258,7 @@ def find_ref_stride(data_1, data_2, foot, freq=100):
     start_ref = mp_profile['motifs'][0]["motifs"][0]
     end_ref = start_ref + window
 
-    return x[start_ref:end_ref].to_numpy(), z[start_ref:end_ref], start_ref, end_ref
+    return x[start_ref:end_ref].to_numpy(), z[start_ref:end_ref], start_ref, end_ref, round(100*autocorr)
 
 
 def len_stride_estimation(data_1, data_2, roll=1, freq=100):
@@ -274,15 +277,15 @@ def len_stride_estimation(data_1, data_2, roll=1, freq=100):
         mean stride time estimation
     """
                             
-    len_stride_data_1 = len_stride_one_side(data_1, roll=roll, freq=freq)
-    len_stride_data_2 = len_stride_one_side(data_2, roll=roll, freq=freq)
+    len_stride_data_1, autocorr_1 = len_stride_one_side(data_1, roll=roll, freq=freq)
+    len_stride_data_2, autocorr_2 = len_stride_one_side(data_2, roll=roll, freq=freq)
 
     # if the two estimates are too far apart, it's likely that one of the peak detections is faulty (the two estimates should be equal).
     # if the foot of interest is defective, we take the lowest. 
     if len_stride_data_1 / len_stride_data_2 >= 1.5:
-        return len_stride_data_2
+        return len_stride_data_2, autocorr_2
     else:
-        return len_stride_data_1
+        return len_stride_data_1, autocorr_1
 
 
 def len_stride_one_side(data, roll=1, freq=100):
@@ -317,10 +320,10 @@ def len_stride_one_side(data, roll=1, freq=100):
     index_pic = autocorr_indexes(y_mean_np[:len(y_mean_np) // 4], freq=freq)
 
     if len(index_pic) > 0:
-      return index_pic[0]
+      return index_pic[0], y_mean_np[index_pic[0]]
         
     else:
-        return 0
+        return 0, 0
 
 
 def autocorr_indexes(y, thres=0.7, min_dist=80, freq=100):
