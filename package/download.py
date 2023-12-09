@@ -20,5 +20,5 @@ def json_report(seg_lim_corrected, steps_lim_corrected, freq, output):
     dict_events["LeftFootEvents"] = strides_lf
     dict_events["RightFootEvents"] = strides_rf
     
-    with open(os.path.join(home_gaitData, code + ".json"), "w") as f:
+    with open(os.path.join(output, "gait_events.json"), "w") as f:
         json.dump(dict_events, f)
