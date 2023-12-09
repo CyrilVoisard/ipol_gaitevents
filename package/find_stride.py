@@ -238,7 +238,8 @@ def find_ref_stride(data_1, data_2, foot, freq=100):
     z = deal_stride.calculate_jerk_tot(data_1)
 
     # search window size : mean stride time estimation
-    window, autocorr = int(len_stride_estimation(data_1, data_2, roll=1, freq=freq))
+    window, autocorr = len_stride_estimation(data_1, data_2, roll=1, freq=freq)
+    window = int(window)
 
     # matrix profile
     mp_profile = mp.compute(x.to_numpy(), windows=window)
