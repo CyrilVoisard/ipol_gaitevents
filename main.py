@@ -11,7 +11,7 @@ from scipy.signal import butter, filtfilt
 from scipy import interpolate
 import sys
 
-from package import import_data, dtw_detection, seg_detection, plot_stepdetection, quality
+from package import import_data, dtw_detection, seg_detection, plot_stepdetection, quality, download
 
 # if you need to access a file next to the source code, use the variable ROOT
 ROOT = os.path.dirname(os.path.realpath(__file__))
@@ -203,7 +203,7 @@ if __name__ == "__main__":
     plot_stepdetection.plot_stepdetection_construction(steps_lim_corrected, data_rf, data_lf, freq, output=data_WD, corrected=True)
 
     # load file to be download
-    json_report(seg_lim_corrected, steps_lim_corrected, freq, output=data_WD)
+    download.json_report(seg_lim_corrected, steps_lim_corrected, freq, output=data_WD)
 
     print("ok charge")
     sys.exit(0)
