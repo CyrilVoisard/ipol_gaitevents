@@ -161,7 +161,7 @@ def find_model_stride(data_1, data_2, foot, len_ref, freq=100):
     """
     
     gyr_model_decal, jerk_model_decal, stride_model_decal_annotations = deal_stride.stride_sain_decal(int(len_ref), freq)
-    gyr_ref, jerk_ref, p, q = find_ref_stride(data_1, data_2, foot, freq=freq)
+    gyr_ref, jerk_ref, p, q, _ = find_ref_stride(data_1, data_2, foot, freq=freq)
 
     cout = []
     for j in range(0, len(gyr_ref)):
