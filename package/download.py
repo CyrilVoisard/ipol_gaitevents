@@ -10,7 +10,7 @@ def json_report(seg_lim, steps_lim, freq, output):
     dict_events["UTurnBoundaries"] = [int(seg_lim[1]), int(seg_lim[2])]
 
     strides = steps_lim[steps_lim["Correct"] == 1]
-    print(len(strides), strides["Foot"][9])
+    print(len(strides)) #, strides["Foot"][9])
     strides_lf = []
     strides_rf = []
     for i in range(len(strides)):
