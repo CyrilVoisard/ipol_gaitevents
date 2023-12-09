@@ -56,7 +56,7 @@ def plot_quality_index(q, ax, scale):
     # plot qi
     max_q=100
     xval = np.arange(0, 2*np.pi*(.05+0.90*(q/max_q)), 0.01)
-    colormap = plt.get_cmap("RdYlGn")
+    colormap = plt.get_cmap("Greens")
     norm = mpl.colors.Normalize(0.0, 2*np.pi)
     # f, ax = plt.subplots(nrows=1, ncols=1, figsize=(4,4),subplot_kw=dict(projection='polar'))
     #Scatter version
