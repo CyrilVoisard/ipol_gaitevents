@@ -3,14 +3,7 @@
 
 import os
 import json
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-import pandas as pd
-from scipy.signal import butter, filtfilt
-from scipy import interpolate
 import sys
-
 from package import import_data, dtw_detection, seg_detection, plot_stepdetection, quality, download
 
 # if you need to access a file next to the source code, use the variable ROOT
