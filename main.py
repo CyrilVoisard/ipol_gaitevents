@@ -31,16 +31,16 @@ def print_seg_detection(seg_lim, freq):
 
     display_dict = {'Start_title': "Trial start",
                     'Start': "{Start}".format(**seg_lim_dict),
-                    'Start_sec': "{}".format(round(seg_lim_dict['Start']/100, 2)),
+                    'Start_sec': "{}".format(round(seg_lim_dict['Start']/freq, 2)),
                     'U-Turn start_title': "U-turn start",
                     'U-Turn start': "{U-Turn start}".format(**seg_lim_dict),
-                    'U-Turn start_sec': "{}".format(round(seg_lim_dict['U-Turn start']/100, 2)),
+                    'U-Turn start_sec': "{}".format(round(seg_lim_dict['U-Turn start']/freq, 2)),
                     'U-Turn end_title': "U-turn end",
                     'U-Turn end': "{U-Turn end}".format(**seg_lim_dict),
-                    'U-Turn end_sec': "{}".format(round(seg_lim_dict['U-Turn end']/100, 2)),
+                    'U-Turn end_sec': "{}".format(round(seg_lim_dict['U-Turn end']/freq, 2)),
                     'End_title': "Trial end",
                     'End': "{End}".format(**seg_lim_dict), 
-                    'End_sec': "{}".format(round(seg_lim_dict['End']/100, 2))}
+                    'End_sec': "{}".format(round(seg_lim_dict['End']/freq, 2))}
         
     info_msg = """
     {Start_title:<15}| {Start:<10}| {Start_sec:<10}
