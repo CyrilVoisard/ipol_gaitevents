@@ -4,7 +4,7 @@
 import os
 import json
 import sys
-from package import import_data, dtw_detection, seg_detection, plot_stepdetection, quality, download
+from package import import_data, dtw_detection, plot_stepdetection, quality, download
 
 # if you need to access a file next to the source code, use the variable ROOT
 ROOT = os.path.dirname(os.path.realpath(__file__))
