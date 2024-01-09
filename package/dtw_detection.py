@@ -8,14 +8,14 @@ from package import find_stride, deal_stride, plot_stepdetection
 
 
 def steps_detection_full(data_rf, data_lf, freq, output):
-    steps_rf, q2_rf = steps_detection(data_rf, data_lf, 1, freq, output)
-    steps_lf, q2_lf = steps_detection(data_lf, data_rf, 0, freq, output)
+    steps_rf, q_rf = steps_detection(data_rf, data_lf, 1, freq, output)
+    steps_lf, q_lf = steps_detection(data_lf, data_rf, 0, freq, output)
     
     full = np.concatenate((steps_rf, steps_lf))
     steps_lim = pd.DataFrame(full, columns=["Foot", "Phase", "HO", "TO", "HS", "FF", "Score"])
-    q2 = [min(q2_rf[0], q2_lf[0]), min(q2_rf[1], q2_lf[1])]
+    q = [min(q_rf[0], q_lf[0]), min(q_rf[1], q_lf[1])]
 
-    return steps_lim, q2
+    return steps_lim, q
 
 
 def steps_detection(data_1, data_2, foot, freq, output):
@@ -23,7 +23,7 @@ def steps_detection(data_1, data_2, foot, freq, output):
     x = data_1["Gyr_Y"]
     z = deal_stride.calculate_jerk_tot(data_1, freq)
 
-    gyr_ok, acc_ok, stride_annotations_ok, q2_side = find_stride.annotate_ref_stride(data_1, data_2, foot, freq, output=output)
+    gyr_ok, acc_ok, stride_annotations_ok, q_side = find_stride.annotate_ref_stride(data_1, data_2, foot, freq, output=output)
 
     cost = matrix_cost(x, z, gyr_ok, acc_ok)
 
@@ -76,7 +76,7 @@ def steps_detection(data_1, data_2, foot, freq, output):
     steps_list = np.array(steps_list)
     steps_list = steps_list[steps_list[:, 3].argsort()]
 
-    return steps_list, q2_side
+    return steps_list, q_side
 
 
 def affine_annotate_dtw(x, y, start, gyr, acc, stride_annotations, disp=False):
