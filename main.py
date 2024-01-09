@@ -56,7 +56,7 @@ def print_seg_detection(seg_lim, freq):
         print(info_msg.format(**display_dict), file=f)
         
 
-def print_steps_detection(seg_lim_full, seg_lim_corrected, steps_lim_full, steps_lim_corrected, freq):
+def print_steps_detection(seg_lim_full, seg_lim_corrected, steps_lim, steps_lim_corrected, freq):
     """Dump the trial parameters computed from the gait events detection.  
 
     Parameters
@@ -65,8 +65,8 @@ def print_steps_detection(seg_lim_full, seg_lim_corrected, steps_lim_full, steps
     """
 
     steps_dict = {"TrialDuration": (seg_lim_full[3] - seg_lim_full[0])/freq, 
-                  "LeftGaitCycles": len(steps_lim_full[steps_lim_full["Foot"]==0]), 
-                  "RightGaitCycles": len(steps_lim_full[steps_lim_full["Foot"]==1]), 
+                  "LeftGaitCycles": len(steps_lim[steps_lim["Foot"]==0]), 
+                  "RightGaitCycles": len(steps_lim[steps_lim["Foot"]==1]), 
                   "WalkingSpeed": (seg_lim_corrected[3] - seg_lim_corrected[0] - seg_lim_corrected[2] + seg_lim_corrected[1])/freq, 
                   "LeftGaitCyclesOk": len(steps_lim_corrected[(steps_lim_corrected["Foot"]==0) & (steps_lim_corrected["Correct"]==1)]), 
                   "RightGaitCyclesOk": len(steps_lim_corrected[(steps_lim_corrected["Foot"]==1) & (steps_lim_corrected["Correct"]==1)])
@@ -103,9 +103,8 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description='Return a semiogram for a given trial.')
-    parser.add_argument('-i0', metavar='data_lb', help='Time series for the lower back sensor.')
-    parser.add_argument('-i1', metavar='data_rf', help='Time series for the right foot sensor.')
-    parser.add_argument('-i2', metavar='data_lf', help='Time series for the left foot sensor.')
+    parser.add_argument('-i0', metavar='data_rf', help='Time series for the right foot sensor.')
+    parser.add_argument('-i1', metavar='data_lf', help='Time series for the left foot sensor.')
 
     
     parser.add_argument('-freq', metavar='freq',
@@ -115,36 +114,27 @@ if __name__ == "__main__":
     freq = int(args.freq)
 
     # quality index tab
-    q1 = [0, 0]  # protocol observation quality [only one u-turn, no steps outside the limits]
-    q2 = [0, 0]  # intrinsic detection quality [autocorrelation coefficient, DTW coefficient]
-    q3 = [0]  # extrinsic detection quality [right-left step alternation]
+    q1 = [0, 0]  # intrinsic detection quality [autocorrelation coefficient, DTW coefficient]
+    q2 = [0]  # extrinsic detection quality [right-left step alternation]
     
     # load data
-    data_lb = import_data.import_XSens(os.path.join(data_WD, args.i0), freq)
-    data_rf = import_data.import_XSens(os.path.join(data_WD, args.i1), freq)
-    data_lf = import_data.import_XSens(os.path.join(data_WD, args.i2), freq)
+    data_rf = import_data.import_XSens(os.path.join(data_WD, args.i0), freq)
+    data_lf = import_data.import_XSens(os.path.join(data_WD, args.i1), freq)
     
     # gait events and steps detection
-    steps_lim_full, q2 = dtw_detection.steps_detection_full(data_rf, data_lf, freq, output=data_WD)
-    
-    # phase boundaries detection and figure
-    seg_lim_full, regression, q1[0] = seg_detection.seg_detection(data_lb, steps_lim_full, freq)
+    steps_lim, q1 = dtw_detection.steps_detection_full(data_rf, data_lf, freq, output=data_WD)
 
-    # quality index and 
-    steps_lim_corrected, seg_lim_corrected, q1[1], q3 = quality.correct_detection(steps_lim_full, seg_lim_full)
-    quality.print_all_quality_index(q1, q2, q3, output=data_WD)
-
-    # print phases and figure
-    print_seg_detection(seg_lim_corrected, freq)
-    seg_detection.plot_seg_detection(seg_lim_corrected, data_lb, regression, freq, output=data_WD)
+    # quality index
+    q2 = quality.correct_detection(steps_lim)
+    quality.print_all_quality_index(q1, q2, output=data_WD)
 
     # print validated gait events and figure 
-    print_steps_detection(seg_lim_full, seg_lim_corrected, steps_lim_full, steps_lim_corrected, freq)
-    plot_stepdetection.plot_stepdetection(steps_lim_corrected, data_rf, data_lf, seg_lim_corrected, freq, output=data_WD)
-    plot_stepdetection.plot_stepdetection_construction(steps_lim_corrected, data_rf, data_lf, freq, output=data_WD, corrected=True)
+    print_steps_detection(steps_lim, freq)
+    plot_stepdetection.plot_stepdetection(steps_lim, data_rf, data_lf, freq, output=data_WD)
+    plot_stepdetection.plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output=data_WD, corrected=True)
 
     # load file to be download
-    download.json_report(seg_lim_corrected, steps_lim_corrected, freq, output=data_WD)
+    download.json_report(steps_lim, freq, output=data_WD)
 
     print("ok charge")
     sys.exit(0)
