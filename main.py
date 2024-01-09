@@ -16,45 +16,6 @@ data_WD = os.getcwd()
 os.chdir(ROOT)
             
 
-def print_seg_detection(seg_lim, freq):
-    """Dump the phase segmentation computed from the trial. 
-
-    Parameters
-    ----------
-        seg_lim {dataframe} -- pandas dataframe with phases events 
-    """
-
-    seg_lim_dict = {'Start': int(seg_lim[0]),
-                    'U-Turn start': int(seg_lim[1]),
-                    'U-Turn end': int(seg_lim[2]),
-                    'End': int(seg_lim[3])}
-
-    display_dict = {'Start_title': "Trial start",
-                    'Start': "{Start}".format(**seg_lim_dict),
-                    'Start_sec': "{}".format(round(seg_lim_dict['Start']/freq, 2)),
-                    'U-Turn start_title': "U-turn start",
-                    'U-Turn start': "{U-Turn start}".format(**seg_lim_dict),
-                    'U-Turn start_sec': "{}".format(round(seg_lim_dict['U-Turn start']/freq, 2)),
-                    'U-Turn end_title': "U-turn end",
-                    'U-Turn end': "{U-Turn end}".format(**seg_lim_dict),
-                    'U-Turn end_sec': "{}".format(round(seg_lim_dict['U-Turn end']/freq, 2)),
-                    'End_title': "Trial end",
-                    'End': "{End}".format(**seg_lim_dict), 
-                    'End_sec': "{}".format(round(seg_lim_dict['End']/freq, 2))}
-        
-    info_msg = """
-    {Start_title:<15}| {Start:<10}| {Start_sec:<10}
-    {U-Turn start_title:<15}| {U-Turn start:<10}| {U-Turn start_sec:<10}
-    {U-Turn end_title:<15}| {U-Turn end:<10}| {U-Turn end_sec:<10}
-    {End_title:<15}| {End:<10}| {End_sec:<10}
-    """
-
-    # Dump information
-    os.chdir(data_WD) # Get back to the normal WD
-
-    with open("seg_lim.txt", "wt") as f:
-        print(info_msg.format(**display_dict), file=f)
-        
 
 def print_steps_detection(seg_lim_full, seg_lim_corrected, steps_lim, steps_lim_corrected, freq):
     """Dump the trial parameters computed from the gait events detection.  
