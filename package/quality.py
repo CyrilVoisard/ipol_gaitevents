@@ -73,7 +73,7 @@ def plot_quality_index(q, ax, scale):
     return ax
     
 
-def compute_q3(steps_lim):
+def compute_extrinsic_quality(steps_lim):
   """Compute the quality index of the trial gait events detection (between 0 and 100) referring to extrinsic quality: right-left step alternation
 
     Parameters
