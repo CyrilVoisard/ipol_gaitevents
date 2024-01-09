@@ -86,7 +86,7 @@ if __name__ == "__main__":
     steps_lim, q1 = dtw_detection.steps_detection_full(data_rf, data_lf, freq, output=data_WD)
 
     # quality index
-    q2 = quality.correct_detection(steps_lim)
+    q2 = quality.compute_extrinsic_quality(steps_lim)
     quality.print_all_quality_index(q1, q2, output=data_WD)
 
     # print validated gait events and figure 
