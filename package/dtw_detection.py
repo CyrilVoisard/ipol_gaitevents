@@ -8,6 +8,21 @@ from package import find_stride, deal_stride, plot_stepdetection
 
 
 def steps_detection_full(data_rf, data_lf, freq, output):
+    """Detection of all gait events.  
+
+    Parameters
+    ----------
+        data_rf {dataframe} -- pandas dataframe with data from the right foot sensor
+        data_lf {dataframe} -- pandas dataframe with data from the left foot sensor
+        freq {int} -- acquisition frequency 
+        output {str} -- folder path for output fig
+
+    Returns
+    -------
+       steps_lim {dataframe} -- pandas dataframe with the detected gait events
+       q {int} -- extrinsic quality index 
+    """
+    
     steps_rf, q_rf = steps_detection(data_rf, data_lf, 1, freq, output)
     steps_lf, q_lf = steps_detection(data_lf, data_rf, 0, freq, output)
     
@@ -19,24 +34,43 @@ def steps_detection_full(data_rf, data_lf, freq, output):
 
 
 def steps_detection(data_1, data_2, foot, freq, output):
-    
+    """Detection of gait events for one foot.  
+
+    Parameters
+    ----------
+        data_1 {dataframe} -- pandas dataframe with data from the considered foot sensor
+        data_2 {dataframe} -- pandas dataframe with data from the other foot sensor
+        foot {int} -- considered foot
+        freq {int} -- acquisition frequency 
+        output {str} -- folder path for output fig
+
+    Returns
+    -------
+       steps_side {array} -- numpy array with the detected gait events
+       q_side {int} -- extrinsic quality index for
+    """
+
+    # data 
     x = data_1["Gyr_Y"]
     z = deal_stride.calculate_jerk_tot(data_1, freq)
 
+    # template for the template based detection
     gyr_ok, acc_ok, stride_annotations_ok, q_side = find_stride.annotate_ref_stride(data_1, data_2, foot, freq, output=output)
 
+    # matrix cost and gait event intuition with basic correlation
     cost = matrix_cost(x, z, gyr_ok, acc_ok)
-
+    
     pic_correl_start = find_stride.indexes(cost, 0.35, min_dist=len(gyr_ok) // 2, thres_abs=True)
     pic_correl_start = pic_correl_start[np.argsort(-cost[pic_correl_start])]
     F = [0] * len(x)  # same size as the signal, allows for counting if the steps are identified.
 
+    # gait events exact determination with DTW
     starts = []
     ends = []
     sims = []
     annotations = []
     steps_list = []
-
+    
     for i in range(len(pic_correl_start)):
         step = []
         start_min, end_min, path_min, sim_min, annotations_min = affine_annotate_dtw(x, z, pic_correl_start[i],
@@ -73,10 +107,10 @@ def steps_detection(data_1, data_2, foot, freq, output):
             step.append(sim_min)
             steps_list.append(step)
 
-    steps_list = np.array(steps_list)
-    steps_list = steps_list[steps_list[:, 3].argsort()]
+    steps_side = np.array(steps_list)
+    steps_side = steps_side[steps_side[:, 3].argsort()]
 
-    return steps_list, q_side
+    return steps_side, q_side
 
 
 def affine_annotate_dtw(x, y, start, gyr, acc, stride_annotations, disp=False):
