@@ -184,7 +184,7 @@ def annotate(path, stride_annotations):
 
     Parameters
     ----------
-        path {} -- . 
+        path {list} -- list of doubles that establish the corrrespondence found between the points of a model stride and those of another stride. 
         stride_annotations {dict} -- dictionary with the index for the 4 gait events of the first sride: HS, FF, HO, TO. 
 
     Returns
@@ -212,7 +212,7 @@ def calculate_jerk_tot(data, freq=100):
 
     Parameters
     ----------
-        data {dataframe} -- .
+        data {dataframe} -- pandas dataframe.
         freq {int} -- acquisition frequency in Herz.
 
     Returns
