@@ -4,6 +4,15 @@ from datetime import datetime
 
 
 def json_report(steps_lim, freq, output):
+    """Download report in a JSON file.
+
+    Parameters
+    ----------
+        steps_lim {dataframe} -- detected gait event. 
+        freq {int} -- acquisition frequency in Herz. 
+        output {str} -- folder in which the figure may be saved.        
+    """
+    
     dict_events = dict()
     dict_events["Detection date"] = str(datetime.now())
     dict_events["Freq"] = freq
