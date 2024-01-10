@@ -6,17 +6,30 @@ from scipy import interpolate
 
 
 def stride_sain_decal(len_estimation, freq=100):
+    """
+
+    Parameters
+    ----------
+        len_estimation {int} -- 
+
+    Returns
+    -------
+        gyr_ref_decal {dict} -- 
+        jerk_ref_decal {dict} -- 
+        stride_ref_decal_annotations {dict} -- 
+    """
+    
     gyr_ref_decal = dict()
-    acc_ref_decal = dict()
+    jerk_ref_decal = dict()
     stride_ref_decal_annotations = dict()
-    gyr_ref, acc_ref, stride_ref_annotations = stride_sain(len_estimation, freq)
+    gyr_ref, jerk_ref, stride_ref_annotations = stride_sain(len_estimation, freq)
     gyr_ref_decal["0"] = gyr_ref
-    acc_ref_decal["0"] = acc_ref
+    jerk_ref_decal["0"] = jerk_ref
     stride_ref_decal_annotations["0"] = stride_ref_annotations
 
     for i in range(1, len(gyr_ref)):
         gyr_ref_decal[str(i)] = np.concatenate((gyr_ref[i:], gyr_ref[:i]), axis=0)
-        acc_ref_decal[str(i)] = np.concatenate((acc_ref[i:], acc_ref[:i]), axis=0)
+        jerk_ref_decal[str(i)] = np.concatenate((jerk_ref[i:], jerk_ref[:i]), axis=0)
         annotations = dict()
         annotations["HS"] = (stride_ref_annotations["HS"] - i) % len(gyr_ref)
         annotations["FF"] = (stride_ref_annotations["FF"] - i) % len(gyr_ref)
@@ -24,10 +37,23 @@ def stride_sain_decal(len_estimation, freq=100):
         annotations["TO"] = (stride_ref_annotations["TO"] - i) % len(gyr_ref)
         stride_ref_decal_annotations[str(i)] = annotations
 
-    return gyr_ref_decal, acc_ref_decal, stride_ref_decal_annotations
+    return gyr_ref_decal, jerk_ref_decal, stride_ref_decal_annotations
 
 
 def stride_sain(len_estimation, freq=100):
+    """Return the model stride of a healthy subject adapted to the desired length. 
+    Length adjustments can only be made only on the stance phase, never on the swing phase.  
+
+    Parameters
+    ----------
+        len_estimation {int} -- desired length for the model stride. 
+
+    Returns
+    -------
+        gyr_ref {array} -- gyration time series for the model stride
+        jerk_ref {array} -- jerk time series for the model stride
+        stride_ref_annotations {dict} -- dictionary with the index for the 4 gait events of the model sride: HS, FF, HO, TO. 
+    """
     
     gyr_ref_100 = np.array([1.26760644e-01, 1.11668357e-01, 8.32307508e-02, 5.23749713e-02,
                             2.49340487e-02, 8.49469197e-04, -2.21600981e-02, -4.43579484e-02,
@@ -113,7 +139,15 @@ def stride_sain(len_estimation, freq=100):
     return gyr_ref, np.sqrt(jerk_ref), stride_ref_annotations
 
 
-def plot_annotate_stride(gyr, acc, stride_annotations, output):
+def plot_annotate_stride(gyr, jerk, stride_annotations, output):
+    """Plot the gait events of a given stride. 
+
+    Parameters
+    ----------
+        gyr {array} -- gyration time series for the given stride
+        jerk {array} -- jerk time series for the given stride
+        stride_annotations {dict} -- dictionary with the index for the 4 gait events of the given sride: HS, FF, HO, TO.   
+    """
 
     fig, ax = plt.subplots(2, figsize=(5, 8))
     ax[0].plot(gyr / np.max(abs(gyr)))
@@ -126,7 +160,7 @@ def plot_annotate_stride(gyr, acc, stride_annotations, output):
     ax[0].legend()
     ax[0].grid()
     ax[0].set_ylabel("Gyr_Y")
-    ax[1].plot(acc / np.max(abs(acc)))
+    ax[1].plot(jerk / np.max(abs(jerk)))
     mi, ma = 0, 1
     ax[1].vlines(stride_annotations["HS"], mi, ma, 'black', label="Heel Strike")
     ax[1].vlines(stride_annotations["FF"], mi, ma, 'green', label="Foot Flat")
@@ -145,6 +179,19 @@ def plot_annotate_stride(gyr, acc, stride_annotations, output):
 
 
 def annotate(path, stride_annotations):
+    """From a first stride whose gait events have been previously annotated, annotate a second stride.  
+    The correspondence path between the two must have been determined beforehand.
+
+    Parameters
+    ----------
+        path {} -- . 
+        stride_annotations {dict} -- dictionary with the index for the 4 gait events of the first sride: HS, FF, HO, TO. 
+
+    Returns
+    -------
+        new_stride_annotations {dict} -- dictionary with the index for the 4 gait events of the second sride.         
+    """
+    
     new_stride_annotations = {'HS': float("inf"), 'FF': float("inf"), 'HO': float("inf"), 'TO': float("inf")}
 
     for i in range(len(path)):
@@ -161,6 +208,17 @@ def annotate(path, stride_annotations):
 
 
 def calculate_jerk_tot(data, freq=100):
+    """Calculate jerk from acceleration data. 
+
+    Parameters
+    ----------
+        data {dataframe} -- .
+        freq {int} -- acquisition frequency in Herz.
+
+    Returns
+    -------
+        z {array} -- jerk time series.
+    """
     
     jerk_tot = np.sqrt(
         np.diff(data["FreeAcc_X"]) ** 2 + np.diff(data["FreeAcc_Z"]) ** 2 + np.diff(data["FreeAcc_Y"]) ** 2)
