@@ -17,39 +17,34 @@ os.chdir(ROOT)
             
 
 
-def print_steps_detection(seg_lim_full, seg_lim_corrected, steps_lim, steps_lim_corrected, freq):
+def print_steps_detection(steps_lim, t_full, freq):
     """Dump the trial parameters computed from the gait events detection.  
 
     Parameters
     ----------
-        steps_lim_corrected {dataframe} -- pandas dataframe with gait events after elimination of the extra trial steps
+        steps_lim {dataframe} -- pandas dataframe with gait events
+        t_full {int} -- total number of samples in the trial
+        freq {int} -- acquisition frequency in Herz
     """
 
-    steps_dict = {"TrialDuration": (seg_lim_full[3] - seg_lim_full[0])/freq, 
+    steps_dict = {"TrialDuration": t_full/freq, 
                   "LeftGaitCycles": len(steps_lim[steps_lim["Foot"]==0]), 
-                  "RightGaitCycles": len(steps_lim[steps_lim["Foot"]==1]), 
-                  "WalkingSpeed": (seg_lim_corrected[3] - seg_lim_corrected[0] - seg_lim_corrected[2] + seg_lim_corrected[1])/freq, 
-                  "LeftGaitCyclesOk": len(steps_lim_corrected[(steps_lim_corrected["Foot"]==0) & (steps_lim_corrected["Correct"]==1)]), 
-                  "RightGaitCyclesOk": len(steps_lim_corrected[(steps_lim_corrected["Foot"]==1) & (steps_lim_corrected["Correct"]==1)])
+                  "RightGaitCycles": len(steps_lim[steps_lim["Foot"]==1])
                  }
 
     display_dict = {'Raw': "Raw data",
-                    'Corrected': "Corrected data",
                     'Number': "Number of footsteps:",
                     'TrialDuration': "Trial duration (s): {TrialDuration}".format(**steps_dict),
                     'LeftGaitCycles': "    - Left foot: {LeftGaitCycles}".format(**steps_dict),
-                    'RightGaitCycles': "    - Right foot: {RightGaitCycles}".format(**steps_dict),
-                    'WalkingSpeed': "WalkingSpeed (m/s): {WalkingSpeed}".format(**steps_dict),
-                    'LeftGaitCyclesOk': '    - Left foot: {LeftGaitCyclesOk}'.format(**steps_dict),
-                    'RightGaitCyclesOk': '    - Right foot: {RightGaitCyclesOk}'.format(**steps_dict)
+                    'RightGaitCycles': "    - Right foot: {RightGaitCycles}".format(**steps_dict)
                     }
     info_msg = """
-    {Raw:^30}|{Corrected:^30}
-    ------------------------------+------------------------------
-    {TrialDuration:<30}| {WalkingSpeed:<30}
-    {Number:<30}| Number of validated footsteps:
-    {LeftGaitCycles:<30}| {LeftGaitCyclesOk:<30}
-    {RightGaitCycles:<30}| {RightGaitCyclesOk:<30}
+    {Raw:^30}
+    ------------------------------
+    {TrialDuration:<30}
+    {Number:<30}
+    {LeftGaitCycles:<30}
+    {RightGaitCycles:<30}
     """
 
     # dump information
@@ -90,7 +85,7 @@ if __name__ == "__main__":
     quality.print_all_quality_index(q1, q2, output=data_WD)
 
     # print validated gait events and figure 
-    print_steps_detection(steps_lim, freq)
+    print_steps_detection(steps_lim, len(data_rf), freq)
     #plot_stepdetection.plot_stepdetection(steps_lim, data_rf, data_lf, freq, output=data_WD)
     #plot_stepdetection.plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output=data_WD, corrected=True)
 
