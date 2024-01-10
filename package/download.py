@@ -11,11 +11,10 @@ def json_report(steps_lim, freq, output):
     steps_lim_lf = []
     steps_lim_rf = []
     for i in range(len(steps_lim)):
-        if steps_lim["Correct"][i]!=0:
-            if steps_lim["Foot"][i]==1:
-                steps_lim_rf.append([int(steps_lim["TO"][i]), int(steps_lim["HS"][i])])
-            else:
-                steps_lim_lf.append([int(steps_lim["TO"][i]), int(steps_lim["HS"][i])])
+        if steps_lim["Foot"][i]==1:
+            steps_lim_rf.append([int(steps_lim["TO"][i]), int(steps_lim["HS"][i])])
+        else:
+            steps_lim_lf.append([int(steps_lim["TO"][i]), int(steps_lim["HS"][i])])
     dict_events["LeftFootEvents"] = steps_lim_lf
     dict_events["RightFootEvents"] = steps_lim_rf
     
