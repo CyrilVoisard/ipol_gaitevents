@@ -87,10 +87,10 @@ if __name__ == "__main__":
     # print validated gait events and figure 
     print_steps_detection(steps_lim, len(data_rf), freq)
     plot_stepdetection.plot_stepdetection(steps_lim, data_rf, data_lf, freq, output=data_WD)
-    plot_stepdetection.plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output=data_WD, corrected=True)
+    plot_stepdetection.plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output=data_WD)
 
     # load file to be download
-    #download.json_report(steps_lim, freq, output=data_WD)
+    download.json_report(steps_lim, freq, output=data_WD)
 
     print("ok charge")
     sys.exit(0)
