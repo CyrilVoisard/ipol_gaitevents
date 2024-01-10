@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 
 import os
-import json
 import sys
 from package import import_data, dtw_detection, plot_stepdetection, quality, download
 
@@ -15,7 +14,6 @@ data_WD = os.getcwd()
 # Change the CWD to ROOT
 os.chdir(ROOT)
             
-
 
 def print_steps_detection(steps_lim, t_full, freq):
     """Dump the trial parameters computed from the gait events detection.  
