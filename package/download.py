@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 
 
-def json_report(seg_lim, steps_lim, freq, output):
+def json_report(steps_lim, freq, output):
     dict_events = dict()
     dict_events["Detection date"] = str(datetime.now())
     dict_events["Freq"] = freq
