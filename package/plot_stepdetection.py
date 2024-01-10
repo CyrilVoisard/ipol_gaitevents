@@ -20,8 +20,8 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, freq, output):
         output {str} -- folder path for output fig
     """
     
-    steps_rf = steps_lim[(steps_lim['Foot']==1) & (steps_lim['Correct']==1)].to_numpy()
-    steps_lf = steps_lim[(steps_lim['Foot']==0) & (steps_lim['Correct']==1)].to_numpy()
+    steps_rf = steps_lim[steps_lim['Foot']==1].to_numpy()
+    steps_lf = steps_lim[steps_lim['Foot']==0].to_numpy()
   
     name = "Gait events detection - "
 
@@ -137,7 +137,7 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, freq, output):
                     transparent=True, bbox_inches="tight")
 
 
-def plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output, corrected=False):
+def plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output):
     """Plot the construction figure for step detection and save the fig in the output folder as png file. 
 
     Parameters
