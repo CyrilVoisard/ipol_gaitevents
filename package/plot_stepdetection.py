@@ -8,13 +8,12 @@ import os
 from package import deal_stride
 
 
-def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
+def plot_stepdetection(steps_lim, data_rf, data_lf, freq, output):
     """Plot the final figure for step detection and save the fig in the output folder as png file. 
 
     Parameters
     ----------
         steps_lim {dataframe} -- pandas dataframe with the detected gait events
-        seg_lim {dataframe} -- pandas dataframe with phases events
         data_rf {dataframe} -- pandas dataframe with data from the right foot sensor
         data_lf {dataframe} -- pandas dataframe with data from the left foot sensor
         freq {int} -- acquisition frequency 
@@ -26,55 +25,17 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
   
     name = "Gait events detection - "
 
-    fig, ax = plt.subplots(3, figsize=(20, 9), sharex=True, sharey=False, gridspec_kw={'height_ratios':[10,1,10]})
+    fig, ax = plt.subplots(2, figsize=(20, 9), sharex=True, sharey=False)
 
     ax[0].grid()
-    #ax[1].set_visible(False)
-    ax[2].grid()
-
-    # Phases segmentation 
-    # Phase 0: waiting
-    ax[1].add_patch(patches.Rectangle((0, 0),  # (x,y)
-                                      seg_lim[0]/freq,  # width
-                                      1,  # height
-                                      alpha=0.1, color="k"))
-    ax[1].text(seg_lim[0]/(2*freq), 0.5, 'waiting', fontsize = 9, horizontalalignment='center', verticalalignment='center')
-    
-    # Phase 1: go
-    ax[1].add_patch(patches.Rectangle((seg_lim[0]/freq, 0),  # (x,y)
-                                      (seg_lim[1]-seg_lim[0])/freq,  # width
-                                      1,  # height
-                                      alpha=0.2, color="k"))
-    ax[1].text(seg_lim[0]/freq + (seg_lim[1]-seg_lim[0])/(2*freq), 0.5, 'straight (go)', fontsize = 9, horizontalalignment='center', verticalalignment='center')
-
-    # Phase 2: u-turn
-    ax[1].add_patch(patches.Rectangle((seg_lim[1]/freq, 0),  # (x,y)
-                                      (seg_lim[2]-seg_lim[1])/freq,  # width
-                                      1,  # height
-                                      alpha=0.3, color="k"))
-    ax[1].text(seg_lim[1]/freq + (seg_lim[2]-seg_lim[1])/(2*freq), 0.5, 'u-turn', fontsize = 9, horizontalalignment='center', verticalalignment='center')
-
-    # Phase 3: back
-    ax[1].add_patch(patches.Rectangle((seg_lim[2]/freq, 0),  # (x,y)
-                                      (seg_lim[3]-seg_lim[2])/freq,  # width
-                                      1,  # height
-                                      alpha=0.2, color="k"))
-    ax[1].text(seg_lim[2]/freq + (seg_lim[3]-seg_lim[2])/(2*freq), 0.5, 'straight (back)', fontsize = 9, horizontalalignment='center', verticalalignment='center')
-
-    # Phase 4: waiting
-    ax[1].add_patch(patches.Rectangle((seg_lim[3]/freq, 0),  # (x,y)
-                                      (len(data_rf)-seg_lim[3])/freq,  # width
-                                      1,  # height
-                                      alpha=0.1, color="k"))
-    ax[1].text(seg_lim[3]/freq + (len(data_rf)-seg_lim[3])/(2*freq), 0.5, 'waiting', fontsize = 9, horizontalalignment='center', verticalalignment='center')
+    ax[1].grid()
 
     ax[0].set(xlabel='Time (s)', ylabel='Gyr ML')
     ax[0].set_title(label = name + "Left Foot", weight='bold')
     ax[0].xaxis.set_tick_params(labelsize=12)
-    ax[1].set(ylabel='Phases')
-    ax[2].set(xlabel='Time (s)', ylabel='Gyr ML')
-    ax[2].set_title(label = name + "Right Foot", weight='bold')
-    ax[2].xaxis.set_tick_params(labelsize=12)
+    ax[1].set(xlabel='Time (s)', ylabel='Gyr ML')
+    ax[1].set_title(label = name + "Right Foot", weight='bold')
+    ax[1].xaxis.set_tick_params(labelsize=12)
 
     # ---------------------------- Left foot data ---------------------------------------------
     t_lf = data_lf["PacketCounter"]
@@ -88,7 +49,7 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
     gyr_rf = data_rf["Gyr_Y"]
     ma_rf = max(gyr_rf)
     mi_rf = min(gyr_rf)
-    ax[2].plot(t_rf, gyr_rf)
+    ax[1].plot(t_rf, gyr_rf)
 
     # ----------------------- Left foot -------------------------------------------
     for i in range(len(steps_lf)): 
@@ -129,32 +90,32 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
     for i in range(len(steps_rf)):
         
         to = int(steps_rf[i][3])
-        ax[2].vlines(t_rf[to], mi_rf, ma_rf, 'k', '--')
+        ax[1].vlines(t_rf[to], mi_rf, ma_rf, 'k', '--')
         hs = int(steps_rf[i][4])
-        ax[2].vlines(t_rf[hs], mi_rf, ma_rf, 'k', '--')
+        ax[1].vlines(t_rf[hs], mi_rf, ma_rf, 'k', '--')
 
         if to < hs:
-            ax[2].add_patch(patches.Rectangle((t_rf[to], mi_rf),  # (x,y)
+            ax[1].add_patch(patches.Rectangle((t_rf[to], mi_rf),  # (x,y)
                                               t_rf[hs] - t_rf[to],  # width
                                               ma_rf - mi_rf,  # height
                                               alpha=0.1,
                                               facecolor='red', linestyle='dotted'))
             if i < len(steps_rf) - 1:
                 to_ap = int(steps_rf[i + 1][3])
-                ax[2].add_patch(patches.Rectangle((t_rf[hs], mi_rf),  # (x,y)
+                ax[1].add_patch(patches.Rectangle((t_rf[hs], mi_rf),  # (x,y)
                                                   t_rf[to_ap] - t_rf[hs],  # width
                                                   ma_rf - mi_rf,  # height
                                                   alpha=0.1,
                                                   facecolor='green', linestyle='dotted'))
         else:
-            ax[2].add_patch(patches.Rectangle((t_rf[hs], min(gyr_rf)),  # (x,y)
+            ax[1].add_patch(patches.Rectangle((t_rf[hs], min(gyr_rf)),  # (x,y)
                                               t_rf[to] - t_rf[hs],  # width
                                               max(gyr_rf) - min(gyr_rf),  # height
                                               alpha=0.1,
                                               facecolor='green', linestyle='dotted'))
             if i < len(steps_rf) - 1:
                 hs_ap = int(steps_rf[i + 1][4])
-                ax[2].add_patch(patches.Rectangle((t_rf[to], min(gyr_rf)),  # (x,y)
+                ax[1].add_patch(patches.Rectangle((t_rf[to], min(gyr_rf)),  # (x,y)
                                                   t_rf[hs_ap] - t_rf[to],  # width
                                                   max(gyr_rf) - min(gyr_rf),  # height
                                                   alpha=0.1,
@@ -168,7 +129,7 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, seg_lim, freq, output):
     green_circle = mpatches.Patch(color='green', label='Flat Foot & Heel Off')
 
     ax[0].legend(handles=[red_patch, green_patch], loc="upper left")
-    ax[2].legend(handles=[red_patch, green_patch], loc="upper left")
+    ax[1].legend(handles=[red_patch, green_patch], loc="upper left")
 
     # save the fig
     path_out = os.path.join(output, "steps.svg")
@@ -182,7 +143,6 @@ def plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output, c
     Parameters
     ----------
         steps_lim {dataframe} -- pandas dataframe with the detected gait events
-        seg_lim {dataframe} -- pandas dataframe with phases events
         data_rf {dataframe} -- pandas dataframe with data from the right foot sensor
         data_lf {dataframe} -- pandas dataframe with data from the left foot sensor
         freq {int} -- acquisition frequency 
