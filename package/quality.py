@@ -87,10 +87,10 @@ def compute_extrinsic_quality(steps_lim):
   
   # estimation of stride alternation
   steps_lim_sort = steps_lim.sort_values(by = ['HS', 'TO'])
-  steps_lim_sort = steps_lim_sort.tolist()
+  foot_list = steps_lim_sort['Foot'].tolist()
   i = 0
-  for k in range(len(steps_lim_sort)-1):
-      i = i + abs(steps_lim_sort[k+1]-steps_lim_sort[k])
-  q3 = round(100*i/(len(steps_lim_sort) -1))
+  for k in range(len(foot_list)-1):
+      i = i + abs(foot_list[k+1]-foot_list[k])
+  q3 = round(100*i/(len(foot_list) -1))
 
   return q3
