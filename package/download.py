@@ -8,9 +8,6 @@ def json_report(seg_lim, steps_lim, freq, output):
     dict_events["Detection date"] = str(datetime.now())
     dict_events["Freq"] = freq
     
-    dict_events["TrialBoundaries"] = [int(seg_lim[0]), int(seg_lim[3])]
-    dict_events["UTurnBoundaries"] = [int(seg_lim[1]), int(seg_lim[2])]
-
     steps_lim_lf = []
     steps_lim_rf = []
     for i in range(len(steps_lim)):
