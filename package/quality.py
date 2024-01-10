@@ -7,14 +7,13 @@ from scipy import stats
 
 
 def print_all_quality_index(q1, q2, output):
-    """Compute the quality index of the trial gait events detection (between 0 and 100) and produce a picture of the number surrounded by an appropriately colored circle. 
-    Add quality index formula ? 
+    """Plot the figure with the quality index.  
 
     Parameters
     ----------
-        steps_lim_full {dataframe} -- pandas dataframe with all the detected gait events
-        seg_lim {dataframe} -- pandas dataframe with phases events 
-        output {str} -- folder path for output fig
+        q1 {float} -- intrinsic quality index.
+        q2 {float} -- extrinsic quality index.
+        output {str} -- folder path for output figure. 
 
     Returns
     -------
@@ -46,8 +45,9 @@ def plot_quality_index(q, ax, scale):
 
     Parameters
     ----------
-        q {int} -- quality index 
-        ax {} -- ax in output fig
+        q {int} -- quality index.
+        ax {matplotlib ax} -- ax in output fig.
+        scale {int} -- to adapt the size of the raws and columns. 
     """
   
     # plot qi
@@ -78,11 +78,11 @@ def compute_extrinsic_quality(steps_lim):
 
     Parameters
     ----------
-        steps_lim {dataframe} -- pandas dataframe with gait events
+        steps_lim {dataframe} -- pandas dataframe with gait events.
 
     Returns
     -------
-        qi {int} -- quality index 
+        qi {int} -- quality index. 
     """
   
   # estimation of stride alternation
