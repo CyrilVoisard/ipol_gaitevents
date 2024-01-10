@@ -82,7 +82,7 @@ if __name__ == "__main__":
     q2 = quality.compute_extrinsic_quality(steps_lim)
     quality.print_all_quality_index(q1, q2, output=data_WD)
 
-    # print validated gait events and figure 
+    # print gait events and display figure 
     print_steps_detection(steps_lim, len(data_rf), freq)
     plot_stepdetection.plot_stepdetection(steps_lim, data_rf, data_lf, freq, output=data_WD)
     plot_stepdetection.plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output=data_WD)
