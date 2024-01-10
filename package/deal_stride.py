@@ -5,42 +5,42 @@ import pandas as pd
 from scipy import interpolate
 
 
-def stride_sain_decal(len_estimation, freq=100):
-    """
+def model_stride_offset(len_estimation, freq=100):
+    """Return a dictionnary with all the possible offset for the model stride of a healthy subject adapted to the desired length. 
 
     Parameters
     ----------
-        len_estimation {int} -- 
+        len_estimation {int} -- desired sample duration for the stride model to be returned. 
 
     Returns
     -------
-        gyr_ref_decal {dict} -- 
-        jerk_ref_decal {dict} -- 
-        stride_ref_decal_annotations {dict} -- 
+        gyr_mod_decal {dict} -- dictionnary with offet of gyration time series for the model stride
+        jerk_mod_decal {dict} -- dictionnary with offet of jerk time series for the model stride
+        stride_mod_decal_annotations {dict} -- dictionnary with offet of the index for the 4 gait events for the model stride
     """
     
-    gyr_ref_decal = dict()
-    jerk_ref_decal = dict()
-    stride_ref_decal_annotations = dict()
-    gyr_ref, jerk_ref, stride_ref_annotations = stride_sain(len_estimation, freq)
-    gyr_ref_decal["0"] = gyr_ref
-    jerk_ref_decal["0"] = jerk_ref
-    stride_ref_decal_annotations["0"] = stride_ref_annotations
+    gyr_mod_decal = dict()
+    jerk_mod_decal = dict()
+    stride_mod_decal_annotations = dict()
+    gyr_mod, jerk_mod, stride_mod_annotations = model_stride(len_estimation, freq)
+    gyr_mod_decal["0"] = gyr_mod
+    jerk_mod_decal["0"] = jerk_mod
+    stride_mod_decal_annotations["0"] = stride_mod_annotations
 
-    for i in range(1, len(gyr_ref)):
-        gyr_ref_decal[str(i)] = np.concatenate((gyr_ref[i:], gyr_ref[:i]), axis=0)
-        jerk_ref_decal[str(i)] = np.concatenate((jerk_ref[i:], jerk_ref[:i]), axis=0)
+    for i in range(1, len(gyr_mod)):
+        gyr_mod_decal[str(i)] = np.concatenate((gyr_mod[i:], gyr_mod[:i]), axis=0)
+        jerk_mod_decal[str(i)] = np.concatenate((jerk_mod[i:], jerk_mod[:i]), axis=0)
         annotations = dict()
-        annotations["HS"] = (stride_ref_annotations["HS"] - i) % len(gyr_ref)
-        annotations["FF"] = (stride_ref_annotations["FF"] - i) % len(gyr_ref)
-        annotations["HO"] = (stride_ref_annotations["HO"] - i) % len(gyr_ref)
-        annotations["TO"] = (stride_ref_annotations["TO"] - i) % len(gyr_ref)
-        stride_ref_decal_annotations[str(i)] = annotations
+        annotations["HS"] = (stride_mod_annotations["HS"] - i) % len(gyr_mod)
+        annotations["FF"] = (stride_mod_annotations["FF"] - i) % len(gyr_mod)
+        annotations["HO"] = (stride_mod_annotations["HO"] - i) % len(gyr_mod)
+        annotations["TO"] = (stride_mod_annotations["TO"] - i) % len(gyr_mod)
+        stride_mod_decal_annotations[str(i)] = annotations
 
-    return gyr_ref_decal, jerk_ref_decal, stride_ref_decal_annotations
+    return gyr_mod_decal, jerk_mod_decal, stride_mod_decal_annotations
 
 
-def stride_sain(len_estimation, freq=100):
+def model_stride(len_estimation, freq=100):
     """Return the model stride of a healthy subject adapted to the desired length. 
     Length adjustments can only be made only on the stance phase, never on the swing phase.  
 
@@ -50,12 +50,12 @@ def stride_sain(len_estimation, freq=100):
 
     Returns
     -------
-        gyr_ref {array} -- gyration time series for the model stride
-        jerk_ref {array} -- jerk time series for the model stride
-        stride_ref_annotations {dict} -- dictionary with the index for the 4 gait events of the model sride: HS, FF, HO, TO. 
+        gyr_mod {array} -- gyration time series for the model stride
+        jerk_mod {array} -- jerk time series for the model stride
+        stride_mod_annotations {dict} -- dictionary with the index for the 4 gait events of the model sride: HS, FF, HO, TO. 
     """
     
-    gyr_ref_100 = np.array([1.26760644e-01, 1.11668357e-01, 8.32307508e-02, 5.23749713e-02,
+    gyr_mod_100 = np.array([1.26760644e-01, 1.11668357e-01, 8.32307508e-02, 5.23749713e-02,
                             2.49340487e-02, 8.49469197e-04, -2.21600981e-02, -4.43579484e-02,
                             -6.35252125e-02, -7.98064015e-02, -1.02934550e-01, -1.55891377e-01,
                             -2.70143688e-01, -4.72886234e-01, -7.73106030e-01, -1.15611776e+00,
@@ -83,17 +83,17 @@ def stride_sain(len_estimation, freq=100):
                             -3.19621130e-01, -3.11547167e-01, -2.52768034e-01, -1.55177074e-01,
                             -4.67644606e-02, 4.13623151e-02, 8.84683220e-02])
 
-    t_ref_100 = np.linspace(0, len(gyr_ref_100) - 1, len(gyr_ref_100))
-    t_ref_freq = np.linspace(0, len(gyr_ref_100) - 1, round(len(gyr_ref_100) * freq / 100))
-    interp_gyr = interpolate.interp1d(t_ref_100, gyr_ref_100, kind='cubic')
-    gyr_ref_freq = interp_gyr(t_ref_freq).tolist()
+    t_mod_100 = np.linspace(0, len(gyr_mod_100) - 1, len(gyr_mod_100))
+    t_mod_freq = np.linspace(0, len(gyr_mod_100) - 1, round(len(gyr_mod_100) * freq / 100))
+    interp_gyr = interpolate.interp1d(t_mod_100, gyr_mod_100, kind='cubic')
+    gyr_mod_freq = interp_gyr(t_mod_freq).tolist()
 
-    n_ajout = max(0, len_estimation - len(t_ref_freq))
+    n_ajout = max(0, len_estimation - len(t_mod_freq))
     ajout = [1.72042875e-01]
 
-    gyr_ref = np.array(ajout * n_ajout + gyr_ref_freq)
+    gyr_mod = np.array(ajout * n_ajout + gyr_mod_freq)
 
-    jerk_ref_100 = np.array([7.33013844e-01, 5.08680015e-01, 2.83958884e-01, 2.13838951e-01,
+    jerk_mod_100 = np.array([7.33013844e-01, 5.08680015e-01, 2.83958884e-01, 2.13838951e-01,
                                            2.62533483e-01, 3.39655179e-01, 3.95763084e-01, 4.42510601e-01,
                                            5.88738895e-01, 9.28792999e-01, 1.35628149e+00, 1.67269301e+00,
                                            1.84836619e+00, 1.91495327e+00, 1.73255119e+00, 1.30569317e+00,
@@ -121,22 +121,22 @@ def stride_sain(len_estimation, freq=100):
                                            3.69761117e+00, 2.90919078e+00, 2.04212959e+00, 1.61950796e+00,
                                            1.41944068e+00, 1.22664442e+00, 9.52457080e-01])
 
-    t_ref_100 = np.linspace(0, len(jerk_ref_100) - 1, len(jerk_ref_100))
-    t_ref_freq = np.linspace(0, len(jerk_ref_100) - 1, round(len(jerk_ref_100) * freq / 100))
-    interp_jerk = interpolate.interp1d(t_ref_100, jerk_ref_100, kind='cubic')
-    jerk_ref_freq = interp_jerk(t_ref_freq).tolist()
+    t_mod_100 = np.linspace(0, len(jerk_mod_100) - 1, len(jerk_mod_100))
+    t_mod_freq = np.linspace(0, len(jerk_mod_100) - 1, round(len(jerk_mod_100) * freq / 100))
+    interp_jerk = interpolate.interp1d(t_mod_100, jerk_mod_100, kind='cubic')
+    jerk_mod_freq = interp_jerk(t_mod_freq).tolist()
 
-    n_ajout = max(0, len_estimation - len(t_ref_freq))
+    n_ajout = max(0, len_estimation - len(t_mod_freq))
     ajout = [1.72042875e-01]
 
-    jerk_ref = np.array(ajout * n_ajout + jerk_ref_freq)
+    jerk_mod = np.array(ajout * n_ajout + jerk_mod_freq)
 
-    stride_ref_annotations = {'HS': round(74*freq/100) + len(ajout * n_ajout),
+    stride_mod_annotations = {'HS': round(74*freq/100) + len(ajout * n_ajout),
                               'FF': round(89*freq/100) + len(ajout * n_ajout),
                               'HO': round(10*freq/100) + len(ajout * n_ajout),
                               'TO': round(32*freq/100) + len(ajout * n_ajout)}
 
-    return gyr_ref, np.sqrt(jerk_ref), stride_ref_annotations
+    return gyr_mod, np.sqrt(jerk_mod), stride_mod_annotations
 
 
 def plot_annotate_stride(gyr, jerk, stride_annotations, output):
@@ -170,7 +170,7 @@ def plot_annotate_stride(gyr, jerk, stride_annotations, output):
     ax[1].set_ylabel("Jerk_tot")
     ax[1].grid()
 
-    titre = "stride_reference.png"
+    titre = "model_stride.png"
     os.chdir(output)
     plt.savefig(titre, bbox_inches="tight")
     plt.close()
