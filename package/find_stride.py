@@ -70,10 +70,10 @@ def plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_
     Arguments:
         gyr_ref {ndarray} -- array with the gyration from the reference stride
         jerk_ref {ndarray} -- array with the jerk from the reference stride
-        ref_stride_annotations {} -- 
-        s_y1 {} -- 
-        s_y2 {} -- 
-        path {} -- 
+        ref_stride_annotations {} -- dictionary with the index for the 4 gait events of the reference sride: HS, FF, HO, TO. 
+        s_y1 {ndarray} -- transposed signal for jerk from the tested time series
+        s_y2 {ndarray} -- transposed signal for gyration from the tested time series
+        path {list} -- list of double giving the correspondance between time series in terms of DTW
         foot {int} -- 0 for left, 1 for right
         freq {int} -- acquisition frequency (Hz)
         output {str} -- folder path for output fig
