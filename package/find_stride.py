@@ -31,27 +31,33 @@ def annotate_ref_stride(data_1, data_2, foot, r=2, freq=100, output=0):
        annotation of gait events of the reference stride in the trial {ndarray}
     """
 
-    # quality intrinsec
+    # intrinsic quality 
     q2_stride = [0, 0]
-                                 
+
+    # reference stride: from the dataset
     gyr_ref, jerk_ref, start_ref, end_ref, q2_stride[0] = find_ref_stride(data_1, data_2, foot, freq)
-    
+
+    # model stride: always the same healthy subject stride
     len_ref = len(gyr_ref)
     gyr_model, jerk_model, stride_model_annotations = find_model_stride(data_1, data_2, foot, len_ref, freq=freq)
 
+    # data formatting
     s_y1 = np.array([1 * jerk_ref / (np.max(jerk_ref)), 1 * gyr_ref / (np.max(abs(gyr_ref)))])
     s_y1 = s_y1.transpose()
-
     s_y2 = np.array([1 * jerk_model / (np.max(jerk_model)), 1 * gyr_ref / (np.max(abs(gyr_model)))])
     s_y2 = s_y2.transpose()
 
+    # DTW application: correspondance path
     path, sim = metrics.dtw_path(s_y1, s_y2, global_constraint="itakura", itakura_max_slope=r)
 
+    # annotate the reference stride with the path and the model stride
     ref_stride_annotations = deal_stride.annotate(path, stride_model_annotations)
 
+    # plot the result
     plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_y2, path,
                                            foot, freq=freq, start=start_ref, output=output)
 
+    # intrinsic quality, second part : DTW value
     q2_stride[1] = max(0, round(100-sim))
 
     return gyr_ref, jerk_ref, ref_stride_annotations, q2_stride
@@ -76,7 +82,7 @@ def plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_
     -------
     fig
     """
-
+    
     sz_1 = s_y1.shape[0]
     sz_2 = s_y2.shape[0]
 
@@ -159,55 +165,61 @@ def find_model_stride(data_1, data_2, foot, len_ref, freq=100):
        jerk time series of the found model stride {ndarray}
        annotation of gait events of the found model stride in the trial {ndarray}
     """
-    
-    gyr_model_decal, jerk_model_decal, stride_model_decal_annotations = deal_stride.stride_sain_decal(int(len_ref), freq)
+
+    # model stride and reference stride
+    gyr_model_decal, jerk_model_decal, stride_model_decal_annotations = deal_stride.model_stride_offset(int(len_ref), freq)
     gyr_ref, jerk_ref, p, q, _ = find_ref_stride(data_1, data_2, foot, freq=freq)
 
-    cout = []
+    # Goal: find an offset that optimizes the similarity between the model stride and the reference stride
+    # correlation list for each offset between the model stride and the reference stride
+    correlation = []
     for j in range(0, len(gyr_ref)):
         u = gyr_ref / (np.max(abs(gyr_ref)))
         v = gyr_model_decal[str(j)] / (np.max(abs(gyr_model_decal[str(j)])))
         w = jerk_ref / (np.max(abs(jerk_ref)))
         h = jerk_model_decal[str(j)] / (np.max(abs(jerk_model_decal[str(j)])))
-        cout.append(stats.pearsonr(u, v[0:len(u)])[0] + stats.pearsonr(w, h[0:len(w)])[0])
+        correlation.append(stats.pearsonr(u, v[0:len(u)])[0] + stats.pearsonr(w, h[0:len(w)])[0])
 
-    cout = np.array(cout)
-    pic_cout = indexes(cout, thres=0.5 * np.max(cout), min_dist=1, thres_abs=True)
-    if cout[0] > 0.5 * np.max(cout):
-        pic_cout = np.append(pic_cout, 0)
+    # correlation pic selection
+    correlation = np.array(correlation)
+    pic_correlation = indexes(correlation, thres=0.5 * np.max(correlation), min_dist=1, thres_abs=True)
+    if correlation[0] > 0.5 * np.max(correlation):
+        pic_correlation = np.append(pic_correlation, 0)
 
-    pic_cout = pic_cout[np.argsort(-cout[pic_cout])]
-    pic_cout = pic_cout[:3]
-    pic_cout.sort()
+    pic_correlation = pic_correlation[np.argsort(-correlation[pic_correlation])]
+    pic_correlation = pic_correlation[:3]
+    pic_correlation.sort()
 
-    if len(pic_cout) == 3:
-        p1_3 = pic_cout[2] - pic_cout[0]
-        p2_1 = pic_cout[0] + len(gyr_ref) - pic_cout[1]
-        p3_2 = pic_cout[1] + len(gyr_ref) - pic_cout[2]
+    # offset selection according to number of peaks detected
+    if len(pic_correlation) == 3:  # if there are 3, the peak with the most central index is taken
+        p1_3 = pic_correlation[2] - pic_correlation[0]
+        p2_1 = pic_correlation[0] + len(gyr_ref) - pic_correlation[1]
+        p3_2 = pic_correlation[1] + len(gyr_ref) - pic_correlation[2]
         if (p1_3 <= p2_1) & (p1_3 <= p3_2):
-            decal_estim = pic_cout[1]
+            decal_estim = pic_correlation[1]
         else:
             if (p3_2 <= p2_1):
-                decal_estim = pic_cout[0]
+                decal_estim = pic_correlation[0]
             else:
-                decal_estim = pic_cout[2]
+                decal_estim = pic_correlation[2]
     else:
-        if len(pic_cout) == 2:
-            max_cout = max(cout[pic_cout[1]], cout[pic_cout[0]])
-            cout_norm_0 = max(0, cout[pic_cout[0]] - 0.75 * max_cout)
-            cout_norm_1 = max(0, cout[pic_cout[1]] - 0.75 * max_cout)
-            if abs(pic_cout[0] - pic_cout[1]) < len(gyr_ref) // 2:
-                cout1 = cout_norm_1/(cout_norm_0 + cout_norm_1)
-                decal_estim = int(min(pic_cout[0], pic_cout[1]) + abs(cout1 * (pic_cout[0] - pic_cout[1])))
+        if len(pic_correlation) == 2:  # if there are 2, we take the barycentre of the two peaks according to their value
+            max_correlation = max(correlation[pic_correlation[1]], correlation[pic_correlation[0]])
+            correlation_norm_0 = max(0, correlation[pic_correlation[0]] - 0.75 * max_correlation)
+            correlation_norm_1 = max(0, correlation[pic_correlation[1]] - 0.75 * max_correlation)
+            if abs(pic_correlation[0] - pic_correlation[1]) < len(gyr_ref) // 2:
+                correlation1 = correlation_norm_1/(correlation_norm_0 + correlation_norm_1)
+                decal_estim = int(min(pic_correlation[0], pic_correlation[1]) + abs(correlation1 * (pic_correlation[0] - pic_correlation[1])))
             else:
-                cout0 = cout_norm_0 / (cout_norm_1 + cout_norm_0)
-                ecart = min(pic_cout[0], pic_cout[1]) + len(gyr_ref) - max(pic_cout[0], pic_cout[1])
-                decal_estim = int(max(pic_cout[0], pic_cout[1]) + ecart * cout0)
-        else:
-            if len(pic_cout) == 0:
-                pic_cout = [0]
-            decal_estim = int(np.median(pic_cout))
+                correlation0 = correlation_norm_0 / (correlation_norm_1 + correlation_norm_0)
+                ecart = min(pic_correlation[0], pic_correlation[1]) + len(gyr_ref) - max(pic_correlation[0], pic_correlation[1])
+                decal_estim = int(max(pic_correlation[0], pic_correlation[1]) + ecart * correlation0)
+        else:  #  if there's 1, it's the selected value, and if there's 0, we take an offset at 0.
+            if len(pic_correlation) == 0:
+                pic_correlation = [0]
+            decal_estim = int(np.median(pic_correlation))
 
+    # we ensure that the offset chosen is modulo the total duration of the reference stride
     decal_estim = decal_estim % len(gyr_ref)
 
     return gyr_model_decal[str(decal_estim)], jerk_model_decal[str(decal_estim)], stride_model_decal_annotations[str(decal_estim)]
@@ -311,13 +323,17 @@ def len_stride_one_side(data, roll=1, freq=100):
     test_13 = x_13.to_numpy()
     x_2 = data["Gyr_Y"]
     test_2 = x_2.to_numpy()
+
+    # weighted autocorrelation from unbiased autocorrelations
     acf = (autocorr(test_11) / 3 + autocorr(test_12) / 3 + autocorr(test_13)) / 3 / 2 + autocorr(test_2) / 2
 
+    # data smoothing possible, not done by default (roll = 1)
     y = pd.DataFrame(acf)
     y_mean = y.rolling(roll, center=True, win_type='cosine').mean()
     y_mean = y_mean.fillna(0)
     y_mean_np = y_mean.to_numpy().transpose()[0]
 
+    # search for peaks
     index_pic = autocorr_indexes(y_mean_np[:len(y_mean_np) // 4], freq=freq)
 
     if len(index_pic) > 0:
@@ -328,7 +344,7 @@ def len_stride_one_side(data, roll=1, freq=100):
 
 
 def autocorr_indexes(y, thres=0.7, min_dist=80, freq=100):
-    """Find autocorrelation local maxima indexes.
+    """Find autocorrelation local maxima indexes adapted for autocorrelation peak detection.
 
     Parameters
     ----------
