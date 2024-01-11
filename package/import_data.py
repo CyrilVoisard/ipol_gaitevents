@@ -35,6 +35,7 @@ def load_XSens(filename, freq):
             j = j + 1
 
     skip = i-1-j
+    print("skip", skip)
     
     signal = pd.read_csv(filename, delimiter="\t", skiprows=skip, header=0)
     t = signal["PacketCounter"]
