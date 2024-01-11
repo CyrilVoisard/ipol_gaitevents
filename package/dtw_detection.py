@@ -40,7 +40,7 @@ def steps_detection(data_1, data_2, foot, freq, output):
     ----------
         data_1 {dataframe} -- pandas dataframe with data from the considered foot sensor
         data_2 {dataframe} -- pandas dataframe with data from the other foot sensor
-        foot {int} -- considered foot
+        foot {int} -- 0 for left, 1 for right
         freq {int} -- acquisition frequency 
         output {str} -- folder path for output fig
 
