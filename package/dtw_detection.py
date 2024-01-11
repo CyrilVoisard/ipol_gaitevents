@@ -55,12 +55,12 @@ def steps_detection(data_1, data_2, foot, freq, output):
     z = deal_stride.calculate_jerk_tot(data_1, freq)
 
     # template for the template based detection
-    gyr_ok, acc_ok, stride_annotations_ok, q_side = find_stride.annotate_ref_stride(data_1, data_2, foot, freq, output=output)
+    gyr_ref, jerk_ref, stride_annotations_ref, q_side = find_stride.annotate_ref_stride(data_1, data_2, foot, freq, output=output)
 
     # matrix cost and gait event intuition with basic correlation
-    cost = matrix_cost(x, z, gyr_ok, acc_ok)
+    cost = matrix_cost(x, z, gyr_ref, jerk_ref)
     
-    pic_correl_start = find_stride.indexes(cost, 0.35, min_dist=len(gyr_ok) // 2, thres_abs=True)
+    pic_correl_start = find_stride.indexes(cost, 0.35, min_dist=len(gyr_ref) // 2, thres_abs=True)
     pic_correl_start = pic_correl_start[np.argsort(-cost[pic_correl_start])]
     F = [0] * len(x)  # same size as the signal, allows for counting if the steps are identified.
 
@@ -74,8 +74,8 @@ def steps_detection(data_1, data_2, foot, freq, output):
     for i in range(len(pic_correl_start)):
         step = []
         start_min, end_min, path_min, sim_min, annotations_min = affine_annotate_dtw(x, z, pic_correl_start[i],
-                                                                                     gyr_ok, acc_ok,
-                                                                                     stride_annotations_ok)
+                                                                                     gyr_ref, jerk_ref,
+                                                                                     stride_annotations_ref)
 
         add = False
         ho = start_min + annotations_min["HO"]
@@ -113,7 +113,23 @@ def steps_detection(data_1, data_2, foot, freq, output):
     return steps_side, q_side
 
 
-def affine_annotate_dtw(x, y, start, gyr, acc, stride_annotations, disp=False):
+def affine_annotate_dtw(x, y, start, gyr, jerk, stride_annotations):
+    """Matrix cost for the template based detection.
+
+    Parameters
+    ----------
+        x {vector} -- time series with gyration signal of the entire signal
+        y {vector} -- time series with jerk signal of the entire signal
+        start {int} -- time series with jerk signal of the entire signal
+        gyr {vector} -- time series with gyration signal of the reference stride
+        jerk {vector} -- time series with jerk signal of the reference stride
+        stride_annotations {dict} -- dictionary with the index for the 4 gait events of the model sride: HS, FF, HO, TO. 
+
+    Returns
+    -------
+       numpy array -- numpy array with the matrix cost
+    """
+    
     L = len(gyr)
     end = start + L
     
@@ -122,7 +138,7 @@ def affine_annotate_dtw(x, y, start, gyr, acc, stride_annotations, disp=False):
                      x[start:end] / np.max(abs(x[start:end]))])
     s_y1 = s_y1.transpose()
 
-    s_y2 = np.array([acc / np.max(acc),
+    s_y2 = np.array([jerk / np.max(jerk),
                      gyr / np.max(abs(gyr))])
     s_y2 = s_y2.transpose()
 
@@ -136,14 +152,29 @@ def affine_annotate_dtw(x, y, start, gyr, acc, stride_annotations, disp=False):
     return start_min, end_min, path_min, sim_min, annotations_min
 
 
-def matrix_cost(x, z, gyr_ok, jerk_ok, mu=0.1):
+def matrix_cost(x, z, gyr_ref, jerk_ref, mu=0.1):
+    """Matrix cost for the template based detection.
+
+    Parameters
+    ----------
+        x {vector} -- time series with gyration signal of the entire signal
+        z {vector} -- time series with jerk signal of the entire signal
+        gyr_ref {vector} -- time series with gyration signal of the reference stride
+        jerk_ref {vector} -- time series with jerk signal of the reference stride
+        mu {float} -- coefficient of expansion and compression above which 2 signals are considered uncorrelated
+
+    Returns
+    -------
+       numpy array -- numpy array with the matrix cost
+    """
+    
     Nx = len(x)
 
     matrix = [0 for i in range(Nx)]
     matrix_2 = [0 for i in range(Nx)]
 
-    u = gyr_ok
-    v = jerk_ok
+    u = gyr_ref
+    v = jerk_ref
     Nd = len(u)
 
     for j in range(0, Nx - Nd + 1):  
