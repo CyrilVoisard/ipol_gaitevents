@@ -22,12 +22,12 @@ def load_XSens(filename, freq):
         signal
     """
 
+    # find the first line
     fileID = open(filename, 'r')
     i = 0
     j = 0
     intro = fileID.readlines()[0][0:13]
     while intro != 'PacketCounter':
-        print("intro", intro)
         i = i + 1
         fileID = open(filename, 'r')
         intro = fileID.readlines()[i][0:13]
@@ -35,8 +35,8 @@ def load_XSens(filename, freq):
             j = j + 1
 
     skip = i-j
-    print("skip", skip)
-    
+
+    # import the data
     signal = pd.read_csv(filename, delimiter="\t", skiprows=skip, header=0)
     t = signal["PacketCounter"]
     t_0 = t[0]
@@ -47,7 +47,7 @@ def load_XSens(filename, freq):
     d = {'PacketCounter': time_init_0}
 
     colonnes = signal.columns
-
+    # complete missing data with interpolation
     for colonne in colonnes[1:]:
         val = signal[colonne]
         f = interpolate.interp1d(t, val)
