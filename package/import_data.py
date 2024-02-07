@@ -50,6 +50,8 @@ def load_XSens(filename, freq):
     # complete missing data with interpolation
     for colonne in colonnes[1:]:
         val = signal[colonne]
+        print("t", t)
+        print("val", val)
         f = interpolate.interp1d(t, val)
         y = f(time)
         d[colonne] = y.tolist()
