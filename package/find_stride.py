@@ -11,7 +11,7 @@ from scipy import stats
 from package import deal_stride
 
 
-def annotate_ref_stride(data_1, data_2, foot, r=2, freq=100, output=0):
+def annotate_ref_stride(data_1, data_2, foot, freq, r=2, output=0):
     """Find, annote and plot a signal subset of the foot of interest to be considered as the reference stride. 
     Annotation of the reference stride with the gait events (TO, HS, FF, HO). 
     
@@ -19,8 +19,8 @@ def annotate_ref_stride(data_1, data_2, foot, r=2, freq=100, output=0):
         data_1 {pandas Dataframe} -- dataframe with data from the foot sensor of interest
         data_2 {pandas Dataframe} -- dataframe with data from the foot sensor of the other side
         foot {int} -- 0 for left, 1 for right
-        r {float} -- size of the Itakura parallelogram to restrict the DTW
         freq {int} -- acquisition frequency (Hz)
+        r {float} -- size of the Itakura parallelogram to restrict the DTW
         output {str} -- folder path for output fig
 
     Returns
@@ -39,7 +39,7 @@ def annotate_ref_stride(data_1, data_2, foot, r=2, freq=100, output=0):
 
     # model stride: always the same healthy subject stride
     len_ref = len(gyr_ref)
-    gyr_model, jerk_model, stride_model_annotations = find_model_stride(data_1, data_2, foot, len_ref, freq=freq)
+    gyr_model, jerk_model, stride_model_annotations = find_model_stride(data_1, data_2, foot, len_ref, freq)
 
     # data formatting
     s_y1 = np.array([1 * jerk_ref / (np.max(jerk_ref)), 1 * gyr_ref / (np.max(abs(gyr_ref)))])
@@ -55,7 +55,7 @@ def annotate_ref_stride(data_1, data_2, foot, r=2, freq=100, output=0):
 
     # plot the result
     plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_y2, path,
-                                           foot, freq=freq, start=start_ref, output=output)
+                                           foot, freq, start=start_ref, output=output)
 
     # intrinsic quality, second part : DTW value
     q2_stride[1] = max(0, round(100-sim))
@@ -63,7 +63,7 @@ def annotate_ref_stride(data_1, data_2, foot, r=2, freq=100, output=0):
     return gyr_ref, jerk_ref, ref_stride_annotations, q2_stride
                              
 
-def plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_y2, path, foot, freq=100, start=0, output=0):
+def plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_y2, path, foot, freq, start=0, output=0):
     """Plot the reference stride and its construction. 
     Annotation of the reference stride with the gait events (TO, HS, FF, HO). 
     
@@ -147,7 +147,7 @@ def plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_
     plt.savefig(titre, bbox_inches="tight")
 
 
-def find_model_stride(data_1, data_2, foot, len_ref, freq=100):
+def find_model_stride(data_1, data_2, foot, len_ref, freq):
     """Find a signal subset of the foot of interest to be considered as the model stride. 
     Annotation of the model stride with the gait events (TO, HS, FF, HO). 
     
@@ -168,7 +168,7 @@ def find_model_stride(data_1, data_2, foot, len_ref, freq=100):
 
     # model stride and reference stride
     gyr_model_decal, jerk_model_decal, stride_model_decal_annotations = deal_stride.model_stride_offset(int(len_ref), freq)
-    gyr_ref, jerk_ref, p, q, _ = find_ref_stride(data_1, data_2, foot, freq=freq)
+    gyr_ref, jerk_ref, p, q, _ = find_ref_stride(data_1, data_2, foot, freq)
 
     # Goal: find an offset that optimizes the similarity between the model stride and the reference stride
     # correlation list for each offset between the model stride and the reference stride
@@ -225,7 +225,7 @@ def find_model_stride(data_1, data_2, foot, len_ref, freq=100):
     return gyr_model_decal[str(decal_estim)], jerk_model_decal[str(decal_estim)], stride_model_decal_annotations[str(decal_estim)]
 
 
-def find_ref_stride(data_1, data_2, foot, freq=100):
+def find_ref_stride(data_1, data_2, foot, freq):
     """Find a signal subset of the foot of interest to be considered as the reference stride. 
     Selection using a matrix profile technique with an annotation vector. 
     
@@ -250,7 +250,7 @@ def find_ref_stride(data_1, data_2, foot, freq=100):
     z = deal_stride.calculate_jerk_tot(data_1)
 
     # search window size : mean stride time estimation
-    window, autocorr = len_stride_estimation(data_1, data_2, roll=1, freq=freq)
+    window, autocorr = len_stride_estimation(data_1, data_2,  freq, roll=1)
     window = int(window)
 
     # matrix profile
@@ -274,15 +274,15 @@ def find_ref_stride(data_1, data_2, foot, freq=100):
     return x[start_ref:end_ref].to_numpy(), z[start_ref:end_ref], start_ref, end_ref, round(100*autocorr)
 
 
-def len_stride_estimation(data_1, data_2, roll=1, freq=100):
+def len_stride_estimation(data_1, data_2, freq, roll=1):
     """Estimate the mean stride time from both feet data computed from autocorrelations. The first foot is the interest foot.  
     The second foot acts as a safety net, in case autocorrelation is limiting on the interest foot. 
     
     Arguments:
         data_1 {pandas Dataframe} -- dataframe with data from the foot sensor of interest
         data_2 {pandas Dataframe} -- dataframe with data from the foot sensor of the other side
-        roll {int} -- size of the window center rolling. Default is 1, meaning no window rolling
         freq {int} -- acquisition frequency (Hz)
+        roll {int} -- size of the window center rolling. Default is 1, meaning no window rolling
 
     Returns
     -------
@@ -290,8 +290,8 @@ def len_stride_estimation(data_1, data_2, roll=1, freq=100):
         mean stride time estimation
     """
                             
-    len_stride_data_1, autocorr_1 = len_stride_one_side(data_1, roll=roll, freq=freq)
-    len_stride_data_2, autocorr_2 = len_stride_one_side(data_2, roll=roll, freq=freq)
+    len_stride_data_1, autocorr_1 = len_stride_one_side(data_1, freq, roll=roll)
+    len_stride_data_2, autocorr_2 = len_stride_one_side(data_2, freq, roll=roll)
 
     # if the two estimates are too far apart, it's likely that one of the peak detections is faulty (the two estimates should be equal).
     # if the foot of interest is defective, we take the lowest. 
@@ -301,13 +301,13 @@ def len_stride_estimation(data_1, data_2, roll=1, freq=100):
         return len_stride_data_1, autocorr_1
 
 
-def len_stride_one_side(data, roll=1, freq=100):
+def len_stride_one_side(data, freq, roll=1):
     """Estimate the mean stride time from one foot data computed from autocorrelations.
     
     Arguments:
         data {pandas Dataframe} -- dataframe with data from one of the foot sensor
-        roll {int} -- size of the window center rolling. Default is 1, meaning no window rolling
         freq {int} -- acquisition frequency (Hz)
+        roll {int} -- size of the window center rolling. Default is 1, meaning no window rolling
 
     Returns
     -------
@@ -334,7 +334,7 @@ def len_stride_one_side(data, roll=1, freq=100):
     y_mean_np = y_mean.to_numpy().transpose()[0]
 
     # search for peaks
-    index_pic = autocorr_indexes(y_mean_np[:len(y_mean_np) // 4], freq=freq)
+    index_pic = autocorr_indexes(y_mean_np[:len(y_mean_np) // 4], freq)
 
     if len(index_pic) > 0:
       return index_pic[0], y_mean_np[index_pic[0]]
@@ -343,7 +343,7 @@ def len_stride_one_side(data, roll=1, freq=100):
         return 0, 0
 
 
-def autocorr_indexes(y, thres=0.7, min_dist=80, freq=100):
+def autocorr_indexes(y, freq, thres=0.7, min_dist=0.8):
     """Find autocorrelation local maxima indexes adapted for autocorrelation peak detection.
 
     Parameters
@@ -360,7 +360,7 @@ def autocorr_indexes(y, thres=0.7, min_dist=80, freq=100):
     if isinstance(y, np.ndarray) and np.issubdtype(y.dtype, np.unsignedinteger):
         raise ValueError("y must be signed")
 
-    i = round(min_dist*freq/100)
+    i = round(min_dist*freq)
     thres = thres * (np.max(y[i:]) - np.max(np.min(y[i:i + np.argmax(y[i:])]), 0)) + np.max(
         np.min(y[i:i + np.argmax(y[i:])]), 0)
 
