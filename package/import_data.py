@@ -49,13 +49,15 @@ def load_XSens(filename, freq):
     colonnes = signal.columns
     # complete missing data with interpolation
     for colonne in colonnes[1:]:
-        val = signal[colonne]
-        print(colonne)
-        print("t", t)
-        print("val", val)
-        f = interpolate.interp1d(t, val)
-        y = f(time)
-        d[colonne] = y.tolist()
+        try:
+            val = signal[colonne]
+            f = interpolate.interp1d(t, val)
+            y = f(time)
+            d[colonne] = y.tolist()
+        except: 
+            print(colonne)
+            print("t", t)
+            print("val", val)
 
     signal = pd.DataFrame(data=d)
 
