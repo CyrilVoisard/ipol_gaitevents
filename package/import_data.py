@@ -86,14 +86,14 @@ def import_XSens(path, freq, start=0, end=200, order=8, fc=14):
     data["FreeAcc_Y"] = data["Acc_Y"] - np.mean(data["Acc_Y"][start:end])
     data["FreeAcc_Z"] = data["Acc_Z"] - np.mean(data["Acc_Z"][start:end])
 
-    data = filter_sig(data, "Acc", order, fc)
-    data = filter_sig(data, "FreeAcc", order, fc)
-    data = filter_sig(data, "Gyr", order, fc)
+    data = filter_sig(data, "Acc", order, fc, fe=freq)
+    data = filter_sig(data, "FreeAcc", order, fc, fe=freq)
+    data = filter_sig(data, "Gyr", order, fc, fe=freq)
 
     return data
 
 
-def filter_sig(data, type_sig, order, fc):
+def filter_sig(data, type_sig, order, fc, fe):
     """Application of Butterworth low-pass filter to a Dataframe
 
     Arguments:
@@ -108,9 +108,9 @@ def filter_sig(data, type_sig, order, fc):
         data
     """
     
-    data[type_sig + "_X"] = low_pass_filter(data[type_sig + "_X"], order, fc)
-    data[type_sig + "_Y"] = low_pass_filter(data[type_sig + "_Y"], order, fc)
-    data[type_sig + "_Z"] = low_pass_filter(data[type_sig + "_Z"], order, fc)
+    data[type_sig + "_X"] = low_pass_filter(data[type_sig + "_X"], order, fc, fe)
+    data[type_sig + "_Y"] = low_pass_filter(data[type_sig + "_Y"], order, fc, fe)
+    data[type_sig + "_Z"] = low_pass_filter(data[type_sig + "_Z"], order, fc, fe)
 
     return data
     
