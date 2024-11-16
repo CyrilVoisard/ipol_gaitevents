@@ -10,7 +10,7 @@ import sys
 
 # XSens data 
 
-def load_XSens(filename, freq):
+def load_XSens(filename):
     """Load the data from a file.
 
     Arguments:
@@ -22,42 +22,29 @@ def load_XSens(filename, freq):
         signal
     """
 
-    # find the first line
-    fileID = open(filename, 'r')
-    i = 0
-    j = 0
-    intro = fileID.readlines()[0][0:13]
-    while intro != 'PacketCounter':
-        i = i + 1
-        fileID = open(filename, 'r')
-        intro = fileID.readlines()[i][0:13]
-        if len(intro) == 1:
-            j = j + 1
+    with open(filename, 'r') as fileID:
+        for i, line in enumerate(fileID):
+            if line.startswith('PacketCounter'):
+                break
+        else:
+            raise ValueError("\nPacketCounter has not been found in data_lb.")
 
-    skip = i-j
-
-    # import the data
-    signal = pd.read_csv(filename, delimiter="\t", skiprows=skip, header=0)
+    signal = pd.read_csv(filename, delimiter="[,\s]", skiprows=i, header=0)
     t = signal["PacketCounter"]
     t_0 = t[0]
     t_fin = t[len(t) - 1]
 
     time = [i for i in range(int(t_0), int(t_fin) + 1)]
-    time_init_0 = [i / freq for i in range(len(time))]
+    time_init_0 = [i for i in range(len(time))]
     d = {'PacketCounter': time_init_0}
 
     colonnes = signal.columns
-    # complete missing data with interpolation
+
     for colonne in colonnes[1:]:
-        try:
-            val = signal[colonne]
-            f = interpolate.interp1d(t, val)
-            y = f(time)
-            d[colonne] = y.tolist()
-        except: 
-            print(colonne)
-            print("t", t)
-            print("val", val)
+        val = signal[colonne]
+        f = interpolate.interp1d(t, val)
+        y = f(time)
+        d[colonne] = y.tolist()
 
     signal = pd.DataFrame(data=d)
 
