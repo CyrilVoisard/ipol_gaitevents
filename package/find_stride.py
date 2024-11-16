@@ -317,12 +317,16 @@ def len_stride_one_side(data, freq, roll=1):
     
     x_11 = data["FreeAcc_X"]
     test_11 = x_11.to_numpy()
+    print("test_11", test_11)
     x_12 = data["FreeAcc_Y"]
     test_12 = x_12.to_numpy()
+    print("test_11", test_12)
     x_13 = data["FreeAcc_Z"]
     test_13 = x_13.to_numpy()
+    print("test_11", test_13)
     x_2 = data["Gyr_Y"]
     test_2 = x_2.to_numpy()
+    print("test_11", test_2)
 
     # weighted autocorrelation from unbiased autocorrelations
     acf = (autocorr(test_11) / 3 + autocorr(test_12) / 3 + autocorr(test_13)) / 3 / 2 + autocorr(test_2) / 2
