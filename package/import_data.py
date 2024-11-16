@@ -41,12 +41,10 @@ def load_XSens(filename):
     colonnes = signal.columns
 
     for colonne in colonnes[1:]:
-        print("avant", signal[colonne])
         val = signal[colonne]
         f = interpolate.interp1d(t, val)
         y = f(time)
         d[colonne] = y.tolist()
-        print("après", d[colonne])
 
     signal = pd.DataFrame(data=d)
 
