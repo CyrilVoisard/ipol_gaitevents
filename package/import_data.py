@@ -51,11 +51,12 @@ def load_XSens(filename):
     return signal
 
 
-def import_XSens(path, freq, start=0, end=200, order=8, fc=14):
+def import_XSens(filename, freq, start=0, end=200, order=8, fc=14):
     """Import and pre-process the data from a file.
 
     Arguments:
         filename {str} -- file path
+        freq {int} -- acquisition frequency
         start {int} -- start of the calibration period
         end {int} -- end of the calibration period
         order {int} -- order of the Butterworth low-pass filter
