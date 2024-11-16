@@ -317,14 +317,12 @@ def len_stride_one_side(data, freq, roll=1):
     
     x_11 = data["FreeAcc_X"]
     test_11 = x_11.to_numpy()
-    print("test_11", test_11)
     x_12 = data["FreeAcc_Y"]
     test_12 = x_12.to_numpy()
-    print("test_12", test_12)
     x_13 = data["FreeAcc_Z"]
     test_13 = x_13.to_numpy()
-    print("test_13", test_13)
     x_2 = data["Gyr_Y"]
+    print("x2", x_2)
     test_2 = x_2.to_numpy()
     print("test_2", test_2)
 
