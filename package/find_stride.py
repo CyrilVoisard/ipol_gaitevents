@@ -360,6 +360,8 @@ def autocorr_indexes(y, freq, thres=0.7, min_dist=0.8):
     if isinstance(y, np.ndarray) and np.issubdtype(y.dtype, np.unsignedinteger):
         raise ValueError("y must be signed")
 
+    print("y", y)
+
     i = round(min_dist*freq)
     thres = thres * (np.max(y[i:]) - np.max(np.min(y[i:i + np.argmax(y[i:])]), 0)) + np.max(
         np.min(y[i:i + np.argmax(y[i:])]), 0)
