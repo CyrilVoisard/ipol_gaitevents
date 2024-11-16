@@ -326,6 +326,7 @@ def len_stride_one_side(data, freq, roll=1):
 
     # weighted autocorrelation from unbiased autocorrelations
     acf = (autocorr(test_11) / 3 + autocorr(test_12) / 3 + autocorr(test_13)) / 3 / 2 + autocorr(test_2) / 2
+    print("acf", acf)
 
     # data smoothing possible, not done by default (roll = 1)
     y = pd.DataFrame(acf)
@@ -359,8 +360,6 @@ def autocorr_indexes(y, freq, thres=0.7, min_dist=0.8):
     
     if isinstance(y, np.ndarray) and np.issubdtype(y.dtype, np.unsignedinteger):
         raise ValueError("y must be signed")
-
-    print("y", y)
 
     i = round(min_dist*freq)
     thres = thres * (np.max(y[i:]) - np.max(np.min(y[i:i + np.argmax(y[i:])]), 0)) + np.max(
