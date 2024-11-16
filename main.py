@@ -72,8 +72,8 @@ if __name__ == "__main__":
     q2 = [0]  # extrinsic detection quality [right-left step alternation]
     
     # load data
-    data_rf = import_data.import_XSens(os.path.join(data_WD, args.i0), freq)
-    data_lf = import_data.import_XSens(os.path.join(data_WD, args.i1), freq)
+    data_rf = import_data.import_XSens(os.path.join(data_WD, args.i0))
+    data_lf = import_data.import_XSens(os.path.join(data_WD, args.i1))
     
     # gait events and steps detection
     steps_lim, q1 = dtw_detection.steps_detection_full(data_rf, data_lf, freq, output=data_WD)
