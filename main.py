@@ -74,7 +74,8 @@ if __name__ == "__main__":
     # load data
     data_rf = import_data.import_XSens(os.path.join(data_WD, args.i0), freq)
     data_lf = import_data.import_XSens(os.path.join(data_WD, args.i1), freq)
-    
+    print("data_rf", data_rf)
+
     # gait events and steps detection
     steps_lim, q1 = dtw_detection.steps_detection_full(data_rf, data_lf, freq, output=data_WD)
 
