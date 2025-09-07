@@ -33,11 +33,11 @@ def print_all_quality_index(q1, q2, output):
     ax1.text(0.7, 0.85, 'Protocol quality score', fontsize = 11, fontweight='bold', transform=plt.gcf().transFigure)
     ax2 = fig.add_subplot(gs[1, 1], projection='polar')
     ax2 = plot_quality_index(round(np.mean(q2)), ax2, scale = 2)
-    ax2.text(0.7, 0.425, 'Intrinsec quality score', fontsize = 11, fontweight='bold', transform=plt.gcf().transFigure)
+    ax2.text(0.7, 0.425, 'Quality score', fontsize = 11, fontweight='bold', transform=plt.gcf().transFigure)
 
     path = os.path.join(output, "quality_index.svg")
 
-    plt.savefig(path, dpi=80, transparent=True, bbox_inches="tight")
+    plt.savefig(path, dpi=300, transparent=True, bbox_inches="tight")
   
 
 def plot_quality_index(q, ax, scale):
