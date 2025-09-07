@@ -327,7 +327,7 @@ def len_stride_one_side(data, freq, roll=1):
     print("test_2", test_2)
 
     # weighted autocorrelation from unbiased autocorrelations
-    acf = (autocorr(test_11) / 3 + autocorr(test_12) / 3 + autocorr(test_13)) / 3 / 2 + autocorr(test_2) / 2
+    acf = (autocorr(test_11) / 3 + autocorr(test_12) / 3 + autocorr(test_13) / 3) / 2 + autocorr(test_2) / 2
     print("acf", acf)
 
     # data smoothing possible, not done by default (roll = 1)
