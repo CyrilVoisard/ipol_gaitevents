@@ -29,14 +29,13 @@ def print_quality_index(q, output):
     plt.savefig(path, dpi=300, transparent=True, bbox_inches="tight")
   
 
-def plot_quality_index(q, ax, scale):
+def plot_quality_index(q, output):
     """Compute the quality index of the trial gait events detection (between 0 and 100) and produce a picture of the number surrounded by an appropriately colored circle. 
 
     Parameters
     ----------
-        q {int} -- quality index.
-        ax {matplotlib ax} -- ax in output fig.
-        scale {int} -- to adapt the size of the raws and columns. 
+        q {float} -- alternation quality index.
+        output {str} -- folder path for output figure. 
     """
 
     # plot qi
