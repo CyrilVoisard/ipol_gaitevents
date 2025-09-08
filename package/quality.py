@@ -38,13 +38,15 @@ def plot_quality_index(q, ax, scale):
         ax {matplotlib ax} -- ax in output fig.
         scale {int} -- to adapt the size of the raws and columns. 
     """
-  
+
     # plot qi
     max_q=100
     xval = np.arange(0, 2*np.pi*(.05+0.90*(q/max_q)), 0.01)
     colormap = plt.get_cmap("Greens")
     norm = mpl.colors.Normalize(0.0, 2*np.pi)
-    # f, ax = plt.subplots(nrows=1, ncols=1, figsize=(4,4),subplot_kw=dict(projection='polar'))
+    
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(4,4),subplot_kw=dict(projection='polar'))
+    
     #Scatter version
     yval = np.ones_like(xval)
     ax.scatter(xval, yval, c=xval, s=300/(2*scale), cmap=colormap, norm=norm, linewidths=1)
@@ -58,11 +60,14 @@ def plot_quality_index(q, ax, scale):
             ax.annotate(q, xy=(1.11*np.pi, .7), color=colormap(.05+0.90*(q/max_q)), fontsize=50/scale)
         else:
             ax.annotate(q, xy=(1.18*np.pi, .5), color=colormap(.05+0.90*(q/max_q)), fontsize=50/scale)
-  
-    return ax
+
+    fig.title('Quality score', fontsize = 14, fontweight='bold')
+    path = os.path.join(output, "quality_index.svg")
+
+    plt.savefig(path, dpi=300, transparent=True, bbox_inches="tight")
     
 
-def compute_extrinsic_quality(steps_lim):
+def compute_quality(steps_lim):
   """Compute the quality index of the trial gait events detection (between 0 and 100) referring to extrinsic quality: right-left step alternation
 
     Parameters
@@ -71,7 +76,7 @@ def compute_extrinsic_quality(steps_lim):
 
     Returns
     -------
-        qi {int} -- quality index. 
+        q {int} -- quality index. 
     """
   
   # estimation of stride alternation
@@ -80,6 +85,6 @@ def compute_extrinsic_quality(steps_lim):
   i = 0
   for k in range(len(foot_list)-1):
       i = i + abs(foot_list[k+1]-foot_list[k])
-  q3 = round(100*i/(len(foot_list) -1))
+  q = round(100*i/(len(foot_list) -1))
 
-  return q3
+  return q
