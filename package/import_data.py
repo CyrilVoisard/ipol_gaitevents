@@ -1,11 +1,8 @@
-import os
-import json
-import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
+import json
 from scipy.signal import butter, filtfilt
 from scipy import interpolate
-import sys
 
 
 # XSens data 
@@ -51,12 +48,11 @@ def load_XSens(filename):
     return signal
 
 
-def import_XSens(filename, freq, start=0, end=200, order=8, fc=14):
+def import_XSens(path, start=0, end=200, order=8, fc=14):
     """Import and pre-process the data from a file.
 
     Arguments:
         filename {str} -- file path
-        freq {int} -- acquisition frequency
         start {int} -- start of the calibration period
         end {int} -- end of the calibration period
         order {int} -- order of the Butterworth low-pass filter
@@ -68,20 +64,20 @@ def import_XSens(filename, freq, start=0, end=200, order=8, fc=14):
         data
     """
     
-    data = load_XSens(filename)
-    
+    data = load_XSens(path)
+
     data["FreeAcc_X"] = data["Acc_X"] - np.mean(data["Acc_X"][start:end])
     data["FreeAcc_Y"] = data["Acc_Y"] - np.mean(data["Acc_Y"][start:end])
     data["FreeAcc_Z"] = data["Acc_Z"] - np.mean(data["Acc_Z"][start:end])
 
-    data = filter_sig(data, "Acc", order, fc, fe=freq)
-    data = filter_sig(data, "FreeAcc", order, fc, fe=freq)
-    data = filter_sig(data, "Gyr", order, fc, fe=freq)
+    data = filter_sig(data, "Acc", order, fc)
+    data = filter_sig(data, "FreeAcc", order, fc)
+    data = filter_sig(data, "Gyr", order, fc)
 
     return data
 
 
-def filter_sig(data, type_sig, order, fc, fe):
+def filter_sig(data, type_sig, order, fc):
     """Application of Butterworth low-pass filter to a Dataframe
 
     Arguments:
@@ -95,13 +91,12 @@ def filter_sig(data, type_sig, order, fc, fe):
     Pandas dataframe
         data
     """
-    
-    data[type_sig + "_X"] = low_pass_filter(data[type_sig + "_X"], order, fc, fe)
-    data[type_sig + "_Y"] = low_pass_filter(data[type_sig + "_Y"], order, fc, fe)
-    data[type_sig + "_Z"] = low_pass_filter(data[type_sig + "_Z"], order, fc, fe)
+    data[type_sig + "_X"] = low_pass_filter(data[type_sig + "_X"], order, fc)
+    data[type_sig + "_Y"] = low_pass_filter(data[type_sig + "_Y"], order, fc)
+    data[type_sig + "_Z"] = low_pass_filter(data[type_sig + "_Z"], order, fc)
 
     return data
-    
+
 
 def low_pass_filter(sig, order=8, fc=14, fe=100):
     """Definition of a Butterworth low-pass filter
@@ -124,5 +119,3 @@ def low_pass_filter(sig, order=8, fc=14, fe=100):
 
     # application
     return filtfilt(b, a, sig)
-
-
