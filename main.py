@@ -74,7 +74,7 @@ if __name__ == "__main__":
     # load data
     data_rf = import_data.import_XSens(os.path.join(data_WD, args.i0), freq)
     data_lf = import_data.import_XSens(os.path.join(data_WD, args.i1), freq)
-    print("data_rf", data_rf)
+    # print("data_rf", data_rf)
 
     # gait events and steps detection
     steps_lim, _ = dtw_detection.steps_detection_full(data_rf, data_lf, freq, output=data_WD)
@@ -84,12 +84,12 @@ if __name__ == "__main__":
     quality.plot_quality_index(q, output=data_WD)
 
     # print gait events and display figure 
-    print_steps_detection(steps_lim, len(data_rf), freq)
+    # print_steps_detection(steps_lim, len(data_rf), freq)
     plot_stepdetection.plot_stepdetection(steps_lim, data_rf, data_lf, freq, output=data_WD)
     plot_stepdetection.plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output=data_WD)
 
     # load file to be download
     download.json_report(steps_lim, freq, output=data_WD)
 
-    print("ok charge")
+    # print("ok charge")
     sys.exit(0)
