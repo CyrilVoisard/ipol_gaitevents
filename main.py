@@ -77,11 +77,11 @@ if __name__ == "__main__":
     print("data_rf", data_rf)
 
     # gait events and steps detection
-    steps_lim, q1 = dtw_detection.steps_detection_full(data_rf, data_lf, freq, output=data_WD)
+    steps_lim, _ = dtw_detection.steps_detection_full(data_rf, data_lf, freq, output=data_WD)
 
     # quality index
-    q2 = quality.compute_extrinsic_quality(steps_lim)
-    quality.print_all_quality_index(q1, q2, output=data_WD)
+    q = quality.compute_quality(steps_lim)
+    quality.plot_quality_index(q, output=data_WD)
 
     # print gait events and display figure 
     print_steps_detection(steps_lim, len(data_rf), freq)
