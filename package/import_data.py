@@ -26,7 +26,7 @@ def load_XSens(filename):
         else:
             raise ValueError("\nPacketCounter has not been found in data_lb.")
 
-    signal = pd.read_csv(filename, delimiter="[,\s]", skiprows=i, header=0)
+    signal = pd.read_csv(filename, delimiter="[,\s]", skiprows=i, header=0, engine="python")
     t = signal["PacketCounter"]
     t_0 = t[0]
     t_fin = t[len(t) - 1]
