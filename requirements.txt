@@ -1,6 +1,7 @@
-numpy
 iio==0.0.3
 tslearn
 matrixprofile
 dtwalign
 pandas==2.0.3
+numpy==1.23.5
+h5py==3.8.0
