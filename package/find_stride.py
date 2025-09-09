@@ -162,7 +162,7 @@ def find_model_stride(data_1, data_2, foot, len_ref, freq):
 
     # model stride and reference stride
     gyr_model_decal, jerk_model_decal, stride_model_decal_annotations = deal_stride.model_stride_offset(int(len_ref), freq)
-    gyr_ref, jerk_ref, p, q, _ = find_ref_stride(data_1, data_2, foot, freq)
+    gyr_ref, jerk_ref, p, q = find_ref_stride(data_1, data_2, foot, freq)
 
     # Goal: find an offset that optimizes the similarity between the model stride and the reference stride
     # correlation list for each offset between the model stride and the reference stride
