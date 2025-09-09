@@ -18,6 +18,9 @@ def plot_quality_index(q, output):
 
     # plot qi
     max_q = 100
+    xval = np.arange(0, 2*np.pi*(.05+0.90*(q/max_q)), 0.01)
+    colormap = plt.get_cmap("Greens")   
+    norm = mpl.colors.Normalize(0.0, 2*np.pi)   
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(4, 4), subplot_kw=dict(projection='polar'))
 
     # Définir les couleurs en fonction de la valeur de q
@@ -31,10 +34,14 @@ def plot_quality_index(q, output):
     # Créer une colormap personnalisée
     cmap = LinearSegmentedColormap.from_list("custom_cmap", colors)
 
+    #Scatter version    
+    yval = np.ones_like(xval)    
+    ax.scatter(xval, yval, c=xval, s=150, cmap=colormap, norm=norm, linewidths=1)      
+
     # Remplir le cercle avec un dégradé
-    theta = np.linspace(0, 2 * np.pi * (q / max_q), 100)
-    radius = np.ones_like(theta)
-    bars = ax.bar(theta, radius, width=0.05, bottom=0.0, color=cmap(theta / (2 * np.pi)), edgecolor='none')
+    # theta = np.linspace(0, 2 * np.pi * (q / max_q), 100)
+    # radius = np.ones_like(theta)
+    # bars = ax.bar(theta, radius, width=0.05, bottom=0.0, color=cmap(theta / (2 * np.pi)), edgecolor='none')
 
     ax.set_axis_off()
     ax.set_ylim(0, 1.5)
