@@ -175,7 +175,7 @@ def plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output):
     # ---------------------------- Left foot data ---------------------------------------------
     t_lf = data_lf["PacketCounter"]
     gyr_lf = data_lf["Gyr_Y"]
-    jerk_lf = deal_stride.calculate_jerk_tot(data_lf)
+    jerk_lf = deal_stride.calculate_jerk_tot(data_lf, freq)
     ma_lf = max(gyr_lf)
     mi_lf = min(gyr_lf)
     ax[0].plot(t_lf.to_numpy(), jerk_lf)
@@ -184,7 +184,7 @@ def plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output):
     # ---------------------------- Right foot data ---------------------------------------------
     t_rf = data_rf["PacketCounter"]
     gyr_rf = data_rf["Gyr_Y"]
-    jerk_rf = deal_stride.calculate_jerk_tot(data_rf)
+    jerk_rf = deal_stride.calculate_jerk_tot(data_rf, freq)
     ma_rf = max(gyr_rf)
     mi_rf = min(gyr_rf)
     ax[2].plot(t_rf.to_numpy(), jerk_rf)
