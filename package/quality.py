@@ -16,26 +16,36 @@ def plot_quality_index(q, output):
     """
 
     # plot qi
-    max_q=100
-    xval = np.arange(0, 2*np.pi*(.05+0.90*(q/max_q)), 0.01)
-    colormap = plt.get_cmap("Greens")
-    norm = mpl.colors.Normalize(0.0, 2*np.pi)
-    
-    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(4,4),subplot_kw=dict(projection='polar'))
-    
-    #Scatter version
-    yval = np.ones_like(xval)
-    ax.scatter(xval, yval, c=xval, s=150, cmap=colormap, norm=norm, linewidths=1)
-  
+    max_q = 100
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(4, 4), subplot_kw=dict(projection='polar'))
+
+    # Définir les couleurs en fonction de la valeur de q
+    if q < 50:
+        colors = ["red", "darkred"]
+    elif 50 <= q < 75:
+        colors = ["orange", "darkorange"]
+    else:
+        colors = ["limegreen", "darkgreen"]
+
+    # Créer une colormap personnalisée
+    cmap = LinearSegmentedColormap.from_list("custom_cmap", colors)
+
+    # Remplir le cercle avec un dégradé
+    theta = np.linspace(0, 2 * np.pi * (q / max_q), 100)
+    radius = np.ones_like(theta)
+    bars = ax.bar(theta, radius, width=0.05, bottom=0.0, color=cmap(theta / (2 * np.pi)), edgecolor='none')
+
     ax.set_axis_off()
-    ax.set_ylim(0,1.5)
-    if q<10:
-        ax.annotate(q, xy=(1.25*np.pi, .3), color=colormap(.05+0.90*(q/max_q)), fontsize=50)
-    else :
-        if  q == 100: 
-            ax.annotate(q, xy=(1.11*np.pi, .7), color=colormap(.05+0.90*(q/max_q)), fontsize=50)
+    ax.set_ylim(0, 1.5)
+
+    # Positionnement du texte en fonction de la valeur de q
+    if q < 10:
+        ax.annotate(int(q), xy=(1.25 * np.pi / 2, 0.3), fontsize=50, ha='center', va='center', color='black')
+    else:
+        if q == 100:
+            ax.annotate(int(q), xy=(1.11 * np.pi / 2, 0.7), fontsize=50, ha='center', va='center', color='black')
         else:
-            ax.annotate(q, xy=(1.18*np.pi, .5), color=colormap(.05+0.90*(q/max_q)), fontsize=50)
+            ax.annotate(int(q), xy=(1.18 * np.pi / 2, 0.5), fontsize=50, ha='center', va='center', color='black')
 
     fig.suptitle('Quality score', fontsize = 14, fontweight='bold')
     path = os.path.join(output, "quality_index.svg")
