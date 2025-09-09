@@ -19,17 +19,16 @@ def plot_quality_index(q, output):
     # plot qi
     max_q = 100
     xval = np.arange(0, 2*np.pi*(.05+0.90*(q/max_q)), 0.01)
-    colormap = plt.get_cmap("Greens")   
     norm = mpl.colors.Normalize(0.0, 2*np.pi)   
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(4, 4), subplot_kw=dict(projection='polar'))
 
     # Définir les couleurs en fonction de la valeur de q
     if q < 50:
-        colors = ["red", "darkred"]
+        colormap = plt.get_cmap("Reds")
     elif 50 <= q < 75:
-        colors = ["orange", "darkorange"]
+        colormap = plt.get_cmap("Yellows")
     else:
-        colors = ["limegreen", "darkgreen"]
+        colormap = plt.get_cmap("Greens")
 
     # Créer une colormap personnalisée
     cmap = LinearSegmentedColormap.from_list("custom_cmap", colors)
