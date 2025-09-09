@@ -84,7 +84,7 @@ if __name__ == "__main__":
     quality.plot_quality_index(q, output=data_WD)
 
     # print gait events and display figure 
-    # print_steps_detection(steps_lim, len(data_rf), freq)
+    print_steps_detection(steps_lim, len(data_rf), freq)
     plot_stepdetection.plot_stepdetection(steps_lim, data_rf, data_lf, freq, output=data_WD)
     plot_stepdetection.plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output=data_WD)
 
