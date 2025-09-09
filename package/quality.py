@@ -47,14 +47,14 @@ def plot_quality_index(q, output):
     ax.set_ylim(0, 1.5)
 
     # Positionnement du texte en fonction de la valeur de q
-    if q < 10:
-        ax.annotate(int(q), xy=(1.25 * np.pi / 2, 0.3), fontsize=50, ha='center', va='center', color='black')
-    else:
-        if q == 100:
-            ax.annotate(int(q), xy=(1.11 * np.pi / 2, 0.7), fontsize=50, ha='center', va='center', color='black')
+    if q<10:
+        ax.annotate(q, xy=(1.25*np.pi, .3), color=colormap(.05+0.90*(q/max_q)), fontsize=50)    
+    else :
+        if  q == 100:
+            ax.annotate(q, xy=(1.11*np.pi, .7), color=colormap(.05+0.90*(q/max_q)), fontsize=50)
         else:
-            ax.annotate(int(q), xy=(1.18 * np.pi / 2, 0.5), fontsize=50, ha='center', va='center', color='black')
-
+            ax.annotate(q, xy=(1.18*np.pi, .5), color=colormap(.05+0.90*(q/max_q)), fontsize=50)
+    
     fig.suptitle('Quality score', fontsize = 14, fontweight='bold')
     path = os.path.join(output, "quality_index.svg")
 
