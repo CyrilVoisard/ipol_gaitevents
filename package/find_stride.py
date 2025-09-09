@@ -247,7 +247,7 @@ def find_ref_stride(data_1, data_2, foot, freq):
     # signals of interest: time, gyration in the axial plane, jerk norm
     t = data_1["PacketCounter"]
     x = data_1["Gyr_Y"]
-    z = deal_stride.calculate_jerk_tot(data_1)
+    z = deal_stride.calculate_jerk_tot(data_1, freq)
 
     # search window size : mean stride time estimation
     window, autocorr = len_stride_estimation(data_1, data_2,  freq, roll=1)
