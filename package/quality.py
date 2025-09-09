@@ -60,7 +60,7 @@ def plot_quality_index(q, output):
         else:
             ax.annotate(q, xy=(1.18*np.pi, .5), color=colormap(.05+0.90*(q/max_q)), fontsize=50)
 
-    fig.title('Quality score', fontsize = 14, fontweight='bold')
+    fig.suptitle('Quality score', fontsize = 14, fontweight='bold')
     path = os.path.join(output, "quality_index.svg")
 
     plt.savefig(path, dpi=300, transparent=True, bbox_inches="tight")
