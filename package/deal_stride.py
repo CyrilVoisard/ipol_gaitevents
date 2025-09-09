@@ -5,7 +5,7 @@ import pandas as pd
 from scipy import interpolate
 
 
-def model_stride_offset(len_estimation, freq=100):
+def model_stride_offset(len_estimation, freq):
     """Return a dictionnary with all the possible offset for the model stride of a healthy subject adapted to the desired length. 
 
     Parameters
@@ -40,7 +40,7 @@ def model_stride_offset(len_estimation, freq=100):
     return gyr_mod_decal, jerk_mod_decal, stride_mod_decal_annotations
 
 
-def model_stride(len_estimation, freq=100):
+def model_stride(len_estimation, freq):
     """Return the model stride of a healthy subject adapted to the desired length. 
     Length adjustments can only be made only on the stance phase, never on the swing phase.  
 
@@ -88,10 +88,10 @@ def model_stride(len_estimation, freq=100):
     interp_gyr = interpolate.interp1d(t_mod_100, gyr_mod_100, kind='cubic')
     gyr_mod_freq = interp_gyr(t_mod_freq).tolist()
 
-    n_ajout = max(0, len_estimation - len(t_mod_freq))
-    ajout = [1.72042875e-01]
+    n_to_add = max(0, len_estimation - len(t_mod_freq))
+    to_add = [1.72042875e-01]
 
-    gyr_mod = np.array(ajout * n_ajout + gyr_mod_freq)
+    gyr_mod = np.array(to_add * n_to_add + gyr_mod_freq)
 
     jerk_mod_100 = np.array([7.33013844e-01, 5.08680015e-01, 2.83958884e-01, 2.13838951e-01,
                                            2.62533483e-01, 3.39655179e-01, 3.95763084e-01, 4.42510601e-01,
@@ -126,15 +126,15 @@ def model_stride(len_estimation, freq=100):
     interp_jerk = interpolate.interp1d(t_mod_100, jerk_mod_100, kind='cubic')
     jerk_mod_freq = interp_jerk(t_mod_freq).tolist()
 
-    n_ajout = max(0, len_estimation - len(t_mod_freq))
-    ajout = [1.72042875e-01]
+    n_to_add = max(0, len_estimation - len(t_mod_freq))
+    to_add = [1.72042875e-01]
 
-    jerk_mod = np.array(ajout * n_ajout + jerk_mod_freq)
+    jerk_mod = np.array(to_add * n_to_add + jerk_mod_freq)
 
-    stride_mod_annotations = {'HS': round(74*freq/100) + len(ajout * n_ajout),
-                              'FF': round(89*freq/100) + len(ajout * n_ajout),
-                              'HO': round(10*freq/100) + len(ajout * n_ajout),
-                              'TO': round(32*freq/100) + len(ajout * n_ajout)}
+    stride_mod_annotations = {'HS': round(74*freq/100) + len(to_add * n_to_add),
+                              'FF': round(89*freq/100) + len(to_add * n_to_add),
+                              'HO': round(10*freq/100) + len(to_add * n_to_add),
+                              'TO': round(32*freq/100) + len(to_add * n_to_add)}
 
     return gyr_mod, np.sqrt(jerk_mod), stride_mod_annotations
 
