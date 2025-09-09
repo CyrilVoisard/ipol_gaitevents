@@ -20,17 +20,15 @@ def steps_detection_full(data_rf, data_lf, freq, output):
     Returns
     -------
        steps_lim {dataframe} -- pandas dataframe with the detected gait events
-       q {int} -- extrinsic quality index 
     """
     
-    steps_rf, q_rf = steps_detection(data_rf, data_lf, 1, freq, output)
-    steps_lf, q_lf = steps_detection(data_lf, data_rf, 0, freq, output)
+    steps_rf = steps_detection(data_rf, data_lf, 1, freq, output)
+    steps_lf = steps_detection(data_lf, data_rf, 0, freq, output)
     
     full = np.concatenate((steps_rf, steps_lf))
     steps_lim = pd.DataFrame(full, columns=["Foot", "Phase", "HO", "TO", "HS", "FF", "Score"])
-    q = [min(q_rf[0], q_lf[0]), min(q_rf[1], q_lf[1])]
 
-    return steps_lim, q
+    return steps_lim
 
 
 def steps_detection(data_1, data_2, foot, freq, output):
@@ -47,7 +45,6 @@ def steps_detection(data_1, data_2, foot, freq, output):
     Returns
     -------
        steps_side {array} -- numpy array with the detected gait events
-       q_side {int} -- extrinsic quality index for
     """
 
     # data 
@@ -55,7 +52,7 @@ def steps_detection(data_1, data_2, foot, freq, output):
     z = deal_stride.calculate_jerk_tot(data_1, freq)
 
     # template for the template based detection
-    gyr_ref, jerk_ref, stride_annotations_ref, q_side = find_stride.annotate_ref_stride(data_1, data_2, foot, freq, output=output)
+    gyr_ref, jerk_ref, stride_annotations_ref = find_stride.annotate_ref_stride(data_1, data_2, foot, freq, output=output)
 
     # matrix cost and gait event intuition with basic correlation
     cost = matrix_cost(x, z, gyr_ref, jerk_ref)
@@ -110,7 +107,7 @@ def steps_detection(data_1, data_2, foot, freq, output):
     steps_side = np.array(steps_list)
     steps_side = steps_side[steps_side[:, 3].argsort()]
 
-    return steps_side, q_side
+    return steps_side
 
 
 def affine_annotate_dtw(x, y, start, gyr, jerk, stride_annotations):
