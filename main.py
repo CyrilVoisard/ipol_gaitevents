@@ -77,7 +77,7 @@ if __name__ == "__main__":
     # print("data_rf", data_rf)
 
     # gait events and steps detection
-    steps_lim, _ = dtw_detection.steps_detection_full(data_rf, data_lf, freq, output=data_WD)
+    steps_lim = dtw_detection.steps_detection_full(data_rf, data_lf, freq, output=data_WD)
 
     # quality index
     q = quality.compute_quality(steps_lim)
