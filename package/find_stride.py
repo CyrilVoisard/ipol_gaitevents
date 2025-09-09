@@ -31,9 +31,6 @@ def annotate_ref_stride(data_1, data_2, foot, freq, r=2, output=0):
        annotation of gait events of the reference stride in the trial {ndarray}
     """
 
-    # intrinsic quality 
-    q2_stride = [0, 0]
-
     # reference stride: from the dataset
     gyr_ref, jerk_ref, start_ref, end_ref, q2_stride[0] = find_ref_stride(data_1, data_2, foot, freq)
 
@@ -57,10 +54,7 @@ def annotate_ref_stride(data_1, data_2, foot, freq, r=2, output=0):
     plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_y2, path,
                                            foot, freq, start=start_ref, output=output)
 
-    # intrinsic quality, second part : DTW value
-    q2_stride[1] = max(0, round(100-sim))
-
-    return gyr_ref, jerk_ref, ref_stride_annotations, q2_stride
+    return gyr_ref, jerk_ref, ref_stride_annotations
                              
 
 def plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_y2, path, foot, freq, start=0, output=0):
