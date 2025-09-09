@@ -265,7 +265,7 @@ def find_ref_stride(data_1, data_2, foot, freq):
     start_ref = mp_profile['motifs'][0]["motifs"][0]
     end_ref = start_ref + window
 
-    return x[start_ref:end_ref].to_numpy(), z[start_ref:end_ref], start_ref, end_ref, round(100*autocorr)
+    return x[start_ref:end_ref].to_numpy(), z[start_ref:end_ref], start_ref, end_ref
 
 
 def len_stride_estimation(data_1, data_2, freq, roll=1):
