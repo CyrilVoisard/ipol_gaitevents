@@ -48,7 +48,7 @@ def plot_quality_index(q, output):
     
     #Scatter version
     yval = np.ones_like(xval)
-    ax.scatter(xval, yval, c=xval, s=300/(2*scale), cmap=colormap, norm=norm, linewidths=1)
+    ax.scatter(xval, yval, c=xval, s=150, cmap=colormap, norm=norm, linewidths=1)
   
     ax.set_axis_off()
     ax.set_ylim(0,1.5)
