@@ -4,6 +4,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from scipy import stats
+from matplotlib.colors import LinearSegmentedColormap
 
 
 def plot_quality_index(q, output):
