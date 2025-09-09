@@ -32,7 +32,7 @@ def annotate_ref_stride(data_1, data_2, foot, freq, r=2, output=0):
     """
 
     # reference stride: from the dataset
-    gyr_ref, jerk_ref, start_ref, end_ref, q2_stride[0] = find_ref_stride(data_1, data_2, foot, freq)
+    gyr_ref, jerk_ref, start_ref, end_ref = find_ref_stride(data_1, data_2, foot, freq)
 
     # model stride: always the same healthy subject stride
     len_ref = len(gyr_ref)
