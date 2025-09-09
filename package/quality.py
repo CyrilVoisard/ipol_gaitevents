@@ -26,7 +26,7 @@ def plot_quality_index(q, output):
     if q < 50:
         colormap = plt.get_cmap("Reds")
     elif 50 <= q < 75:
-        colormap = plt.get_cmap("Yellows")
+        colormap = plt.get_cmap("Oranges")
     else:
         colormap = plt.get_cmap("Greens")
 
