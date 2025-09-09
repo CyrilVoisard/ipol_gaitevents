@@ -207,7 +207,7 @@ def annotate(path, stride_annotations):
     return new_stride_annotations
 
 
-def calculate_jerk_tot(data, freq=100):
+def calculate_jerk_tot(data, freq):
     """Calculate jerk from acceleration data. 
 
     Parameters
