@@ -30,9 +30,6 @@ def plot_quality_index(q, output):
     else:
         colormap = plt.get_cmap("Greens")
 
-    # Créer une colormap personnalisée
-    cmap = LinearSegmentedColormap.from_list("custom_cmap", colors)
-
     #Scatter version    
     yval = np.ones_like(xval)    
     ax.scatter(xval, yval, c=xval, s=150, cmap=colormap, norm=norm, linewidths=1)      
