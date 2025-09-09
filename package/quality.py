@@ -6,29 +6,6 @@ from matplotlib.gridspec import GridSpec
 from scipy import stats
 
 
-def print_quality_index(q, output):
-    """Plot the figure with the quality index.  
-
-    Parameters
-    ----------
-        q {float} -- alternation quality index.
-        output {str} -- folder path for output figure. 
-
-    Returns
-    -------
-        None
-    """
-
-    fig = plt.figure(figsize=(6, 5), facecolor='white')
-    axes = plt.subplot(111, polar=True, axisbg='white')
-    axes = plot_quality_index(q_mean, ax0, scale = 1)
-    axes.text(0.22, 0.79, 'Quality score', fontsize = 14, fontweight='bold', transform=plt.gcf().transFigure)
-    
-    path = os.path.join(output, "quality_index.svg")
-
-    plt.savefig(path, dpi=300, transparent=True, bbox_inches="tight")
-  
-
 def plot_quality_index(q, output):
     """Compute the quality index of the trial gait events detection (between 0 and 100) and produce a picture of the number surrounded by an appropriately colored circle. 
 
