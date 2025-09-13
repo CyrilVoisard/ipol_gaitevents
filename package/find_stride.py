@@ -143,7 +143,7 @@ def plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_
 
 def find_model_stride(data_1, data_2, foot, len_ref, freq):
     """Stretch/compress the model stride to correpond with the reference stride. 
-    Adaptthe model stride gait events (TO, HS, FF, HO). 
+    Adapt the model stride gait events (TO, HS, FF, HO). 
     
     Arguments:
         data_1 {pandas Dataframe} -- dataframe with data from the foot sensor of interest
