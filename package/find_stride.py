@@ -41,7 +41,7 @@ def annotate_ref_stride(data_1, data_2, foot, freq, r=2, output=0):
     # data formatting
     s_y1 = np.array([1 * jerk_ref / (np.max(jerk_ref)), 1 * gyr_ref / (np.max(abs(gyr_ref)))])
     s_y1 = s_y1.transpose()
-    s_y2 = np.array([1 * jerk_model / (np.max(jerk_model)), 1 * gyr_ref / (np.max(abs(gyr_model)))])
+    s_y2 = np.array([1 * jerk_model / (np.max(jerk_model)), 1 * gyr_model / (np.max(abs(gyr_model)))])
     s_y2 = s_y2.transpose()
 
     # DTW application: correspondance path
