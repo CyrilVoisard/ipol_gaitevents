@@ -92,9 +92,8 @@ def filter_sig(data, type_sig, order, fc, freq):
     Pandas dataframe
         data
     """
-    data[type_sig + "_X"] = low_pass_filter(data[type_sig + "_X"], order, fc, freq)
-    data[type_sig + "_Y"] = low_pass_filter(data[type_sig + "_Y"], order, fc, freq)
-    data[type_sig + "_Z"] = low_pass_filter(data[type_sig + "_Z"], order, fc, freq)
+    for axis in ("X", "Y", "Z"):
+        data[type_sig + "_" + axis] = low_pass_filter(data[type_sig + "_" + axis], order, fc, freq)
 
     return data
 
