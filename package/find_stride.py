@@ -1,6 +1,5 @@
 import os
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import matrixprofile as mp
 from scipy.spatial.distance import cdist
@@ -213,7 +212,7 @@ def find_ref_stride(data_1, data_2, foot, freq):
     z_norm = z / np.max(z)
     for i in range(len(x) - window + 1):
         av.append(np.sum(abs(x_norm[i + window // 3: i + 2 * window // 3])))
-                 # + np.sum(abs(z_norm[i + window // 3: i + 2 * window // 3])))
+        
     av = av / np.max(av)
     mp_profile = mp.transform.apply_av(mp_profile, "custom", av)
 
@@ -285,12 +284,8 @@ def len_stride_one_side(data, freq):
     # weighted autocorrelation from unbiased autocorrelations
     acf = (autocorr(test_11) / 3 + autocorr(test_12) / 3 + autocorr(test_13) / 3) / 2 + autocorr(test_2) / 2
 
-    y = pd.DataFrame(acf)
-    y_mean = y.fillna(0)
-    y_mean_np = y_mean.to_numpy().transpose()[0]
-
-    # search for peaks
-    index_pic = autocorr_indexes(y_mean_np[:len(y_mean_np) // 4], freq)
+    # peaks are searched over the first quarter of the ACF only
+    index_pic = autocorr_indexes(acf[:len(acf) // 4], freq)
 
     if len(index_pic) > 0:
       return index_pic[0], y_mean_np[index_pic[0]]
