@@ -3,9 +3,9 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 from tslearn import metrics
+from scipy.signal import find_peaks
 
 from package import find_stride, deal_stride, plot_stepdetection
-
 
 def steps_detection_full(data_rf, data_lf, freq, output):
     """Detection of all gait events.  
@@ -57,7 +57,7 @@ def steps_detection(data_1, data_2, foot, freq, output):
     # matrix cost and gait event intuition with basic correlation
     cost = matrix_cost(x, z, gyr_ref, jerk_ref)
     
-    pic_correl_start = find_stride.indexes(cost, 0.35, min_dist=len(gyr_ref) // 2, thres_abs=True)
+    pic_correl_start, _ = find_peaks(cost, height=0.35, distance=max(1, len(gyr_ref) // 2))
     pic_correl_start = pic_correl_start[np.argsort(-cost[pic_correl_start])]
     F = [0] * len(x)  # same size as the signal, allows for counting if the steps are identified.
 
