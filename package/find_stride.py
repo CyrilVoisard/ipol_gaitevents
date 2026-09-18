@@ -286,8 +286,7 @@ def len_stride_one_side(data, freq):
     acf = (autocorr(test_11) / 3 + autocorr(test_12) / 3 + autocorr(test_13) / 3) / 2 + autocorr(test_2) / 2
 
     y = pd.DataFrame(acf)
-    y_mean = y.mean()
-    y_mean = y_mean.fillna(0)
+    y_mean = y.fillna(0)
     y_mean_np = y_mean.to_numpy().transpose()[0]
 
     # search for peaks
