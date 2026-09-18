@@ -62,10 +62,6 @@ def steps_detection(data_1, data_2, foot, freq, output):
     F = [0] * len(x)  # same size as the signal, allows for counting if the steps are identified.
 
     # gait events exact determination with DTW
-    starts = []
-    ends = []
-    sims = []
-    annotations = []
     steps_list = []
     
     for i in range(len(pic_correl_start)):
@@ -90,19 +86,18 @@ def steps_detection(data_1, data_2, foot, freq, output):
             add = True
 
         if add:
-            starts.append(start_min)
-            ends.append(end_min)
-            sims.append(sim_min)
-            annotations.append(annotations_min)
-
             step.append(foot)
-            step.append(100)
+            step.append(freq)
             step.append(ho)
             step.append(to)
             step.append(hs)
             step.append(ff)
             step.append(sim_min)
             steps_list.append(step)
+    
+    if len(steps_list) == 0:
+        raise ValueError(
+            "No gait cycle could be detected for this foot. The recording may be too short, or the signal may not contain a gait sequence.")
 
     steps_side = np.array(steps_list)
     steps_side = steps_side[steps_side[:, 3].argsort()]
@@ -139,7 +134,8 @@ def affine_annotate_dtw(x, y, start, gyr, jerk, stride_annotations):
                      gyr / np.max(abs(gyr))])
     s_y2 = s_y2.transpose()
 
-    r = 2
+    r = 2 # itakura
+    # multidimensional DTW with dependence (DTW_D): the two channels form a single 2-D sequence, the local cost being the Euclidean norm in R^2
     path_min, sim_min = metrics.dtw_path(s_y1, s_y2, global_constraint="itakura", itakura_max_slope=r)
     start_min = start
     end_min = start + L
@@ -168,7 +164,6 @@ def matrix_cost(x, z, gyr_ref, jerk_ref, mu=0.1):
     Nx = len(x)
 
     matrix = [0 for i in range(Nx)]
-    matrix_2 = [0 for i in range(Nx)]
 
     u = gyr_ref
     v = jerk_ref
@@ -184,12 +179,9 @@ def matrix_cost(x, z, gyr_ref, jerk_ref, mu=0.1):
 
         # correlation estimation
         w = stats.pearsonr(x[j:j + Nd], u)[0] / 2 + stats.pearsonr(z[j:j + Nd], v)[0] / 2
-        w_2 = max(stats.pearsonr(x[j:j + Nd], u)[0], stats.pearsonr(z[j:j + Nd], v)[0])
         if (cx > mu * cu) & (cz > mu * cv):
             matrix[j] = w
-            matrix_2[j] = w_2
         else:
             matrix[j] = -abs(w) / 10  
-            matrix_2[j] = -abs(w_2) / 10
 
     return np.array(matrix, dtype=float)
