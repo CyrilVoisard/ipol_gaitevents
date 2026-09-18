@@ -197,7 +197,6 @@ def find_ref_stride(data_1, data_2, foot, freq):
     """
 
     # signals of interest: time, gyration in the axial plane, jerk norm
-    t = data_1["PacketCounter"]
     x = data_1["Gyr_Y"]
     z = deal_stride.calculate_jerk_tot(data_1, freq)
 
@@ -213,7 +212,7 @@ def find_ref_stride(data_1, data_2, foot, freq):
     x_norm = x / np.max(abs(x))
     z_norm = z / np.max(z)
     for i in range(len(x) - window + 1):
-        av.append(np.sum(abs(x_norm[i + window // 3: i + 2 * window // 3])) # ** 2
+        av.append(np.sum(abs(x_norm[i + window // 3: i + 2 * window // 3]))
                   + np.sum(abs(z_norm[i + window // 3: i + 2 * window // 3])))
     av = av / np.max(av)
     mp_profile = mp.transform.apply_av(mp_profile, "custom", av)
