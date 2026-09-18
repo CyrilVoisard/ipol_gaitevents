@@ -48,24 +48,19 @@ def load_XSens(filename):
     return signal
 
 
-def import_XSens(path, freq, start=0, end=200, order=8, fc=14):
-    """Import and pre-process the data from a file.
-
-    Arguments:
-        filename {str} -- file path
-        freq {int} -- acquisition frequency (Hz)
-        start {int} -- start of the calibration period
-        end {int} -- end of the calibration period
-        order {int} -- order of the Butterworth low-pass filter
-        fc {int} -- cut-off frequency of the Butterworth low-pass filter
-
-    Returns
-    -------
-    Pandas dataframe
-        data
+def import_XSens(path, freq, t_start=0.0, t_end=2.0, order=8, fc=14):
+    """...
+        t_start {float} -- start of the calibration period, in seconds
+        t_end {float} -- end of the calibration period, in seconds
     """
-    
+
     data = load_XSens(path)
+
+    start = int(round(t_start * freq))
+    end = int(round(t_end * freq))
+    if end > len(data):
+        raise ValueError(
+            "The recording is shorter than the baseline window ({:.1f} s): a standing period is required at the beginning of the trial.".format(t_end))
 
     data["FreeAcc_X"] = data["Acc_X"] - np.mean(data["Acc_X"][start:end])
     data["FreeAcc_Y"] = data["Acc_Y"] - np.mean(data["Acc_Y"][start:end])
