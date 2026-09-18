@@ -48,11 +48,12 @@ def load_XSens(filename):
     return signal
 
 
-def import_XSens(path, start=0, end=200, order=8, fc=14):
+def import_XSens(path, freq, start=0, end=200, order=8, fc=14):
     """Import and pre-process the data from a file.
 
     Arguments:
         filename {str} -- file path
+        freq {int} -- acquisition frequency (Hz)
         start {int} -- start of the calibration period
         end {int} -- end of the calibration period
         order {int} -- order of the Butterworth low-pass filter
@@ -70,14 +71,14 @@ def import_XSens(path, start=0, end=200, order=8, fc=14):
     data["FreeAcc_Y"] = data["Acc_Y"] - np.mean(data["Acc_Y"][start:end])
     data["FreeAcc_Z"] = data["Acc_Z"] - np.mean(data["Acc_Z"][start:end])
 
-    data = filter_sig(data, "Acc", order, fc)
-    data = filter_sig(data, "FreeAcc", order, fc)
-    data = filter_sig(data, "Gyr", order, fc)
+    data = filter_sig(data, "Acc", order, fc, freq)
+    data = filter_sig(data, "FreeAcc", order, fc,  freq)
+    data = filter_sig(data, "Gyr", order, fc, freq)
 
     return data
 
 
-def filter_sig(data, type_sig, order, fc):
+def filter_sig(data, type_sig, order, fc, freq):
     """Application of Butterworth low-pass filter to a Dataframe
 
     Arguments:
@@ -91,14 +92,14 @@ def filter_sig(data, type_sig, order, fc):
     Pandas dataframe
         data
     """
-    data[type_sig + "_X"] = low_pass_filter(data[type_sig + "_X"], order, fc)
-    data[type_sig + "_Y"] = low_pass_filter(data[type_sig + "_Y"], order, fc)
-    data[type_sig + "_Z"] = low_pass_filter(data[type_sig + "_Z"], order, fc)
+    data[type_sig + "_X"] = low_pass_filter(data[type_sig + "_X"], order, fc, freq)
+    data[type_sig + "_Y"] = low_pass_filter(data[type_sig + "_Y"], order, fc, freq)
+    data[type_sig + "_Z"] = low_pass_filter(data[type_sig + "_Z"], order, fc, freq)
 
     return data
 
 
-def low_pass_filter(sig, order=8, fc=14, fe=100):
+def low_pass_filter(sig, order, fc, fe):
     """Definition of a Butterworth low-pass filter
 
     Arguments:
