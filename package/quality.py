@@ -60,13 +60,15 @@ def compute_quality(steps_lim):
     -------
         q {int} -- quality index. 
     """
-  
-  # estimation of stride alternation
-  steps_lim_sort = steps_lim.sort_values(by = ['HS', 'TO'])
+  # the initial contacts (IC) of both feet are merged and sorted in chronological order
+  steps_lim_sort = steps_lim.sort_values(by=['HS', 'TO'])
   foot_list = steps_lim_sort['Foot'].tolist()
-  i = 0
-  for k in range(len(foot_list)-1):
-      i = i + abs(foot_list[k+1]-foot_list[k])
-  q = round(100*i/(len(foot_list) -1))
+
+  if len(foot_list) < 2:
+      return 0
+
+  # number of alternations between two consecutive initial contacts
+  n_alt = sum(abs(foot_list[k + 1] - foot_list[k]) for k in range(len(foot_list) - 1))
+  q = round(100 * n_alt / (len(foot_list) - 1))
 
   return q
