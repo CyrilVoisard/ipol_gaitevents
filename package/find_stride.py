@@ -216,10 +216,9 @@ def find_ref_stride(data_1, data_2, foot, freq):
                   + np.sum(abs(z_norm[i + window // 3: i + 2 * window // 3])))
     av = av / np.max(av)
     mp_profile = mp.transform.apply_av(mp_profile, "custom", av)
-    mp_profile = mp.discover.motifs(mp_profile, k=1, use_cmp=True)
 
     # extraction of the beginning and end of the sub-series which will be the reference stride
-    start_ref = mp_profile['motifs'][0]["motifs"][0]
+    start_ref = int(np.argmin(mp_profile['cmp']))
     end_ref = start_ref + window
 
     return x[start_ref:end_ref].to_numpy(), z[start_ref:end_ref], start_ref, end_ref
