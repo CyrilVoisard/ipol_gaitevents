@@ -207,27 +207,32 @@ def annotate(path, stride_annotations):
     return new_stride_annotations
 
 
-def calculate_jerk_tot(data, freq):
+def calculate_jerk_tot(data, freq, win_s=0.09):
     """Calculate jerk from acceleration data. 
 
     Parameters
     ----------
         data {dataframe} -- pandas dataframe.
         freq {int} -- acquisition frequency in Herz.
+        win_s {float} -- duration of the smoothing window, in seconds.
 
     Returns
     -------
         z {array} -- jerk time series.
     """
     
-    jerk_tot = np.sqrt(
-        np.diff(data["FreeAcc_X"]) ** 2 + np.diff(data["FreeAcc_Z"]) ** 2 + np.diff(data["FreeAcc_Y"]) ** 2)
+    jerk_tot = np.sqrt(np.diff(data["FreeAcc_X"]) ** 2
+                       + np.diff(data["FreeAcc_Y"]) ** 2
+                       + np.diff(data["FreeAcc_Z"]) ** 2)
+    # pad to keep the same length
     jerk_tot = np.array(jerk_tot.tolist() + [0])
+
+    # odd-sized centered window, expressed in seconds (9 samples if 100 Hz)
+    win = max(3, 2 * int(round(win_s * freq / 2)) + 1)
+
     y = pd.DataFrame(jerk_tot)
-    # Rolling the jerk with a center window 
-    y_mean = y.rolling(9, center=True, win_type='boxcar').sum()
+    y_mean = y.rolling(win, center=True, win_type='boxcar').sum()
     y_mean = y_mean.fillna(0)
-    # Transpose to have a numpy array 
     z = y_mean.to_numpy().transpose()[0]
-    
+
     return z
