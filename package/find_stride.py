@@ -176,45 +176,7 @@ def find_model_stride(data_1, data_2, foot, len_ref, freq):
 
     # correlation pic selection
     correlation = np.array(correlation)
-    pic_correlation = indexes(correlation, thres=0.5 * np.max(correlation), min_dist=1, thres_abs=True)
-    if correlation[0] > 0.5 * np.max(correlation):
-        pic_correlation = np.append(pic_correlation, 0)
-
-    pic_correlation = pic_correlation[np.argsort(-correlation[pic_correlation])]
-    pic_correlation = pic_correlation[:3]
-    pic_correlation.sort()
-
-    # offset selection according to number of peaks detected
-    if len(pic_correlation) == 3:  # if there are 3, the peak with the most central index is taken
-        p1_3 = pic_correlation[2] - pic_correlation[0]
-        p2_1 = pic_correlation[0] + len(gyr_ref) - pic_correlation[1]
-        p3_2 = pic_correlation[1] + len(gyr_ref) - pic_correlation[2]
-        if (p1_3 <= p2_1) & (p1_3 <= p3_2):
-            stretch_estim = pic_correlation[1]
-        else:
-            if (p3_2 <= p2_1):
-                stretch_estim = pic_correlation[0]
-            else:
-                stretch_estim = pic_correlation[2]
-    else:
-        if len(pic_correlation) == 2:  # if there are 2, we take the barycentre of the two peaks according to their value
-            max_correlation = max(correlation[pic_correlation[1]], correlation[pic_correlation[0]])
-            correlation_norm_0 = max(0, correlation[pic_correlation[0]] - 0.75 * max_correlation)
-            correlation_norm_1 = max(0, correlation[pic_correlation[1]] - 0.75 * max_correlation)
-            if abs(pic_correlation[0] - pic_correlation[1]) < len(gyr_ref) // 2:
-                correlation1 = correlation_norm_1/(correlation_norm_0 + correlation_norm_1)
-                stretch_estim = int(min(pic_correlation[0], pic_correlation[1]) + abs(correlation1 * (pic_correlation[0] - pic_correlation[1])))
-            else:
-                correlation0 = correlation_norm_0 / (correlation_norm_1 + correlation_norm_0)
-                ecart = min(pic_correlation[0], pic_correlation[1]) + len(gyr_ref) - max(pic_correlation[0], pic_correlation[1])
-                stretch_estim = int(max(pic_correlation[0], pic_correlation[1]) + ecart * correlation0)
-        else:  #  if there's 1, it's the selected value, and if there's 0, we take an offset at 0.
-            if len(pic_correlation) == 0:
-                pic_correlation = [0]
-            stretch_estim = int(np.median(pic_correlation))
-
-    # we ensure that the offset chosen is modulo the total duration of the reference stride
-    stretch_estim = stretch_estim % len(gyr_ref)
+    stretch_estim = int(np.argmax(correlation)) % len(gyr_ref)
 
     return gyr_model_stretch[str(stretch_estim)], jerk_model_stretch[str(stretch_estim)], stride_model_stretch_annotations[str(stretch_estim)]
 
