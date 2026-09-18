@@ -54,9 +54,9 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, freq, output):
     # ----------------------- Left foot -------------------------------------------
     for i in range(len(steps_lf)): 
         
-        to = int(steps_lf[i][3])
+        to = int(steps_lf[i][2])
         ax[0].vlines(t_lf[to], mi_lf, ma_lf, 'k', '--')
-        hs = int(steps_lf[i][4])
+        hs = int(steps_lf[i][3])
         ax[0].vlines(t_lf[hs], mi_lf, ma_lf, 'k', '--')
 
         if to < hs:
@@ -89,9 +89,9 @@ def plot_stepdetection(steps_lim, data_rf, data_lf, freq, output):
     # ----------------------- Right foot -------------------------------------------
     for i in range(len(steps_rf)):
         
-        to = int(steps_rf[i][3])
+        to = int(steps_rf[i][2])
         ax[1].vlines(t_rf[to], mi_rf, ma_rf, 'k', '--')
-        hs = int(steps_rf[i][4])
+        hs = int(steps_rf[i][3])
         ax[1].vlines(t_rf[hs], mi_rf, ma_rf, 'k', '--')
 
         if to < hs:
@@ -193,14 +193,14 @@ def plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output):
     # ----------------------- Left foot -------------------------------------------
     for i in range(len(steps_lf)): 
         
-        ax[0].plot(t_lf[int(steps_lf[i][2])], jerk_lf[int(steps_lf[i][2])], 'g', marker='x')
-        ax[0].plot(t_lf[int(steps_lf[i][3])], jerk_lf[int(steps_lf[i][3])], 'r', marker='x')
-        ax[0].plot(t_lf[int(steps_lf[i][4])], jerk_lf[int(steps_lf[i][4])], 'k', marker='x')
-        ax[0].plot(t_lf[int(steps_lf[i][5])], jerk_lf[int(steps_lf[i][5])], 'g', marker='x')
+        ax[0].plot(t_lf[int(steps_lf[i][1])], jerk_lf[int(steps_lf[i][1])], 'g', marker='x')
+        ax[0].plot(t_lf[int(steps_lf[i][2])], jerk_lf[int(steps_lf[i][2])], 'r', marker='x')
+        ax[0].plot(t_lf[int(steps_lf[i][3])], jerk_lf[int(steps_lf[i][3])], 'k', marker='x')
+        ax[0].plot(t_lf[int(steps_lf[i][4])], jerk_lf[int(steps_lf[i][4])], 'g', marker='x')
 
-        to = int(steps_lf[i][3])
+        to = int(steps_lf[i][2])
         ax[1].vlines(t_lf[to], mi_lf, ma_lf, 'k', '--')
-        hs = int(steps_lf[i][4])
+        hs = int(steps_lf[i][3])
         ax[1].vlines(t_lf[hs], mi_lf, ma_lf, 'k', '--')
 
         if to < hs:
@@ -210,7 +210,7 @@ def plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output):
                                               alpha=0.1,
                                               facecolor='red', linestyle='dotted'))
             if i < len(steps_lf) - 1:
-                to_ap = int(steps_lf[i + 1][3])
+                to_ap = int(steps_lf[i + 1][2])
                 ax[1].add_patch(patches.Rectangle((t_lf[hs], min(gyr_lf)),  # (x,y)
                                                   t_lf[to_ap] - t_lf[hs],  # width
                                                   max(gyr_lf) - min(gyr_lf),  # height
@@ -223,7 +223,7 @@ def plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output):
                                               alpha=0.1,
                                               facecolor='green', linestyle='dotted'))
             if i < len(steps_lf) - 1:
-                hs_ap = int(steps_lf[i + 1][4])
+                hs_ap = int(steps_lf[i + 1][3])
                 ax[1].add_patch(patches.Rectangle((t_lf[to], min(gyr_lf)),  # (x,y)
                                                   t_lf[hs_ap] - t_lf[to],  # width
                                                   max(gyr_lf) - min(gyr_lf),  # height
@@ -232,14 +232,14 @@ def plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output):
 
     # ----------------------- Right foot -------------------------------------------
     for i in range(len(steps_rf)):
-        ax[2].plot(t_rf[int(steps_rf[i][2])], jerk_rf[int(steps_rf[i][2])], 'g', marker='x')
-        ax[2].plot(t_rf[int(steps_rf[i][3])], jerk_rf[int(steps_rf[i][3])], 'r', marker='x')
-        ax[2].plot(t_rf[int(steps_rf[i][4])], jerk_rf[int(steps_rf[i][4])], 'k', marker='x')
-        ax[2].plot(t_rf[int(steps_rf[i][5])], jerk_rf[int(steps_rf[i][5])], 'g', marker='x')
+        ax[2].plot(t_rf[int(steps_rf[i][1])], jerk_rf[int(steps_rf[i][1])], 'g', marker='x')
+        ax[2].plot(t_rf[int(steps_rf[i][2])], jerk_rf[int(steps_rf[i][2])], 'r', marker='x')
+        ax[2].plot(t_rf[int(steps_rf[i][3])], jerk_rf[int(steps_rf[i][3])], 'k', marker='x')
+        ax[2].plot(t_rf[int(steps_rf[i][4])], jerk_rf[int(steps_rf[i][4])], 'g', marker='x')
 
-        to = int(steps_rf[i][3])
+        to = int(steps_rf[i][2])
         ax[3].vlines(t_rf[to], mi_rf, ma_rf, 'k', '--')
-        hs = int(steps_rf[i][4])
+        hs = int(steps_rf[i][3])
         ax[3].vlines(t_rf[hs], mi_rf, ma_rf, 'k', '--')
 
         if to < hs:
@@ -249,7 +249,7 @@ def plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output):
                                               alpha=0.1,
                                               facecolor='red', linestyle='dotted'))
             if i < len(steps_rf) - 1:
-                to_ap = int(steps_rf[i + 1][3])
+                to_ap = int(steps_rf[i + 1][2])
                 ax[3].add_patch(patches.Rectangle((t_rf[hs], mi_rf),  # (x,y)
                                                   t_rf[to_ap] - t_rf[hs],  # width
                                                   ma_rf - mi_rf,  # height
@@ -262,7 +262,7 @@ def plot_stepdetection_construction(steps_lim, data_rf, data_lf, freq, output):
                                               alpha=0.1,
                                               facecolor='green', linestyle='dotted'))
             if i < len(steps_rf) - 1:
-                hs_ap = int(steps_rf[i + 1][4])
+                hs_ap = int(steps_rf[i + 1][3])
                 ax[3].add_patch(patches.Rectangle((t_rf[to], min(gyr_rf)),  # (x,y)
                                                   t_rf[hs_ap] - t_rf[to],  # width
                                                   max(gyr_rf) - min(gyr_rf),  # height
