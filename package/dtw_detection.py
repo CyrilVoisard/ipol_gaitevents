@@ -26,7 +26,7 @@ def steps_detection_full(data_rf, data_lf, freq, output):
     steps_lf = steps_detection(data_lf, data_rf, 0, freq, output)
     
     full = np.concatenate((steps_rf, steps_lf))
-    steps_lim = pd.DataFrame(full, columns=["Foot", "Phase", "HO", "TO", "HS", "FF", "Score"])
+    steps_lim = pd.DataFrame(full, columns=["Foot", "HO", "TO", "HS", "FF", "Score"])
 
     return steps_lim
 
@@ -87,7 +87,6 @@ def steps_detection(data_1, data_2, foot, freq, output):
 
         if add:
             step.append(foot)
-            step.append(freq)
             step.append(ho)
             step.append(to)
             step.append(hs)
@@ -100,7 +99,7 @@ def steps_detection(data_1, data_2, foot, freq, output):
             "No gait cycle could be detected for this foot. The recording may be too short, or the signal may not contain a gait sequence.")
 
     steps_side = np.array(steps_list)
-    steps_side = steps_side[steps_side[:, 3].argsort()]
+    steps_side = steps_side[steps_side[:, 2].argsort()]
 
     return steps_side
 
