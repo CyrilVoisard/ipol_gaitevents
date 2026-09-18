@@ -288,7 +288,7 @@ def len_stride_one_side(data, freq):
     index_pic = autocorr_indexes(acf[:len(acf) // 4], freq)
 
     if len(index_pic) > 0:
-      return index_pic[0], y_mean_np[index_pic[0]]
+      return index_pic[0], acf[index_pic[0]]
         
     else:
         return 0, 0
