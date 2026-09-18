@@ -226,10 +226,6 @@ def find_ref_stride(data_1, data_2, foot, freq):
 def matrix_profile(x, window):
     """Exact matrix profile of a time series, using the z-normalized Euclidean distance.
 
-    Computed with stumpy.stump, which implements the exact STOMP algorithm with the default
-    exclusion zone of ceil(window / 4) samples: a subsequence is never matched with its own
-    immediate neighbours, which would otherwise be trivially similar.
-
     Arguments:
         x {ndarray} -- 1-D time series
         window {int} -- subsequence length, in samples
@@ -247,12 +243,6 @@ def matrix_profile(x, window):
 def annotation_vector(gyr, jerk, window):
     """Annotation vector promoting the presence of the swing phase in the center of the window.
 
-    For each candidate position, the normalized angular velocity and the normalized jerk are
-    summed over the central third of the window. Both are maximal during the swing phase, so
-    windows whose central third contains the swing phase are favoured. Standing periods, where
-    both signals are almost zero, receive a value close to 0 and are therefore discarded, even
-    though they are the most self-similar part of the recording.
-
     Arguments:
         gyr {ndarray} -- sagittal angular velocity
         jerk {ndarray} -- total jerk magnitude
@@ -269,7 +259,7 @@ def annotation_vector(gyr, jerk, window):
     jerk_norm = jerk_norm / np.max(jerk_norm)
 
     # cumulative sums allow the sliding sums to be computed in one pass
-    cumsum = np.concatenate(([0.0], np.cumsum(gyr_norm + jerk_norm)))
+    cumsum = np.concatenate(([0.0], np.cumsum(gyr_norm)))
 
     positions = np.arange(len(gyr_norm) - window + 1)
     start = positions + window // 3
@@ -287,10 +277,6 @@ def annotation_vector(gyr, jerk, window):
 
 def corrected_matrix_profile(mp_values, av):
     """Correct a matrix profile with an annotation vector (Dau and Keogh, 2017).
-
-    A subsequence with av = 0 gets a corrected value greater than or equal to the maximum of the
-    matrix profile, and can therefore never be preferred to a subsequence with av = 1, whatever
-    its repetition score. Between these two extremes the penalty is continuous and monotonic.
 
     Arguments:
         mp_values {ndarray} -- matrix profile
@@ -394,12 +380,6 @@ def len_stride_one_side(data, freq):
 def autocorr_indexes(y, freq, thres=0.7, min_lag=0.8):
     """Find the local maxima of an autocorrelation function above an adaptive amplitude threshold.
 
-    The threshold is built from the local dynamic range of the ACF beyond the minimum lag:
-    T = lambda + thres * (y[i_max] - lambda), where y[i_max] is the highest ACF value for lags
-    >= i_0 and lambda the lowest value between i_0 and i_max. It is therefore relative to the
-    shape of the ACF rather than to an absolute amplitude, which makes it insensitive to the
-    overall regularity of the gait.
-
     Arguments:
         y {ndarray} -- unbiased autocorrelation, already restricted to the lags of interest
         freq {int} -- acquisition frequency (Hz)
@@ -430,10 +410,6 @@ def autocorr_indexes(y, freq, thres=0.7, min_lag=0.8):
 
 def autocorr(f):
     """Unbiased autocorrelation estimator.
-
-    Computed through the Wiener-Khinchin theorem: the signal is zero-padded to 2N, its power
-    spectrum is obtained by FFT, the inverse FFT is truncated to its first N values, divided
-    term by term by (N - i), and finally rescaled so that acf[0] = 1.
 
     Arguments:
         f {ndarray} -- 1-D data to compute the autocorrelation from
