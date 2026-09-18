@@ -1,5 +1,5 @@
 tslearn==0.6.3
-matrixprofile==1.1.10
+stumpy==1.13.0
 pandas==2.0.3
 numpy==1.23.5
 scipy==1.10.1
