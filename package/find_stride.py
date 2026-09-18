@@ -201,7 +201,7 @@ def find_ref_stride(data_1, data_2, foot, freq):
     z = deal_stride.calculate_jerk_tot(data_1, freq)
 
     # search window size : mean stride time estimation
-    window, autocorr = len_stride_estimation(data_1, data_2,  freq, roll=1)
+    window, autocorr = len_stride_estimation(data_1, data_2,  freq)
     window = int(window)
 
     # matrix profile
@@ -224,7 +224,7 @@ def find_ref_stride(data_1, data_2, foot, freq):
     return x[start_ref:end_ref].to_numpy(), z[start_ref:end_ref], start_ref, end_ref
 
 
-def len_stride_estimation(data_1, data_2, freq, roll=1):
+def len_stride_estimation(data_1, data_2, freq):
     """Estimate the mean stride time from both feet data computed from autocorrelations. The first foot is the interest foot.  
     The second foot acts as a safety net, in case autocorrelation is limiting on the interest foot. 
     
@@ -232,7 +232,6 @@ def len_stride_estimation(data_1, data_2, freq, roll=1):
         data_1 {pandas Dataframe} -- dataframe with data from the foot sensor of interest
         data_2 {pandas Dataframe} -- dataframe with data from the foot sensor of the other side
         freq {int} -- acquisition frequency (Hz)
-        roll {int} -- size of the window center rolling. Default is 1, meaning no window rolling
 
     Returns
     -------
@@ -240,8 +239,8 @@ def len_stride_estimation(data_1, data_2, freq, roll=1):
         mean stride time estimation
     """
                             
-    len_stride_data_1, autocorr_1 = len_stride_one_side(data_1, freq, roll=roll)
-    len_stride_data_2, autocorr_2 = len_stride_one_side(data_2, freq, roll=roll)
+    len_stride_data_1, autocorr_1 = len_stride_one_side(data_1, freq)
+    len_stride_data_2, autocorr_2 = len_stride_one_side(data_2, freq)
 
     # no peak found on one side: the other estimate is used
     if len_stride_data_1 == 0 and len_stride_data_2 == 0:
@@ -261,13 +260,12 @@ def len_stride_estimation(data_1, data_2, freq, roll=1):
         return len_stride_data_1, autocorr_1
 
 
-def len_stride_one_side(data, freq, roll=1):
+def len_stride_one_side(data, freq):
     """Estimate the mean stride time from one foot data computed from autocorrelations.
     
     Arguments:
         data {pandas Dataframe} -- dataframe with data from one of the foot sensor
         freq {int} -- acquisition frequency (Hz)
-        roll {int} -- size of the window center rolling. Default is 1, meaning no window rolling
 
     Returns
     -------
@@ -287,9 +285,8 @@ def len_stride_one_side(data, freq, roll=1):
     # weighted autocorrelation from unbiased autocorrelations
     acf = (autocorr(test_11) / 3 + autocorr(test_12) / 3 + autocorr(test_13) / 3) / 2 + autocorr(test_2) / 2
 
-    # data smoothing possible, not done by default (roll = 1)
     y = pd.DataFrame(acf)
-    y_mean = y.rolling(roll, center=True, win_type='cosine').mean()
+    y_mean = y.mean()
     y_mean = y_mean.fillna(0)
     y_mean_np = y_mean.to_numpy().transpose()[0]
 
