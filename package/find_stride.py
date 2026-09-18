@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import matrixprofile as mp
 from scipy.spatial.distance import cdist
 from tslearn import metrics
-import dtwalign
 from scipy import stats
 
 from package import deal_stride
@@ -36,7 +35,7 @@ def annotate_ref_stride(data_1, data_2, foot, freq, r=2, output=0):
 
     # model stride: always the same healthy subject stride
     len_ref = len(gyr_ref)
-    gyr_model, jerk_model, stride_model_annotations = find_model_stride(data_1, data_2, foot, len_ref, freq)
+    gyr_model, jerk_model, stride_model_annotations = find_model_stride(gyr_ref, jerk_ref, freq)
 
     # data formatting
     s_y1 = np.array([1 * jerk_ref / (np.max(jerk_ref)), 1 * gyr_ref / (np.max(abs(gyr_ref)))])
@@ -141,28 +140,25 @@ def plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_
     plt.savefig(titre, bbox_inches="tight")
 
 
-def find_model_stride(data_1, data_2, foot, len_ref, freq):
-    """Stretch/compress the model stride to correpond with the reference stride. 
-    Adapt the model stride gait events (TO, HS, FF, HO). 
-    
+def find_model_stride(gyr_ref, jerk_ref, freq):
+    """Stretch the model stride so that it matches the duration of the reference stride,
+    and circularly shift it so that its swing phase is aligned with that of the reference.
+
     Arguments:
-        data_1 {pandas Dataframe} -- dataframe with data from the foot sensor of interest
-        data_2 {pandas Dataframe} -- dataframe with data from the foot sensor of the other side
-        foot {int} -- 0 for left, 1 for right
-        len_ref {int} -- size of the attended model stride
+        gyr_ref {ndarray} -- gyration time series of the reference stride
+        jerk_ref {ndarray} -- jerk time series of the reference stride
         freq {int} -- acquisition frequency (Hz)
 
     Returns
     -------
-    ndarray, ndarray, ndarray
-       gyration time series of the found model stride {ndarray}
-       jerk time series of the found model stride {ndarray}
-       annotation of gait events of the found model stride in the trial {ndarray}
+    ndarray, ndarray, dict
+       gyration time series of the aligned model stride
+       jerk time series of the aligned model stride
+       gait event indexes of the aligned model stride
     """
 
-    # model stride and reference stride
-    gyr_model_stretch, jerk_model_stretch, stride_model_stretch_annotations = deal_stride.model_stride_offset(int(len_ref), freq)
-    gyr_ref, jerk_ref, p, q = find_ref_stride(data_1, data_2, foot, freq)
+    # model stride, stretched to the reference stride duration
+    gyr_model_stretch, jerk_model_stretch, stride_model_stretch_annotations = deal_stride.model_stride_offset(int(len(gyr_ref)), freq)
 
     # Goal: find an offset that optimizes the similarity between the model stride and the reference stride
     # correlation list for each offset between the model stride and the reference stride
@@ -249,8 +245,18 @@ def len_stride_estimation(data_1, data_2, freq, roll=1):
     len_stride_data_1, autocorr_1 = len_stride_one_side(data_1, freq, roll=roll)
     len_stride_data_2, autocorr_2 = len_stride_one_side(data_2, freq, roll=roll)
 
-    # if the two estimates are too far apart, it's likely that one of the peak detections is faulty (the two estimates should be equal).
-    # if the foot of interest is defective, we take the lowest. 
+    # no peak found on one side: the other estimate is used
+    if len_stride_data_1 == 0 and len_stride_data_2 == 0:
+        raise ValueError(
+            "No stride duration could be estimated from the autocorrelation of either foot. "
+            "The recording may be too short or may not contain a walking sequence.")
+    if len_stride_data_1 == 0:
+        return len_stride_data_2, autocorr_2
+    if len_stride_data_2 == 0:
+        return len_stride_data_1, autocorr_1
+
+    # if the two estimates are too far apart, one of the peak detections is likely faulty (both should be nearly equal during steady walking). 
+    # The typical failure mode is that the first peak is missed and a harmonic near 2*l is returned, hence the asymmetric test.
     if len_stride_data_1 / len_stride_data_2 >= 1.5:
         return len_stride_data_2, autocorr_2
     else:
