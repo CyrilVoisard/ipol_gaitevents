@@ -4,6 +4,7 @@ import pandas as pd
 from scipy import stats
 from tslearn import metrics
 from scipy.signal import find_peaks
+from package import config
 
 from package import find_stride, deal_stride, plot_stepdetection
 
@@ -56,8 +57,9 @@ def steps_detection(data_1, data_2, foot, freq, output):
 
     # matrix cost and gait event intuition with basic correlation
     cost = matrix_cost(x, z, gyr_ref, jerk_ref)
-    
-    pic_correl_start, _ = find_peaks(cost, height=0.35, distance=max(1, len(gyr_ref) // 2))
+
+    pic_correl_start, _ = find_peaks(cost, height=config.C_MIN,
+                                     distance=max(1, int(len(gyr_ref) * config.NMS_FRAC)))
     pic_correl_start = pic_correl_start[np.argsort(-cost[pic_correl_start])]
     F = [0] * len(x)  # same size as the signal, allows for counting if the steps are identified.
 
@@ -120,7 +122,7 @@ def affine_annotate_dtw(x, y, start, gyr, jerk, stride_annotations):
     -------
        numpy array -- numpy array with the matrix cost
     """
-    
+
     L = len(gyr)
     end = start + L
     
@@ -133,7 +135,7 @@ def affine_annotate_dtw(x, y, start, gyr, jerk, stride_annotations):
                      gyr / np.max(abs(gyr))])
     s_y2 = s_y2.transpose()
 
-    r = 2 # itakura
+    r = config.ITAKURA_MAX_SLOPE
     # multidimensional DTW with dependence (DTW_D): the two channels form a single 2-D sequence, the local cost being the Euclidean norm in R^2
     path_min, sim_min = metrics.dtw_path(s_y1, s_y2, global_constraint="itakura", itakura_max_slope=r)
     start_min = start
@@ -144,7 +146,7 @@ def affine_annotate_dtw(x, y, start, gyr, jerk, stride_annotations):
     return start_min, end_min, path_min, sim_min, annotations_min
 
 
-def matrix_cost(x, z, gyr_ref, jerk_ref, mu=0.1):
+def matrix_cost(x, z, gyr_ref, jerk_ref, mu=None):
     """Matrix cost for the template based detection.
 
     Parameters
@@ -159,7 +161,9 @@ def matrix_cost(x, z, gyr_ref, jerk_ref, mu=0.1):
     -------
        numpy array -- numpy array with the matrix cost
     """
-    
+
+    mu = config.MU_MIN if mu is None else mu
+
     Nx = len(x)
 
     matrix = [0 for i in range(Nx)]

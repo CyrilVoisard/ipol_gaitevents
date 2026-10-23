@@ -6,11 +6,12 @@ from scipy.spatial.distance import cdist
 from scipy.signal import find_peaks
 from scipy import stats
 from tslearn import metrics
+from package import config
 
 from package import deal_stride
 
 
-def annotate_ref_stride(data_1, data_2, foot, freq, r=2, output=0):
+def annotate_ref_stride(data_1, data_2, foot, freq, r=None, output=0):
     """Find, annotate and plot a signal subset of the foot of interest to be considered as the reference stride.
     Annotation of the reference stride with the gait events (TO, HS, FF, HO).
 
@@ -29,6 +30,8 @@ def annotate_ref_stride(data_1, data_2, foot, freq, r=2, output=0):
        jerk time series of the reference stride
        gait event indexes within the reference stride
     """
+
+    r = config.ITAKURA_MAX_SLOPE if r is None else r
 
     # reference stride: extracted from the recording itself (step 2)
     gyr_ref, jerk_ref, start_ref, end_ref = find_ref_stride(data_1, data_2, foot, freq)
@@ -51,8 +54,9 @@ def annotate_ref_stride(data_1, data_2, foot, freq, r=2, output=0):
     ref_stride_annotations = deal_stride.annotate(path, stride_model_annotations)
 
     # plot the result
-    plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_y2, path,
-                             foot, freq, start=start_ref, output=output)
+    if output:
+        plot_annotate_ref_stride(gyr_ref, jerk_ref, ref_stride_annotations, s_y1, s_y2, path,
+                                 foot, freq, start=start_ref, output=output)
 
     return gyr_ref, jerk_ref, ref_stride_annotations
 
@@ -262,8 +266,8 @@ def annotation_vector(gyr, jerk, window):
     cumsum = np.concatenate(([0.0], np.cumsum(gyr_norm)))
 
     positions = np.arange(len(gyr_norm) - window + 1)
-    start = positions + window // 3
-    end = positions + (2 * window) // 3
+    start = positions + int(window * config.AV_START_FRAC)
+    end = positions + int(window * config.AV_END_FRAC)
     av = cumsum[end] - cumsum[start]
 
     max_av = np.max(av)
@@ -337,7 +341,7 @@ def len_stride_estimation(data_1, data_2, freq):
     # If the two estimates are too far apart, one of the peak detections is likely faulty: during
     # steady walking both should be nearly equal. The typical failure mode is that the first peak
     # is missed and a harmonic near 2*l is returned, hence the asymmetric test.
-    if len_stride_data_1 / len_stride_data_2 >= 1.5:
+    if len_stride_data_1 / len_stride_data_2 >= config.TWO_FOOT_RATIO:
         return len_stride_data_2, autocorr_2
 
     return len_stride_data_1, autocorr_1
@@ -364,11 +368,10 @@ def len_stride_one_side(data, freq):
 
     # combined ACF from unbiased autocorrelations: the sagittal angular velocity carries half of
     # the total weight, the three acceleration axes sharing the other half
-    acf = autocorr(gyr_y) / 2 + (autocorr(acc_x) + autocorr(acc_y) + autocorr(acc_z)) / 6
+    w = config.W_GYR
+    acf = w * autocorr(gyr_y) + (1 - w) * (autocorr(acc_x) + autocorr(acc_y) + autocorr(acc_z)) / 3
+    acf_search = acf[:int(len(acf) * config.ACF_SEARCH_FRAC)]
 
-    # peaks are searched over the first quarter of the ACF only: the variance of the unbiased
-    # estimator grows with the lag, since only N - i terms contribute to it
-    acf_search = acf[:len(acf) // 4]
     index_pic = autocorr_indexes(acf_search, freq)
 
     if len(index_pic) > 0:
@@ -377,7 +380,7 @@ def len_stride_one_side(data, freq):
     return 0, 0
 
 
-def autocorr_indexes(y, freq, thres=0.7, min_lag=0.8):
+def autocorr_indexes(y, freq, thres=None, min_lag=None):
     """Find the local maxima of an autocorrelation function above an adaptive amplitude threshold.
 
     Arguments:
@@ -390,6 +393,9 @@ def autocorr_indexes(y, freq, thres=0.7, min_lag=0.8):
     -------
     ndarray with the indexes (lags, in samples) of the detected local maxima
     """
+
+    thres = config.ALPHA_ACF if thres is None else thres
+    min_lag = config.MIN_LAG_S if min_lag is None else min_lag
 
     y = np.asarray(y, dtype=float)
 
