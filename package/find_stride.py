@@ -263,7 +263,9 @@ def annotation_vector(gyr, jerk, window):
     jerk_norm = jerk_norm / np.max(jerk_norm)
 
     # cumulative sums allow the sliding sums to be computed in one pass
-    cumsum = np.concatenate(([0.0], np.cumsum(gyr_norm)))
+    # cumsum = np.concatenate(([0.0], np.cumsum(gyr_norm)))
+    signal = gyr_norm + jerk_norm if config.AV_WITH_JERK else gyr_norm
+    cumsum = np.concatenate(([0.0], np.cumsum(signal)))
 
     positions = np.arange(len(gyr_norm) - window + 1)
     start = positions + int(window * config.AV_START_FRAC)

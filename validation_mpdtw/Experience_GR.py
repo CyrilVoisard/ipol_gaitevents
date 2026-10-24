@@ -1,11 +1,6 @@
 import os
 import json
-from IPython.display import display
-from load_package import xsens, events, gait_rite
-
-
-def display_data():
-    return 0
+from load_package import xsens, gait_rite
 
 
 class Experience_GR(object):
@@ -294,10 +289,3 @@ class Experience_GR(object):
                         seg_lim = seg_steps.import_seg(seg_path, disp)
 
         return seg_lim
-
-    # ---------------------------------- Affichage ---------------------------------------------
-
-    def display_verif(self):
-        image_to_display = [e for e in self.file_list if e.endswith("_verif_dictionnaire.png")][0]
-        display(os.path.join(self.root, image_to_display))
-        return 0

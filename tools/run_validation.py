@@ -18,25 +18,24 @@ import traceback
 
 import numpy as np
 import pandas as pd
-
 # --- paths to adapt -------------------------------------------------------------------
 
 IPOL_REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Folder holding input_validation_OK2 / _SEP / _EVF and the historical modules
-# Patient.py, Patient_EVF.py, Experience_GR.py, recall_precision.py.
-VALIDATION_HOME = '/Users/cyril/Library/Mobile Documents/com~apple~CloudDocs/Borelli/6 - Publications/2024 - MPDTW/100 - Article final et suivi de soumission/0 - Données utilisées/Input/input'
+# Historical modules used by the validation chain, shipped with this repository.
+MODULES_DIR = os.path.join(IPOL_REPO, "validation_mpdtw")
 
-RESULTS_DIR = os.path.join(VALIDATION_HOME, "results_sensitivity")
+# Folder holding input_validation_OK2 / _SEP / _EVF. Private data, not in the repository.
+DATA_HOME = "/Users/cyril/Library/Mobile Documents/com~apple~CloudDocs/Borelli/6 - Publications/2024 - MPDTW/100 - Article final et suivi de soumission/0 - Données utilisées/Input/input"
 
-# recall_precision.py converts walkway seconds into samples with a hard-coded factor of 100,
-# so trials acquired at another frequency cannot go through this chain unchanged.
+RESULTS_DIR = os.path.join(IPOL_REPO, "results_sensitivity")
+
 FREQ = 100
 
 # --------------------------------------------------------------------------------------
 
 sys.path.insert(0, IPOL_REPO)
-sys.path.insert(0, VALIDATION_HOME)
+sys.path.insert(0, MODULES_DIR)
 
 from package import dtw_detection, config  # noqa: E402
 
@@ -106,7 +105,7 @@ def list_experiments(cohort):
         triplets (patient, experiment name, folder)
     """
 
-    root = os.path.join(VALIDATION_HOME, "input_validation_" + cohort)
+    root = os.path.join(DATA_HOME, "input_validation_" + cohort)
     if not os.path.isdir(root):
         raise FileNotFoundError("Folder not found: {}".format(root))
 

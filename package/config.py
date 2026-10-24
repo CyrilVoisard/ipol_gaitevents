@@ -54,6 +54,11 @@ MU_MIN = 0.1
 #: duration.
 NMS_FRAC = 0.5
 
+#: Include the normalized jerk in the annotation vector, alongside the angular velocity.
+#: The original publication uses both signals; the current implementation uses the angular
+#: velocity only. The sensitivity study compares the two variants.
+AV_WITH_JERK = 0
+
 # ---------------------------------------------------------------------------
 # Pre-processing
 # ---------------------------------------------------------------------------

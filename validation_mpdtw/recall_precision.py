@@ -2,7 +2,6 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-from load_package import seg_steps
 
 
 def compute_precision(precision, data, steps_full, exo, id_exp):
