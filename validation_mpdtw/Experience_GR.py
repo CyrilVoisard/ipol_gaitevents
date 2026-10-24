@@ -81,8 +81,7 @@ class Experience_GR(object):
 
     def get_data_tronc_brut(self, disp=False):
 
-        with open(
-                "/Users/cyril/Library/Mobile Documents/com~apple~CloudDocs/Borelli/4 - Classes et fonctions/sensors_dictionnaires.json") as json_dict:
+        with open("sensors_dictionnaires.json") as json_dict:
             sensors_dict = json.load(json_dict)
 
         i = 0
@@ -110,8 +109,7 @@ class Experience_GR(object):
 
     def get_data_tronc(self, correction_acc=True, disp=False):
 
-        with open(
-                "/Users/cyril/Library/Mobile Documents/com~apple~CloudDocs/Borelli/4 - Classes et fonctions/sensors_dictionnaires.json") as json_dict:
+        with open("sensors_dictionnaires.json") as json_dict:
             sensors_dict = json.load(json_dict)
 
         i = 0
@@ -129,8 +127,7 @@ class Experience_GR(object):
 
     def import_experience(self, correction_acc=True, correction_gr=True, disp=False):
 
-        with open(
-                "/Users/cyril/Library/Mobile Documents/com~apple~CloudDocs/Borelli/4 - Classes et fonctions/sensors_dictionnaires.json") as json_dict:
+        with open("sensors_dictionnaires.json") as json_dict:
             sensors_dict = json.load(json_dict)
 
         i = 0
@@ -174,8 +171,7 @@ class Experience_GR(object):
     def import_experience_pied(self, correction_acc=True, correction_gr=True, disp=False):
         #print("Correction : ", correction_acc)
 
-        with open(
-                "/Users/cyril/Library/Mobile Documents/com~apple~CloudDocs/Borelli/4 - Classes et fonctions/sensors_dictionnaires.json") as json_dict:
+        with open("sensors_dictionnaires.json") as json_dict:
             sensors_dict = json.load(json_dict)
 
         i = 0
